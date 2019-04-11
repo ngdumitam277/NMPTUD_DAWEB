@@ -1,3 +1,3 @@
 module.exports = {
-    url: 'mongodb+srv://democf:anhsang@cluster0-98okr.gcp.mongodb.net/haydaytv'
+    url: 'mongodb+srv://ngocqui:0857894172@cluster0-jxcfo.gcp.mongodb.net/admissions'
 }

@@ -1,5 +1,5 @@
 // Configuring the database
-const dbConfig = require('./config/database.config.js')
+const dbConfig = require('./server/config/database.config')
 const mongoose = require('mongoose')
 const express = require('express')
 const bodyParser = require('body-parser')
@@ -39,4 +39,4 @@ mongoose.connect(dbConfig.url, {
 app.listen(port, () => console.log(`Server started on port ${port}`))
 
 // Require routes
-require('./app/routes/movie.routes.js')(app);
+require('./server/app/routes/taikhoan.routes.js')(app);
