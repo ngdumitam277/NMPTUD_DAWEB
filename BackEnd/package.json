@@ -1,0 +1,21 @@
+{
+  "name": "vuejs",
+  "version": "1.0.0",
+  "description": "Full stack vue and express app movies",
+  "main": "index.js",
+  "scripts": {
+    "strat": "node server/index.js",
+    "dev": "nodemon server/index.js"
+  },
+  "author": "Nguyen Sang",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "mongoose": "^5.4.20"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.10"
+  }
+}
