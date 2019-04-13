@@ -26,22 +26,14 @@ function Footer({ ...props }) {
       <div className={classes.container}>
         <div className={classes.left}>
           <List className={classes.list}>
-            <ListItem className={classes.inlineBlock}>
-              <a
-                href="https://www.creative-tim.com/"
-                className={classes.block}
-                target="_blank"
-              >
-                Creative Tim
-              </a>
-            </ListItem>
+            
             <ListItem className={classes.inlineBlock}>
               <a
                 href="https://www.creative-tim.com/presentation"
                 className={classes.block}
                 target="_blank"
               >
-                About us
+                Về chúng tôi
               </a>
             </ListItem>
             <ListItem className={classes.inlineBlock}>
@@ -50,7 +42,7 @@ function Footer({ ...props }) {
                 className={classes.block}
                 target="_blank"
               >
-                Blog
+                Liên Hệ
               </a>
             </ListItem>
             <ListItem className={classes.inlineBlock}>
@@ -59,22 +51,15 @@ function Footer({ ...props }) {
                 className={classes.block}
                 target="_blank"
               >
-                Licenses
+                Giấy phép
               </a>
             </ListItem>
           </List>
         </div>
         <div className={classes.right}>
-          &copy; {1900 + new Date().getYear()} , made with{" "}
-          <Favorite className={classes.icon} /> by{" "}
-          <a
-            href="https://www.creative-tim.com"
-            className={aClasses}
-            target="_blank"
-          >
-            Creative Tim
-          </a>{" "}
-          for a better web.
+          &copy; {1900 + new Date().getYear()}. Designed by TEAM 8{" "}
+          <Favorite className={classes.icon} />
+          
         </div>
       </div>
     </footer>
