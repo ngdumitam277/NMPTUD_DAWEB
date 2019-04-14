@@ -13,33 +13,38 @@ exports.taoPhanHoi = async(req, res) => {
     let tgTSnhap = req.body.tgTSnhap ? moment(req.body.tgTSnhap, "DD-MM-YYYY HH:mm:ss").toISOString() : ""
     let tgNgNhapDataNhap = req.body.tgNgNhapDataNhap ? moment(req.body.tgNgNhapDataNhap, "DD-MM-YYYY HH:mm:ss").toISOString() : ""
 
-    if(maPH !== "" && !isNaN(trangThai)){
-        let user = await PhanHoi.find({maPH: maPH})
-        if(user.length > 0){
-            res.send({message: "Phản hồi đã tồn tại!"})
-        }
-
-        const phanhoi = new PhanHoi({
-            maPH: maPH,
-            usernamecb: usernamecb,
-            usernamets: usernamets,
-            noidungTSchat: noidungTSchat,
-            noidungNgNhapDataChat: noidungNgNhapDataChat,
-            anhMinhChung: anhMinhChung,
-            trangThai: trangThai,
-            tgTSnhap: tgTSnhap,
-            tgNgNhapDataNhap: tgNgNhapDataNhap
-        })
+    try{
+        if(maPH !== "" && !isNaN(trangThai)){
+            let exist = await PhanHoi.find({maPH: maPH})
+            if(exist.length > 0){
+                res.send({message: "Phản hồi đã tồn tại!"})
+            }
     
-        phanhoi.save()
-        .then((result) => {
-            res.send({message: "Tạo phản hồi thành công!"});
-        }).catch(err => {
-            console.log("taoPhanHoi", err)
-            res.send({message: "Lỗi tạo phản hồi"})
-        })
-    }else{
-        console.log("taoPhanHoi", "maPH không được rỗng!")
-        res.send({message: "maPH không được rỗng!"})
+            const phanhoi = new PhanHoi({
+                maPH: maPH,
+                usernamecb: usernamecb,
+                usernamets: usernamets,
+                noidungTSchat: noidungTSchat,
+                noidungNgNhapDataChat: noidungNgNhapDataChat,
+                anhMinhChung: anhMinhChung,
+                trangThai: trangThai,
+                tgTSnhap: tgTSnhap,
+                tgNgNhapDataNhap: tgNgNhapDataNhap
+            })
+        
+            phanhoi.save()
+            .then((result) => {
+                res.send({message: "Tạo phản hồi thành công!"});
+            }).catch(err => {
+                console.log("taoPhanHoi", err)
+                res.send({message: "Lỗi tạo phản hồi"})
+            })
+        }else{
+            console.log("taoPhanHoi", "maPH không được rỗng!")
+            res.send({message: "maPH không được rỗng!"})
+        }
+    }catch(err){
+        console.log("taoPhanHoi", err)
+        res.send({message: "Lỗi tạo phản hồi"})
     }
 };

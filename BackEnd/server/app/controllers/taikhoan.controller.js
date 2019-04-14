@@ -20,41 +20,46 @@ exports.taoTaiKhoan = async(req, res) => {
     let tinhTrang = req.body.tinhTrang ? req.body.tinhTrang : ""
     let tgDangKy = req.body.tgDangKy ? moment(req.body.tgDangKy, "DD-MM-YYYY HH:mm:ss").toISOString() : ""
 
-    if(username !== ""){
-        let user = await TaiKhoan.find({username: username})
-        if(user.length > 0){
-            res.send({message: "Tài khoản đã tồn tại!"})
-        }
-
-        const taikhoan = new TaiKhoan({
-            username: username,
-            password: password,
-            soCMND: soCMND,
-            ngCapCMND: ngCapCMND,
-            hTen: hTen,
-            ngSinh: ngSinh,
-            danToc: danToc,
-            gioiTinh: gioiTinh,
-            anh34: anh34,
-            SDT: SDT,
-            noiSinh: noiSinh,
-            diaChi: diaChi,
-            email: email,
-            loai: loai,
-            tinhTrang: tinhTrang,
-            tgDangKy: tgDangKy
-        })
+    try{
+        if(username !== ""){
+            let exist = await TaiKhoan.find({username: username})
+            if(exist.length > 0){
+                res.send({message: "Tài khoản đã tồn tại!"})
+            }
     
-        taikhoan.save()
-        .then((result) => {
-            res.send({message: "Tạo tài khoản thành công!"});
-        }).catch(err => {
-            console.log("taoTaiKhoan", err)
-            res.send({message: "Lỗi tạo tài khoản"})
-        })
-    }else{
-        console.log("taoTaiKhoan", "username không được rỗng!")
-        res.send({message: "Username không được rỗng!"})
+            const taikhoan = new TaiKhoan({
+                username: username,
+                password: password,
+                soCMND: soCMND,
+                ngCapCMND: ngCapCMND,
+                hTen: hTen,
+                ngSinh: ngSinh,
+                danToc: danToc,
+                gioiTinh: gioiTinh,
+                anh34: anh34,
+                SDT: SDT,
+                noiSinh: noiSinh,
+                diaChi: diaChi,
+                email: email,
+                loai: loai,
+                tinhTrang: tinhTrang,
+                tgDangKy: tgDangKy
+            })
+        
+            taikhoan.save()
+            .then((result) => {
+                res.send({message: "Tạo tài khoản thành công!"});
+            }).catch(err => {
+                console.log("taoTaiKhoan", err)
+                res.send({message: "Lỗi tạo tài khoản"})
+            })
+        }else{
+            console.log("taoTaiKhoan", "username không được rỗng!")
+            res.send({message: "Username không được rỗng!"})
+        }
+    }catch(err){
+        console.log("taoTaiKhoan", err)
+        res.send({message: "Lỗi tạo tài khoản"})
     }
 };
 

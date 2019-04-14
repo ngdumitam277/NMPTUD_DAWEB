@@ -2,11 +2,14 @@ const mongoose = require('mongoose')
 
 const ThiSinhSchema = mongoose.Schema({
     usernamets: String,
-    maNganh: String,
-    tenKhoi: String,
-    diemTBthi: Intl,
-    diemCong: Intl,
-    tinhTrang: Intl
+    SBD: String,
+    tenTHPT: String,
+    namTotNghiep: String,  
+    anhMinhChung: String,
+    ttTuyenSinh: Intl,
+    Phach: Intl,
+    maKhuVuc: String,
+    maDoiTuong: String
 }, {
     timestamps: true
 })

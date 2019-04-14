@@ -7,27 +7,32 @@ exports.taoTaiKhoanLog = async(req, res) => {
     let tgSuaXoa = req.body.tgSuaXoa ? moment(req.body.tgSuaXoa, "DD-MM-YYYY HH:mm:ss").toISOString() : ""
     let ttinLog = req.body.ttinLog ? req.body.ttinLog : ""
 
-    if(username !== ""){
-        let user = await TaiKhoanLog.find({username: username})
-        if(user.length > 0){
-            res.send({message: "Tài khoản log đã tồn tại!"})
-        }
-
-        const taikhoan = new TaiKhoanLog({
-            username: username,
-            tgSuaXoa: tgSuaXoa,
-            ttinLog: ttinLog
-        })
+    try{
+        if(username !== ""){
+            let exist = await TaiKhoanLog.find({username: username})
+            if(exist.length > 0){
+                res.send({message: "Tài khoản log đã tồn tại!"})
+            }
     
-        taikhoan.save()
-        .then((result) => {
-            res.send({message: "Tạo tài khoản log thành công!"});
-        }).catch(err => {
-            console.log("taoTaiKhoanLog", err)
-            res.send({message: "Lỗi tạo tài khoản log"})
-        })
-    }else{
-        console.log("taoTaiKhoanLog", "username không được rỗng!")
-        res.send({message: "Username không được rỗng!"})
+            const taikhoan = new TaiKhoanLog({
+                username: username,
+                tgSuaXoa: tgSuaXoa,
+                ttinLog: ttinLog
+            })
+        
+            taikhoan.save()
+            .then((result) => {
+                res.send({message: "Tạo tài khoản log thành công!"});
+            }).catch(err => {
+                console.log("taoTaiKhoanLog", err)
+                res.send({message: "Lỗi tạo tài khoản log"})
+            })
+        }else{
+            console.log("taoTaiKhoanLog", "username không được rỗng!")
+            res.send({message: "Username không được rỗng!"})
+        }
+    }catch(err){
+        console.log("taoTaiKhoanLog", err)
+        res.send({message: "Lỗi tạo tài khoản log"})
     }
 };
