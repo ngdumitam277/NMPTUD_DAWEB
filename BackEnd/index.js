@@ -40,3 +40,5 @@ app.listen(port, () => console.log(`Server started on port ${port}`))
 
 // Require routes
 require('./server/app/routes/taikhoan.routes.js')(app);
+require('./server/app/routes/ngQuanLy.routes.js')(app);
+require('./server/app/routes/canbo.routes.js')(app);

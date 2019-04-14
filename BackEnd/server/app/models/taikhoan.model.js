@@ -15,7 +15,7 @@ const TaikhoanSchema = mongoose.Schema({
     diaChi: String,
     email: String,
     loai: String,
-    tingTrang: Intl,
+    tinhTrang: Intl,
     tgDangKy: Date
 }, {
     timestamps: true
