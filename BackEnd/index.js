@@ -46,3 +46,5 @@ require('./server/app/routes/ngNhapData.routes.js')(app);
 require('./server/app/routes/ngNhapDiem.routes.js')(app);
 require('./server/app/routes/phanhoi_phuckhao.routes.js')(app);
 require('./server/app/routes/diemThi.routes.js')(app);
+require('./server/app/routes/thiSinh.routes.js')(app);
+require('./server/app/routes/taikhoanLog.routes.js')(app);
