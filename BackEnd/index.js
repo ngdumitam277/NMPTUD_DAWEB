@@ -44,3 +44,5 @@ require('./server/app/routes/ngQuanLy.routes.js')(app);
 require('./server/app/routes/canbo.routes.js')(app);
 require('./server/app/routes/ngNhapData.routes.js')(app);
 require('./server/app/routes/ngNhapDiem.routes.js')(app);
+require('./server/app/routes/phanhoi_phuckhao.routes.js')(app);
+require('./server/app/routes/diemThi.routes.js')(app);

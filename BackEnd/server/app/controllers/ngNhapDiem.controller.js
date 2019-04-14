@@ -29,7 +29,7 @@ exports.taoNguoiNhapDiem = async(req, res) => {
             res.send({message: "Lỗi tạo người nhập điểm"})
         })
     }else{
-        console.log("taoNguoiNhapDiem", "username không được rỗng!")
-        res.send({message: "Username không được rỗng!"})
+        console.log("taoNguoiNhapDiem", "usernameNgNhapDiem không được rỗng!")
+        res.send({message: "usernameNgNhapDiem không được rỗng!"})
     }
 };

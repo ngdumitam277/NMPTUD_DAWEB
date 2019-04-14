@@ -33,7 +33,7 @@ exports.taoNguoiNhapData = async(req, res) => {
             res.send({message: "Lỗi tạo người nhập data"})
         })
     }else{
-        console.log("taoNguoiNhapData", "username không được rỗng!")
-        res.send({message: "Username không được rỗng!"})
+        console.log("taoNguoiNhapData", "usernameNgNhapData không được rỗng!")
+        res.send({message: "usernameNgNhapData không được rỗng!"})
     }
 };
