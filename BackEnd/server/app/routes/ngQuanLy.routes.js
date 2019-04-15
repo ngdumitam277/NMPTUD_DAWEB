@@ -3,4 +3,7 @@ module.exports = (app) => {
 
     // tạo người quản lý
     app.post('/web/create/ngquanly', ngQuanLy.taonguoiquanly);
+
+    // lấy thời gian
+    app.post('/web/ngquanly/laythoigian', ngQuanLy.laythoigian);
 }

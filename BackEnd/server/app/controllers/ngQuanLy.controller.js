@@ -48,3 +48,38 @@ exports.taonguoiquanly = async(req, res) => {
         res.send({message: "Lỗi tạo người quản lý"})
     }
 };
+
+// lấy thời gian
+exports.laythoigian = async(req, res) => {
+    let tgHienTai = req.body.tgHienTai ? moment(req.body.tgHienTai, "DD-MM-YYYY HH:mm:ss").toDate() : ""
+    let day = req.body.tgHienTai ? `${moment(req.body.tgHienTai, "DD-MM-YYYY HH:mm:ss").year()}` : ""
+
+    try{
+        if(day !== ""){
+            ngQuanLy.aggregate([
+                { $match : { namTuyenSinh : day } },
+                { $project: {
+                        tgNhanHoSo: { $divide: [ { $subtract: [ "$tgNhanHoSo", tgHienTai ] }, 1000*60*60*24 ] },
+                        tgKTnhanHoSo: { $divide: [ { $subtract: [ "$tgKTnhanHoSo", tgHienTai ] }, 1000*60*60*24 ] },
+                        tgCongBoKQ: { $divide: [ { $subtract: [ "$tgCongBoKQ", tgHienTai ] }, 1000*60*60*24 ] },
+                        tgKTcongBoKQ: { $divide: [ { $subtract: [ "$tgKTcongBoKQ", tgHienTai ] }, 1000*60*60*24 ] },
+                        tgPhucKhao: { $divide: [ { $subtract: [ "$tgPhucKhao", tgHienTai ] }, 1000*60*60*24 ] },
+                        tgKTphucKhao: { $divide: [ { $subtract: [ "$tgKTphucKhao", tgHienTai ] }, 1000*60*60*24 ] }
+                    } 
+                }
+            ])
+            .then((result) => {
+                res.send(result);
+            }).catch(err => {
+                console.log("laythoigian", err)
+                res.send({message: "Lỗi lấy thời gian"})
+            })
+        }else{
+            console.log("laythoigian", "ngày không được rỗng!")
+            res.send({message: "Lỗi lấy thời gian"})
+        }
+    }catch(err){
+        console.log("laythoigian", err)
+        res.send({message: "Lỗi lấy thời gian"})
+    }
+};
