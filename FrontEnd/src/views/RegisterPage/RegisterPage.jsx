@@ -25,7 +25,7 @@ import loginPageStyle from "assets/jss/material-kit-react/views/loginPage.jsx";
 
 import image from "assets/img/bg-login.jpeg";
 
-class LoginPage extends React.Component {
+class RegisterPage extends React.Component {
   constructor(props) {
     super(props);
     // we use this to make the card to appear after the page has been rendered
@@ -61,13 +61,13 @@ class LoginPage extends React.Component {
             backgroundPosition: "top center"
           }}
         >
-          <div className={classes.container}>
+          <div className={classes.container} style={{zIndex:9999}}>
             <GridContainer justify="center">
               <GridItem xs={12} sm={12} md={4}>
                 <Card className={classes[this.state.cardAnimaton]}>
                   <form className={classes.form}>
                     <CardHeader color="primary" className={classes.cardHeader}>
-                      <h4>Đăng nhập</h4>
+                      <h4>Đăng ký</h4>
                       <div className={classes.socialLine}>
                         <Button
                           justIcon
@@ -100,6 +100,21 @@ class LoginPage extends React.Component {
                     </CardHeader>
 
                     <CardBody>
+                    <CustomInput
+                        labelText="Họ tên ..."
+                        id="first"
+                        formControlProps={{
+                          fullWidth: true
+                        }}
+                        inputProps={{
+                          type: "text",
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <People className={classes.inputIconsColor} />
+                            </InputAdornment>
+                          )
+                        }}
+                      />
                       <CustomInput
                         labelText="Tài Khoản Email..."
                         id="email"
@@ -136,21 +151,14 @@ class LoginPage extends React.Component {
                     <CardFooter className={classes.cardFooter} style={{display: 'block'}}>
                       <div style={{textAlign:'center'}}>
                         <Button simple color="primary" size="lg">
-                          Đăng Nhập
+                          Đăng Ký
                         </Button>
                       </div>
-                      <GridContainer>
-                        <GridItem xs={12} sm={6} md={6}>
-                          <a href="" target="_blank"> Quên mật khẩu</a>
-                        </GridItem>
-                        <GridItem xs={12} sm={6} md={6} style={{textAlign:'right'}}>
-                          <Link to={"/register-page"} className={classes.link}>
-                             
-                                Đăng ký
-                             
-                          </Link>
-                        </GridItem>
-                      </GridContainer>
+                      <Link to={"/login-page"} className={classes.link}>
+                            
+                        Về đăng nhập
+                        
+                        </Link>
                     </CardFooter>
                    
                   </form>
@@ -166,4 +174,4 @@ class LoginPage extends React.Component {
   }
 }
 
-export default withStyles(loginPageStyle)(LoginPage);
+export default withStyles(loginPageStyle)(RegisterPage);
