@@ -1,4 +1,5 @@
 const TaiKhoan = require('../models/taikhoan.model.js');
+const ngQuanLy = require('../models/ngQuanLy.model.js');
 const moment = require('moment');
 
 // tạo tài khoản thí sinh
@@ -16,8 +17,6 @@ exports.taoTaiKhoanTS = async(req, res) => {
     let noiSinh = req.body.noiSinh ? req.body.noiSinh : ""
     let diaChi = req.body.diaChi ? req.body.diaChi : ""
     let email = req.body.email ? req.body.email : ""
-    let loai = req.body.loai ? req.body.loai : ""
-    let tinhTrang = req.body.tinhTrang ? req.body.tinhTrang : ""
     let tgDangKy = req.body.tgDangKy ? moment(req.body.tgDangKy, "DD-MM-YYYY HH:mm:ss").toISOString() : ""
 
     try{
@@ -41,8 +40,8 @@ exports.taoTaiKhoanTS = async(req, res) => {
                 noiSinh: noiSinh,
                 diaChi: diaChi,
                 email: email,
-                loai: loai,
-                tinhTrang: tinhTrang,
+                loai: "TS",
+                tinhTrang: 0,
                 tgDangKy: tgDangKy
             })
         
@@ -65,6 +64,7 @@ exports.taoTaiKhoanTS = async(req, res) => {
 
 // tạo tài khoản cán bộ
 exports.taoTaiKhoanCB = async(req, res) => {
+    let maCB = req.body.maCB ? req.body.maCB : ""
     let username = req.body.username ? req.body.username : ""
     let password = req.body.password ? req.body.password : ""
     let soCMND = req.body.soCMND ? req.body.soCMND : ""
@@ -78,43 +78,47 @@ exports.taoTaiKhoanCB = async(req, res) => {
     let noiSinh = req.body.noiSinh ? req.body.noiSinh : ""
     let diaChi = req.body.diaChi ? req.body.diaChi : ""
     let email = req.body.email ? req.body.email : ""
-    let loai = req.body.loai ? req.body.loai : ""
-    let tinhTrang = req.body.tinhTrang ? req.body.tinhTrang : ""
     let tgDangKy = req.body.tgDangKy ? moment(req.body.tgDangKy, "DD-MM-YYYY HH:mm:ss").toISOString() : ""
 
     try{
-        if(username !== ""){
-            let exist = await TaiKhoan.find({username: username})
-            if(exist.length > 0){
-                res.send({message: "Tài khoản đã tồn tại!"})
-            }
-    
-            const taikhoan = new TaiKhoan({
-                username: username,
-                password: password,
-                soCMND: soCMND,
-                ngCapCMND: ngCapCMND,
-                hTen: hTen,
-                ngSinh: ngSinh,
-                danToc: danToc,
-                gioiTinh: gioiTinh,
-                anh34: anh34,
-                SDT: SDT,
-                noiSinh: noiSinh,
-                diaChi: diaChi,
-                email: email,
-                loai: loai,
-                tinhTrang: tinhTrang,
-                tgDangKy: tgDangKy
-            })
+        if(username !== "" && maCB !== ""){
+            let ngQL = await ngQuanLy.find({maXacThucCB: maCB})
+            if(ngQL.length > 0){
+                let exist = await TaiKhoan.find({username: username})
+                if(exist.length > 0){
+                    res.send({message: "Tài khoản đã tồn tại!"})
+                }
         
-            taikhoan.save()
-            .then((result) => {
-                res.send({message: "ok"});
-            }).catch(err => {
-                console.log("taoTaiKhoan", err)
-                res.send({message: "Lỗi tạo tài khoản"})
-            })
+                const taikhoan = new TaiKhoan({
+                    username: username,
+                    password: password,
+                    soCMND: soCMND,
+                    ngCapCMND: ngCapCMND,
+                    hTen: hTen,
+                    ngSinh: ngSinh,
+                    danToc: danToc,
+                    gioiTinh: gioiTinh,
+                    anh34: anh34,
+                    SDT: SDT,
+                    noiSinh: noiSinh,
+                    diaChi: diaChi,
+                    email: email,
+                    loai: "CB",
+                    tinhTrang: 0,
+                    tgDangKy: tgDangKy
+                })
+            
+                taikhoan.save()
+                .then((result) => {
+                    res.send({message: "ok"});
+                }).catch(err => {
+                    console.log("taoTaiKhoan", err)
+                    res.send({message: "Lỗi tạo tài khoản"})
+                })
+            }else{
+                console.log("taoTaiKhoanCB", "lỗi mã xác thức cán bộ!")
+                res.send({message: "Lỗi mã xác thực cán bộ!"})
+            }
         }else{
             console.log("taoTaiKhoan", "username không được rỗng!")
             res.send({message: "Username không được rỗng!"})
