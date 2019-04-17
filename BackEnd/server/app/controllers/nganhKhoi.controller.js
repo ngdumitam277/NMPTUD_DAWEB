@@ -10,11 +10,6 @@ exports.taoNganhKhoi = async(req, res) => {
 
     try{
         if(maNganh !== "" && !isNaN(diemChuan) && !isNaN(slTSthiNganhKhoi)){
-            let exist = await NganhKhoi.find({maNganh: maNganh})
-            if(exist.length > 0){
-                res.send({message: "Ngành khối đã tồn tại!"})
-            }
-    
             const nganh = new NganhKhoi({
                 maNganh: maNganh,
                 tenKhoi: tenKhoi,
@@ -24,7 +19,7 @@ exports.taoNganhKhoi = async(req, res) => {
         
             nganh.save()
             .then((result) => {
-                res.send({message: "Tạo ngành khối thành công!"});
+                res.send({message: "ok"});
             }).catch(err => {
                 console.log("taoNganhKhoi", err)
                 res.send({message: "Lỗi tạo ngành khối"})

@@ -20,7 +20,7 @@ exports.taoKhuVuc = async(req, res) => {
         
             khuvuc.save()
             .then((result) => {
-                res.send({message: "Tạo khu vực thành công!"});
+                res.send({message: "ok"});
             }).catch(err => {
                 console.log("taoKhuVuc", err)
                 res.send({message: "Lỗi tạo khu vực"})

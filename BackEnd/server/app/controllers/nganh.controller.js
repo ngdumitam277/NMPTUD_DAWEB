@@ -22,7 +22,7 @@ exports.taoNganh = async(req, res) => {
         
             nganh.save()
             .then((result) => {
-                res.send({message: "Tạo ngành thành công!"});
+                res.send({message: "ok"});
             }).catch(err => {
                 console.log("taoNganh", err)
                 res.send({message: "Lỗi tạo ngành"})

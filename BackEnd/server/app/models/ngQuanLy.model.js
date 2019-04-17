@@ -3,6 +3,8 @@ const mongoose = require('mongoose')
 const NgQuanLySchema = mongoose.Schema({
     username: String,
     namTuyenSinh: String,
+    anhTruong: String,
+    ttTruong: String,
     tgNhanHoSo: Date,
     tgKTnhanHoSo: Date,
     tgCongBoKQ: Date,

@@ -22,7 +22,7 @@ exports.taoTaiKhoanLog = async(req, res) => {
         
             taikhoan.save()
             .then((result) => {
-                res.send({message: "Tạo tài khoản log thành công!"});
+                res.send({message: "ok"});
             }).catch(err => {
                 console.log("taoTaiKhoanLog", err)
                 res.send({message: "Lỗi tạo tài khoản log"})

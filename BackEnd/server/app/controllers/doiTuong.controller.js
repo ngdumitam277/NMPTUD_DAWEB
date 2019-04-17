@@ -20,7 +20,7 @@ exports.taoDoiTuong = async(req, res) => {
         
             doituong.save()
             .then((result) => {
-                res.send({message: "Tạo đối tượng thành công!"});
+                res.send({message: "ok"});
             }).catch(err => {
                 console.log("taoDoiTuong", err)
                 res.send({message: "Lỗi tạo đối tượng"})

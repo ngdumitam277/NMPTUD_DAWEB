@@ -8,11 +8,6 @@ exports.taoKhoiMon = async(req, res) => {
 
     try{
         if(tenKhoi !== "" && tenMon !== ""){
-            let exist = await KhoiMon.find({tenKhoi: tenKhoi})
-            if(exist.length > 0){
-                res.send({message: "Khối đã tồn tại!"})
-            }
-    
             const khoimon = new KhoiMon({
                 tenKhoi: tenKhoi,
                 tenMon: tenMon
@@ -20,7 +15,7 @@ exports.taoKhoiMon = async(req, res) => {
         
             khoimon.save()
             .then((result) => {
-                res.send({message: "Tạo khối môn thành công!"});
+                res.send({message: "ok"});
             }).catch(err => {
                 console.log("taoKhoiMon", err)
                 res.send({message: "Lỗi tạo khối môn"})

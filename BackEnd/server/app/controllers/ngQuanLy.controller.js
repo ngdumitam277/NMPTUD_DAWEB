@@ -34,7 +34,7 @@ exports.taonguoiquanly = async(req, res) => {
         
             quanly.save()
             .then((result) => {
-                res.send({message: "Tạo người quản lý thành công!"});
+                res.send({message: "ok"});
             }).catch(err => {
                 console.log("taonguoiquanly", err)
                 res.send({message: "Lỗi tạo người quản lý"})

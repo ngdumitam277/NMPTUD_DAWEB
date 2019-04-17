@@ -24,7 +24,7 @@ exports.taoDiemThi = async(req, res) => {
         
             diemthi.save()
             .then((result) => {
-                res.send({message: "Tạo điểm thi thành công!"});
+                res.send({message: "ok"});
             }).catch(err => {
                 console.log("taoDiemThi", err)
                 res.send({message: "Lỗi tạo điểm thi"})

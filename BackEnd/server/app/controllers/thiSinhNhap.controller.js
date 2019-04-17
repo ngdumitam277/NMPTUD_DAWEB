@@ -30,7 +30,7 @@ exports.taoThiSinh = async(req, res) => {
         
             thisinh.save()
             .then((result) => {
-                res.send({message: "Tạo thí sinh thành công!"});
+                res.send({message: "ok"});
             }).catch(err => {
                 console.log("taoThiSinh", err)
                 res.send({message: "Lỗi tạo thí sinh"})

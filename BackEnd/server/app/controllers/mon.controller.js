@@ -24,7 +24,7 @@ exports.taoMon = async(req, res) => {
         
             mon.save()
             .then((result) => {
-                res.send({message: "Tạo môn thi thành công!"});
+                res.send({message: "ok"});
             }).catch(err => {
                 console.log("taoMon", err)
                 res.send({message: "Lỗi tạo môn thi"})

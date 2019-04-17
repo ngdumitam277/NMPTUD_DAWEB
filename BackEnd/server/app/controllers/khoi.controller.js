@@ -22,7 +22,7 @@ exports.taoKhoi = async(req, res) => {
         
             khoi.save()
             .then((result) => {
-                res.send({message: "Tạo khối thành công!"});
+                res.send({message: "ok"});
             }).catch(err => {
                 console.log("taoKhoi", err)
                 res.send({message: "Lỗi tạo khối"})

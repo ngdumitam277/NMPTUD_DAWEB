@@ -34,7 +34,7 @@ exports.taoPhanHoi = async(req, res) => {
         
             phanhoi.save()
             .then((result) => {
-                res.send({message: "Tạo phản hồi thành công!"});
+                res.send({message: "ok"});
             }).catch(err => {
                 console.log("taoPhanHoi", err)
                 res.send({message: "Lỗi tạo phản hồi"})

@@ -15,6 +15,15 @@ module.exports = (app) => {
     // // Delete a Note with movieId
     // app.delete('/movies/:movieId', movies.delete);
 
-    // tạo tài khoản
-    app.post('/web/create/taikhoan', taikhoan.taoTaiKhoan);
+    // tạo tài khoản thí sinh
+    app.post('/web/create/taikhoan/thisinh', taikhoan.taoTaiKhoanTS);
+
+    // tạo tài khoản cán bộ
+    app.post('/web/create/taikhoan/canbo', taikhoan.taoTaiKhoanCB);
+
+    // đăng nhập bằng tài khoản
+    app.post('/web/taikhoan/dangnhap', taikhoan.dangnhap);
+
+    // đổi mật khẩu tài khoản
+    app.post('/web/taikhoan/thaydoi/matkhau', taikhoan.thayDoiMatKhau);
 }

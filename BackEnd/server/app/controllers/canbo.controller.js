@@ -22,7 +22,7 @@ exports.taoCanBo = async(req, res) => {
         
             canbo.save()
             .then((result) => {
-                res.send({message: "Tạo cán bộ thành công!"});
+                res.send({message: "ok"});
             }).catch(err => {
                 console.log("taoCanBo", err)
                 res.send({message: "Lỗi tạo cán bộ"})

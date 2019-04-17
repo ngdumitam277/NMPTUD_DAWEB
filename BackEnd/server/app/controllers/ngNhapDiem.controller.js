@@ -24,7 +24,7 @@ exports.taoNguoiNhapDiem = async(req, res) => {
         
             ngNhap.save()
             .then((result) => {
-                res.send({message: "Tạo người nhập điểm thành công!"});
+                res.send({message: "ok"});
             }).catch(err => {
                 console.log("taoNguoiNhapDiem", err)
                 res.send({message: "Lỗi tạo người nhập điểm"})
