@@ -1,6 +1,7 @@
 const TaiKhoan = require('../models/taikhoan.model.js');
 const ngQuanLy = require('../models/ngQuanLy.model.js');
 const moment = require('moment');
+const nodemailer = require("nodemailer");
 
 // tạo tài khoản thí sinh
 exports.taoTaiKhoanTS = async(req, res) => {
@@ -189,6 +190,89 @@ exports.thayDoiMatKhau = async(req, res) => {
         res.send({message: "Lỗi thay đổi mật khẩu!"})
     }
 };
+
+// gửi mã xác nhận khi tạo tài khoản
+exports.sendCode = async(req, res) => {
+    let email = req.body.email ? req.body.email : ""
+
+    try{
+        if(email !== ""){
+            let exist = await TaiKhoan.find({email: email})
+            if(exist.length > 0){
+                let kt = await updateCodeUser(exist, code)
+                if(kt === false) res.send({message: "error"})
+
+                kt = await sendMailCodeResetPassword(email, code)
+                if(kt === false) res.send({message: "error"})
+
+                res.send({message: "ok"})
+            }else{
+                console.log("sendCode", "Email không tồn tại!")
+                res.send({message: "Email không tồn tại!"})
+            }
+        }else{
+            console.log("sendCode", "Email không được rỗng")
+            res.send({message: "Email không được rỗng!"})
+        }
+    }catch(err){
+        console.log(err, "sendCode")
+        res.send({message: "Lỗi gửi mã xác nhận!"})
+    }
+};
+
+async function updateCodeUser(data, code){
+    try{
+        let response = await User.findByIdAndUpdate(data[0]._id, {
+            maXacNhan: code
+        }, {new: true})
+        if(response.code){
+            return true
+        }else{
+            return false
+        }
+    }catch(err){
+        console.log(err, "updateCodeUser")
+        return false
+    }
+    return false
+}
+
+function getCode(){
+    let code = ""
+    for(let i=0; i<6; i++){
+        code += Math.floor((Math.random() * 9) + 1)
+    }
+    return code
+}
+
+async function sendMailCodeResetPassword(mailReceivers, code){
+    try{
+        let transporter = nodemailer.createTransport({
+            service: "Gmail",
+            auth: {
+                user: "thongbaotasker@gmail.com", 
+                pass: "8239198tamquysang" 
+            }
+        });
+        
+        let mailOptions = {
+            from: '"Đăng ký tài khoản" <thongbaotasker@gmail.com>', // sender address
+            to: mailReceivers, // list of receivers
+            subject: 'Thông tin đăng ký tài khoản của bạn', // Subject line
+            text: `Code your is: ${code}`, // plain text body
+        };
+    
+        let response = await transporter.sendMail(mailOptions)
+        if(response.messageId){
+            return true
+        }
+    }catch(err){
+        console.log(err)
+        return false
+    }
+
+    return false
+}
 
 // Retrieve and return all movies from the database.
 exports.findAll = (req, res) => {

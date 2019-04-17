@@ -16,7 +16,8 @@ const TaikhoanSchema = mongoose.Schema({
     email: String,
     loai: String,
     tinhTrang: Intl,
-    tgDangKy: Date
+    tgDangKy: Date,
+    maXacNhan: String
 }, {
     timestamps: true
 })

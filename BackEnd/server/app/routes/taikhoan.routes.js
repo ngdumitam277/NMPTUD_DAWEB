@@ -26,4 +26,7 @@ module.exports = (app) => {
 
     // đổi mật khẩu tài khoản
     app.post('/web/taikhoan/thaydoi/matkhau', taikhoan.thayDoiMatKhau);
+
+    // gửi mã xác nhận khi tạo tài khoản
+    app.post('/web/taikhoan/email/code', taikhoan.sendCode);
 }
