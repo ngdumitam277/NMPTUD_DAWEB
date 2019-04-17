@@ -31,6 +31,8 @@ import SectionDownload from "./Sections/SectionDownload.jsx";
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
 import SectionsImage from "./Sections/SectionsImage.jsx";
 import SectionHistory from "./Sections/SectionHistory.jsx";
+import SectionCertificate from "./Sections/SectionCertificate.jsx";
+import SectionNews from "./Sections/SectionNews.jsx";
 
 class Components extends React.Component {
   render() {
@@ -66,6 +68,8 @@ class Components extends React.Component {
         <div className={classNames(classes.main, classes.mainRaised)}>
           <SectionHistory />
           <SectionsImage />
+          <SectionCertificate />
+          <SectionNews />
           <SectionBasics />
           <SectionNavbars />
           <SectionTabs />
