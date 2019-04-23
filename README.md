@@ -4,6 +4,8 @@
 |18424058| Nguyễn Dương Minh Tâm |18424058@student.hcmus.edu.vn|
 |18424054| Ngô Ngọc Qúy |18424054@student.hcmus.edu.vn|
 |18424056| Nguyễn Tấn Sang|18424056@student.hcmus.edu.vn|
+
+----------------------
  **Cấu trúc nhân sự**
 
 + Phân tích yêu cầu:
@@ -59,6 +61,6 @@
  
 ## Thiết kế dữ liệu:
 		https://photos.app.goo.gl/QM8RN6VDtVVQB6Uq6
-## Task (Cập nhật và release thường xuyên):
+## Task:
 		https://docs.google.com/document/d/1JDz9rD8vYcemrK4qH4JXUPeVoSLQKmW0cLqs_5SzBZo/edit?usp=sharing
 
