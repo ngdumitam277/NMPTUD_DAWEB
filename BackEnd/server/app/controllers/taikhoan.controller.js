@@ -1,6 +1,7 @@
 const TaiKhoan = require('../models/taikhoan.model.js');
 const ngQuanLy = require('../models/ngQuanLy.model.js');
 const CanBo = require('../models/canbo.model.js');
+const ThiSinh = require('../models/thiSinh.model.js');
 const moment = require('moment');
 const nodemailer = require("nodemailer");
 
@@ -235,6 +236,111 @@ exports.hienThongTinThiSinh = async(req, res) => {
     }
 };
 
+// nạp thông tin thí sinh
+exports.napThongTinThiSinh = async(req, res) => {
+    let username = req.body.username ? req.body.username : ""
+    let password = req.body.password ? req.body.password : ""
+    let soCMND = req.body.soCMND ? req.body.soCMND : ""
+    let ngCapCMND = req.body.ngCapCMND ? moment(req.body.ngCapCMND, "DD-MM-YYYY HH:mm:ss").toISOString() : ""
+    let hTen = req.body.hTen ? req.body.hTen : ""
+    let ngSinh = req.body.ngSinh ? moment(req.body.ngSinh, "DD-MM-YYYY HH:mm:ss").toISOString() : ""
+    let danToc = req.body.danToc ? req.body.danToc : ""
+    let gioiTinh = req.body.gioiTinh ? req.body.gioiTinh : ""
+    let anh34 = req.body.anh34 ? req.body.anh34 : ""
+    let SDT = req.body.SDT ? req.body.SDT : ""
+    let noiSinh = req.body.noiSinh ? req.body.noiSinh : ""
+    let diaChi = req.body.diaChi ? req.body.diaChi : ""
+    let email = req.body.email ? req.body.email : ""
+    let tgDangKy = req.body.tgDangKy ? moment(req.body.tgDangKy, "DD-MM-YYYY HH:mm:ss").toISOString() : ""
+    let SBD = req.body.SBD ? req.body.SBD : ""
+    let tenTHPT = req.body.tenTHPT ? req.body.tenTHPT : ""
+    let namTotNghiep = req.body.namTotNghiep ? req.body.namTotNghiep : ""
+    let anhMinhChung = req.body.anhMinhChung ? req.body.anhMinhChung : ""
+    let ttTuyenSinh = Number(req.body.ttTuyenSinh)
+    let Phach = Number(req.body.Phach)
+    let maKhuVuc = req.body.maKhuVuc ? req.body.maKhuVuc : ""
+    let maDoiTuong = req.body.maDoiTuong ? req.body.maDoiTuong : ""
+
+    try{
+        if(username !== ""){
+            if(kiemTraEmail(email)){
+                res.send({message: "Lỗi email trùng!"})
+            }
+
+            if(kiemTraCMND(soCMND)){
+                res.send({message: "Lỗi CMND trùng!"})
+            }
+
+            if(kiemTraSDT(SDT)){
+                res.send({message: "Lỗi SDT trùng!"})
+            }
+
+            let taikhoan = taoTaiKhoanTS(username, password, soCMND, ngCapCMND, hTen, ngSinh, danToc, gioiTinh,
+                anh34, SDT, noiSinh, diaChi, email, tgDangKy)
+            let thisinh = taoThiSinh(username, SBD, tenTHPT, namTotNghiep, anhMinhChung, ttTuyenSinh, Phach, 
+                maKhuVuc, maDoiTuong)
+
+            Promise.all([taikhoan, thisinh])
+            .then((result) => {
+                if(result[0] && result[1]){
+                    res.send({message: "ok"})
+                }else{
+                    res.send({message: "Lỗi nạp thông tin thí sinh!"})
+                }
+            })
+            .catch((err) => {
+                console.log("napThongTinThiSinh", err)
+                res.send({message: "Lỗi nạp thông tin thí sinh!"})
+            })
+        }else{
+            console.log("napThongTinThiSinh", "username không được rỗng!")
+            res.send({message: "Username không được rỗng!"})
+        }
+    }catch(err){
+        console.log("napThongTinThiSinh", err)
+        res.send({message: "Lỗi nạp thông tin thí sinh!"})
+    }
+};
+
+async function kiemTraEmail(email){
+    try{
+        let taikhoan = await TaiKhoan.find({email: email})
+        if(taikhoan.length > 0){
+            return true
+        }
+    }catch(err){
+        console.log("kiemTraEmail", err)
+    }
+
+    return false
+}
+
+async function kiemTraCMND(soCMND){
+    try{
+        let taikhoan = await TaiKhoan.find({soCMND: soCMND})
+        if(taikhoan.length > 0){
+            return true
+        }
+    }catch(err){
+        console.log("kiemTraCMND", err)
+    }
+
+    return false
+}
+
+async function kiemTraSDT(SDT){
+    try{
+        let taikhoan = await TaiKhoan.find({SDT: SDT})
+        if(taikhoan.length > 0){
+            return true
+        }
+    }catch(err){
+        console.log("kiemTraSDT", err)
+    }
+
+    return false
+}
+
 async function layTinhTrangNguoiNhapDiem(){
     let namTuyenSinh = new Date().getFullYear()
 
@@ -256,6 +362,62 @@ async function layTinhTrangNguoiNhapDiem(){
     }
 
     return -1
+}
+
+async function taoTaiKhoanTS(username, password, soCMND, ngCapCMND, hTen, ngSinh, danToc, gioiTinh,
+    anh34, SDT, noiSinh, diaChi, email, tgDangKy) {
+    const taikhoan = new TaiKhoan({
+        username: username,
+        password: password,
+        soCMND: soCMND,
+        ngCapCMND: ngCapCMND,
+        hTen: hTen,
+        ngSinh: ngSinh,
+        danToc: danToc,
+        gioiTinh: gioiTinh,
+        anh34: anh34,
+        SDT: SDT,
+        noiSinh: noiSinh,
+        diaChi: diaChi,
+        email: email,
+        loai: "TS",
+        tinhTrang: 0,
+        tgDangKy: tgDangKy,
+        maXacNhan: ""
+    })
+
+    try{
+        await taikhoan.save()
+        return true
+    }catch(err){
+        console.log("taoTaiKhoanTS", err)
+    }
+
+    return false
+}
+
+async function taoThiSinh(username, SBD, tenTHPT, namTotNghiep, anhMinhChung, ttTuyenSinh, Phach, 
+    maKhuVuc, maDoiTuong){
+    const thisinh = new ThiSinh({
+        usernamets: username,
+        SBD: SBD,
+        tenTHPT: tenTHPT,
+        namTotNghiep: namTotNghiep,
+        anhMinhChung: anhMinhChung,
+        ttTuyenSinh: ttTuyenSinh,
+        Phach: Phach,
+        maKhuVuc: maKhuVuc,
+        maDoiTuong: maDoiTuong
+    })
+
+    try{
+        await thisinh.save()
+        return true
+    }catch(err){
+        console.log("taoThiSinh", err)
+    }
+
+    return false
 }
 
 async function layTinhTrangNguoiNhapData(){
@@ -298,7 +460,8 @@ async function taoCanBo(username, chucVu, quyenHan){
     return false
 }
 
-async function taoTaiKhoanCB(){
+async function taoTaiKhoanCB(username, password, soCMND, ngCapCMND, hTen, ngSinh, danToc, gioiTinh,
+                    anh34, SDT, noiSinh, diaChi, email, tgDangKy, maXacNhan){
     const taikhoan = new TaiKhoan({
         username: username,
         password: password,
@@ -323,7 +486,7 @@ async function taoTaiKhoanCB(){
         await taikhoan.save()
         return true
     }catch(err){
-        console.log("taoTaiKhoan", err)
+        console.log("taoTaiKhoanCB", err)
     }
 
     return false
@@ -398,6 +561,8 @@ exports.sendCode = async(req, res) => {
         if(email !== ""){
             let exist = await TaiKhoan.find({email: email})
             if(exist.length > 0){
+                let code = getCode()
+
                 let kt = await updateCodeUser(exist, code)
                 if(kt === false) res.send({message: "error"})
 
