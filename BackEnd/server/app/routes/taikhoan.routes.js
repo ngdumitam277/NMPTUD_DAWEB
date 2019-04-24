@@ -29,4 +29,7 @@ module.exports = (app) => {
 
     // gửi mã xác nhận khi tạo tài khoản
     app.post('/web/taikhoan/email/code', taikhoan.sendCode);
+
+    // lấy tình trạng của tài khoản
+    app.post('/web/taikhoan/tinhtrang', taikhoan.layTinhTrang);
 }

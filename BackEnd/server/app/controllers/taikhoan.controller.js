@@ -124,6 +124,99 @@ exports.taoTaiKhoanCB = async(req, res) => {
     }
 };
 
+// lấy tình trạng tài khoản
+exports.layTinhTrang = async(req, res) => {
+    let username = req.body.username ? req.body.username : ""
+
+    try{
+        if(username !== ""){
+            let taikhoan = await TaiKhoan.find({username: username}, { loai: 1, tinhTrang: 1 })
+            if(taikhoan.length > 0){
+                let loai = taikhoan[0].loai
+                let tinhTrang = Number(taikhoan[0].tinhTrang)
+
+                if(loai === "TS"){
+                    res.send({tinhTrang: tinhTrang})
+                }else{
+                    let canbo = await CanBo.find({username: username}, { quyenHan: 1 })
+                    if(canbo.length > 0){
+                        let quyenHan = Number(canbo[0].quyenHan)
+                        if(quyenHan === 0){
+                            let tinhTrangCB = await layTinhTrangNguoiNhapData()
+                            tinhTrang = tinhTrangCB === -1 ? tinhTrang : tinhTrangCB
+
+                            res.send({tinhTrang: tinhTrang})
+                        }else if(quyenHan === 1){
+                            let tinhTrangCB = await layTinhTrangNguoiNhapDiem()
+                            tinhTrang = tinhTrangCB === -1 ? tinhTrang : tinhTrangCB
+
+                            res.send({tinhTrang: tinhTrang})
+                        }else{
+                            res.send({tinhTrang: tinhTrang})
+                        }
+                    }else{
+                        res.send({message: "Không có username này trong cán bộ!"})
+                    }
+                }
+            }else{
+                res.send({message: "Không có username này trong tài khoản!"})
+            }
+        }else{
+            console.log("layTinhTrang", "username không được rỗng!")
+            res.send({message: "Username không được rỗng!"})
+        }
+    }catch(err){
+        console.log("layTinhTrang", err)
+        res.send({message: "Lỗi lấy tình trạng"})
+    }
+};
+
+async function layTinhTrangNguoiNhapDiem(){
+    let namTuyenSinh = new Date().getFullYear()
+
+    try{
+        let quanly = await ngQuanLy.aggregate([
+                    { $match: { namTuyenSinh: `${namTuyenSinh}` } },
+                    { $project: { tinhTrang: 
+                            {
+                                $cond: { if: { $gte: [ "$tgCongBoKQ", new Date() ] }, then: 2, else: -1 }
+                            }
+                        } 
+                    }
+                ])
+        if(quanly.length > 0){
+            return quanly[0].tinhTrang
+        }
+    }catch(err){
+        console.log("layTinhTrangNguoiNhapDiem", err)
+    }
+
+    return -1
+}
+
+async function layTinhTrangNguoiNhapData(){
+    let namTuyenSinh = new Date().getFullYear()
+
+    try{
+        let quanly = await ngQuanLy.aggregate([
+                    { $match: { namTuyenSinh: `${namTuyenSinh}` } },
+                    { $project: { tinhTrang: 
+                            {
+                                $cond: { if: { $gte: [ "$tgKTnhanHoSo", new Date() ] }, then: 2, else: -1 }
+                            }
+                        } 
+                    }
+                ])
+        if(quanly.length > 0){
+            return quanly[0].tinhTrang
+        }
+    }catch(err){
+        console.log("layTinhTrangNguoiNhapData", err)
+    }
+
+    return -1
+}
+
 async function taoCanBo(username, chucVu, quyenHan){
     const canbo = new CanBo({
         username: username,
