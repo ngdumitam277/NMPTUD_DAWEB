@@ -32,4 +32,7 @@ module.exports = (app) => {
 
     // lấy tình trạng của tài khoản
     app.post('/web/taikhoan/tinhtrang', taikhoan.layTinhTrang);
+
+    // hiện thông tin thí sinh
+    app.post('/web/taikhoan/thongtin/thisinh', taikhoan.hienThongTinThiSinh);
 }
