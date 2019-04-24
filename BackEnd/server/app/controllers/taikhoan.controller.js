@@ -1,5 +1,6 @@
 const TaiKhoan = require('../models/taikhoan.model.js');
 const ngQuanLy = require('../models/ngQuanLy.model.js');
+const CanBo = require('../models/canbo.model.js');
 const moment = require('moment');
 const nodemailer = require("nodemailer");
 
@@ -43,29 +44,30 @@ exports.taoTaiKhoanTS = async(req, res) => {
                 email: email,
                 loai: "TS",
                 tinhTrang: 0,
-                tgDangKy: tgDangKy
+                tgDangKy: tgDangKy,
+                maXacNhan: ""
             })
         
             taikhoan.save()
             .then((result) => {
                 res.send({message: "ok"});
             }).catch(err => {
-                console.log("taoTaiKhoan", err)
-                res.send({message: "Lỗi tạo tài khoản"})
+                console.log("taoTaiKhoanTS", err)
+                res.send({message: "Lỗi tạo tài khoản thí sinh thất bại!"})
             })
         }else{
-            console.log("taoTaiKhoan", "username không được rỗng!")
+            console.log("taoTaiKhoanTS", "username không được rỗng!")
             res.send({message: "Username không được rỗng!"})
         }
     }catch(err){
-        console.log("taoTaiKhoan", err)
+        console.log("taoTaiKhoanTS", err)
         res.send({message: "Lỗi tạo tài khoản"})
     }
 };
 
 // tạo tài khoản cán bộ
 exports.taoTaiKhoanCB = async(req, res) => {
-    let maCB = req.body.maCB ? req.body.maCB : ""
+    let maXacNhan = req.body.maXacNhan ? req.body.maXacNhan : ""
     let username = req.body.username ? req.body.username : ""
     let password = req.body.password ? req.body.password : ""
     let soCMND = req.body.soCMND ? req.body.soCMND : ""
@@ -80,55 +82,95 @@ exports.taoTaiKhoanCB = async(req, res) => {
     let diaChi = req.body.diaChi ? req.body.diaChi : ""
     let email = req.body.email ? req.body.email : ""
     let tgDangKy = req.body.tgDangKy ? moment(req.body.tgDangKy, "DD-MM-YYYY HH:mm:ss").toISOString() : ""
+    let chucVu = req.body.chucVu ? req.body.chucVu : ""
+    let quyenHan = Number(req.body.quyenHan)
 
     try{
-        if(username !== "" && maCB !== ""){
-            let ngQL = await ngQuanLy.find({maXacThucCB: maCB})
+        if(username !== "" && maXacNhan !== ""){
+            let ngQL = await ngQuanLy.find({maXacThucCB: maXacNhan})
             if(ngQL.length > 0){
                 let exist = await TaiKhoan.find({username: username})
                 if(exist.length > 0){
                     res.send({message: "Tài khoản đã tồn tại!"})
                 }
-        
-                const taikhoan = new TaiKhoan({
-                    username: username,
-                    password: password,
-                    soCMND: soCMND,
-                    ngCapCMND: ngCapCMND,
-                    hTen: hTen,
-                    ngSinh: ngSinh,
-                    danToc: danToc,
-                    gioiTinh: gioiTinh,
-                    anh34: anh34,
-                    SDT: SDT,
-                    noiSinh: noiSinh,
-                    diaChi: diaChi,
-                    email: email,
-                    loai: "CB",
-                    tinhTrang: 0,
-                    tgDangKy: tgDangKy
-                })
-            
-                taikhoan.save()
+                let taikhoan = taoTaiKhoanCB(username, password, soCMND, ngCapCMND, hTen, ngSinh, danToc, gioiTinh,
+                    anh34, SDT, noiSinh, diaChi, email, tgDangKy, maXacNhan)
+                let canbo = taoCanBo(username, chucVu, quyenHan)
+
+                Promise.all([taikhoan, canbo])
                 .then((result) => {
-                    res.send({message: "ok"});
-                }).catch(err => {
-                    console.log("taoTaiKhoan", err)
-                    res.send({message: "Lỗi tạo tài khoản"})
+                    if(result[0] && result[1]){
+                        res.send({message: "ok"})
+                    }else{
+                        console.log("taoTaiKhoanCB", "Tạo tài khoản cán bộ thất bại!")
+                        res.send("taoTaiKhoanCB", "Tạo tài khoản cán bộ thất bại!")
+                    }
+                })
+                .catch((err) => {
+                    console.log("taoTaiKhoanCB", err)
+                    res.send("taoTaiKhoanCB", "Tạo tài khoản cán bộ thất bại!")
                 })
             }else{
                 console.log("taoTaiKhoanCB", "lỗi mã xác thức cán bộ!")
                 res.send({message: "Lỗi mã xác thực cán bộ!"})
             }
         }else{
-            console.log("taoTaiKhoan", "username không được rỗng!")
+            console.log("taoTaiKhoanCB", "username không được rỗng!")
             res.send({message: "Username không được rỗng!"})
         }
     }catch(err){
-        console.log("taoTaiKhoan", err)
+        console.log("taoTaiKhoanCB", err)
         res.send({message: "Lỗi tạo tài khoản"})
     }
 };
+
+async function taoCanBo(username, chucVu, quyenHan){
+    const canbo = new CanBo({
+        username: username,
+        chucVu: chucVu,
+        quyenHan: quyenHan
+    })
+
+    try{
+        await canbo.save()
+        return true
+    }catch(err){
+        console.log("taoCanBo", err)
+    }
+
+    return false
+}
+
+async function taoTaiKhoanCB(){
+    const taikhoan = new TaiKhoan({
+        username: username,
+        password: password,
+        soCMND: soCMND,
+        ngCapCMND: ngCapCMND,
+        hTen: hTen,
+        ngSinh: ngSinh,
+        danToc: danToc,
+        gioiTinh: gioiTinh,
+        anh34: anh34,
+        SDT: SDT,
+        noiSinh: noiSinh,
+        diaChi: diaChi,
+        email: email,
+        loai: "CB",
+        tinhTrang: 0,
+        tgDangKy: tgDangKy,
+        maXacNhan: maXacNhan
+    })
+
+    try{
+        await taikhoan.save()
+        return true
+    }catch(err){
+        console.log("taoTaiKhoan", err)
+    }
+
+    return false
+}
 
 // đăng nhập bằng tài khoản
 exports.dangnhap = async(req, res) => {
