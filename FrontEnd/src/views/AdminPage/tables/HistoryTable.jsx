@@ -6,6 +6,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableFooter from '@material-ui/core/TableFooter';
 import TablePagination from '@material-ui/core/TablePagination';
+import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
@@ -94,9 +95,9 @@ const HistoryTableWrapped = withStyles(actionsStyles, { withTheme: true })(
 );
 
 let counter = 0;
-function createData(name, calories, fat) {
+function createData(phach, mon, diemCu, diemMoi, ngNhap, thoiGian, loai) {
     counter += 1;
-    return { id: counter, name, calories, fat };
+    return { id: counter, phach, mon, diemCu, diemMoi, ngNhap, thoiGian, loai };
 }
 
 const styles = theme => ({
@@ -115,22 +116,16 @@ const styles = theme => ({
 class CustomPaginationActionsTable extends React.Component {
     state = {
         rows: [
-            createData('Cupcake', 305, 3.7),
-            createData('Donut', 452, 25.0),
-            createData('Eclair', 262, 16.0),
-            createData('Frozen yoghurt', 159, 6.0),
-            createData('Gingerbread', 356, 16.0),
-            createData('Honeycomb', 408, 3.2),
-            createData('Ice cream sandwich', 237, 9.0),
-            createData('Jelly Bean', 375, 0.0),
-            createData('KitKat', 518, 26.0),
-            createData('Lollipop', 392, 0.2),
-            createData('Marshmallow', 318, 0),
-            createData('Nougat', 360, 19.0),
-            createData('Oreo', 437, 18.0),
+            createData('P001', "Lý", 3.7, 10, "AD001", "20-12-2012", "sửa"),
+            createData('P001', "Lý", 3.7, 10, "AD001", "20-12-2012", "sửa"),
+            createData('P001', "Lý", 3.7, 10, "AD001", "20-12-2012", "sửa"),
+            createData('P001', "Lý", 3.7, 10, "AD001", "20-12-2012", "sửa"),
+            createData('P001', "Lý", 3.7, 10, "AD001", "20-12-2012", "sửa"),
+            createData('P001', "Lý", 3.7, 10, "AD001", "20-12-2012", "sửa"),
+            createData('P001', "Lý", 3.7, 10, "AD001", "20-12-2012", "sửa")
         ].sort((a, b) => (a.calories < b.calories ? -1 : 1)),
         page: 0,
-        rowsPerPage: 7,
+        rowsPerPage: 5,
     };
 
     handleChangePage = (event, page) => {
@@ -148,16 +143,35 @@ class CustomPaginationActionsTable extends React.Component {
 
         return (
             <Paper className={classes.root}>
+                 <div className={classes.title}>
+                  <h4>Danh sách lịch sử</h4>
+                </div>
                 <div className={classes.tableWrapper}>
+
                     <Table className={classes.table}>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Phách</TableCell>
+                                <TableCell align="right">Môn</TableCell>
+                                <TableCell align="right">Điểm cũ</TableCell>
+                                <TableCell align="right">Điểm mới</TableCell>
+                                <TableCell align="right">Người nhập</TableCell>
+                                <TableCell align="right">Thời gian nhập</TableCell>
+                                <TableCell align="right">Loại</TableCell>
+                            </TableRow>
+                        </TableHead>
                         <TableBody>
                             {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
                                 <TableRow key={row.id}>
                                     <TableCell component="th" scope="row">
-                                        {row.name}
+                                        {row.phach}
                                     </TableCell>
-                                    <TableCell align="right">{row.calories}</TableCell>
-                                    <TableCell align="right">{row.fat}</TableCell>
+                                    <TableCell align="right">{row.mon}</TableCell>
+                                    <TableCell align="right">{row.diemCu}</TableCell>
+                                    <TableCell align="right">{row.diemMoi}</TableCell>
+                                    <TableCell align="right">{row.ngNhap}</TableCell>
+                                    <TableCell align="right">{row.thoiGian}</TableCell>
+                                    <TableCell align="right">{row.loai}</TableCell>
                                 </TableRow>
                             ))}
                             {emptyRows > 0 && (

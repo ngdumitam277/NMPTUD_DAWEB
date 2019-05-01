@@ -72,7 +72,7 @@ class Components extends React.Component {
           <SectionCertificate />
           <SectionNews />
 
-          <SectionBasics />
+          {/* <SectionBasics />
           <SectionNavbars />
           <SectionTabs />
           <SectionPills />
@@ -90,7 +90,7 @@ class Components extends React.Component {
             </Link>
           </GridItem>
           <SectionExamples />
-          <SectionDownload />
+          <SectionDownload /> */}
         </div>
         <Footer />
       </div>

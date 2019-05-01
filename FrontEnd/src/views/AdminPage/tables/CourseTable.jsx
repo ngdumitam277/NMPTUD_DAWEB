@@ -6,6 +6,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableFooter from '@material-ui/core/TableFooter';
 import TablePagination from '@material-ui/core/TablePagination';
+import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
@@ -21,7 +22,6 @@ const actionsStyles = theme => ({
     marginLeft: theme.spacing.unit * 2.5,
   },
 });
-
 class CourseTable extends React.Component {
   handleFirstPageButtonClick = event => {
     this.props.onChangePage(event, 0);
@@ -46,7 +46,7 @@ class CourseTable extends React.Component {
     const { classes, count, page, rowsPerPage, theme } = this.props;
 
     return (
-      <div className={classes.root}>
+      <div style={{width:400}} classname={classes.root}>
         <IconButton
           onClick={this.handleFirstPageButtonClick}
           disabled={page === 0}
@@ -94,9 +94,9 @@ const CourseTableWrapped = withStyles(actionsStyles, { withTheme: true })(
 );
 
 let counter = 0;
-function createData(name, calories, fat) {
+function createData(nameCourse, examDate, hour, room) {
   counter += 1;
-  return { id: counter, name, calories, fat };
+  return { id: counter, nameCourse, examDate, hour, room };
 }
 
 const styles = theme => ({
@@ -115,22 +115,18 @@ const styles = theme => ({
 class CustomPaginationActionsTable extends React.Component {
   state = {
     rows: [
-      createData('Cupcake', 305, 3.7),
-      createData('Donut', 452, 25.0),
-      createData('Eclair', 262, 16.0),
-      createData('Frozen yoghurt', 159, 6.0),
-      createData('Gingerbread', 356, 16.0),
-      createData('Honeycomb', 408, 3.2),
-      createData('Ice cream sandwich', 237, 9.0),
-      createData('Jelly Bean', 375, 0.0),
-      createData('KitKat', 518, 26.0),
-      createData('Lollipop', 392, 0.2),
-      createData('Marshmallow', 318, 0),
-      createData('Nougat', 360, 19.0),
-      createData('Oreo', 437, 18.0),
-    ].sort((a, b) => (a.calories < b.calories ? -1 : 1)),
+      createData('Toán', "10/10/2012", "8:00", "20B"),
+      createData('Lý', "10/10/2012", "8:00", "20F"),
+      createData('Hóa', "10/10/2012", "8:00", "20G"),
+      createData('Sinh', "10/10/2012", "8:00", "20J"),
+      createData('Sử', "10/10/2012", "8:00", "20L"),
+      createData('Địa', "10/10/2012", "8:00", "20F"),
+      createData('Anh văn', "10/10/2012", "8:00", "20T"),
+      createData('Văn', "10/10/2012", "8:00", "20D"),
+
+    ].sort((a, b) => (a.examDate < b.examDate ? -1 : 1)),
     page: 0,
-    rowsPerPage: 7,
+    rowsPerPage: 5,
   };
 
   handleChangePage = (event, page) => {
@@ -147,17 +143,27 @@ class CustomPaginationActionsTable extends React.Component {
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
     return (
-      <Paper className={classes.root}>
-        <div className={classes.tableWrapper}>
-          <Table className={classes.table}>
+      <Paper classname={classes.root}>
+        <div classname={classes.tableWrapper}>
+          <Table classname={classes.table}>
+            <TableHead>
+              <TableRow>
+                <TableCell>Tên môn</TableCell>
+                <TableCell align="right">Ngày thi</TableCell>
+                <TableCell align="right">Giờ thi</TableCell>
+                <TableCell align="right">Phòng thi</TableCell>
+                
+              </TableRow>
+            </TableHead>
             <TableBody>
               {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
                 <TableRow key={row.id}>
                   <TableCell component="th" scope="row">
-                    {row.name}
+                    {row.nameCourse}
                   </TableCell>
-                  <TableCell align="right">{row.calories}</TableCell>
-                  <TableCell align="right">{row.fat}</TableCell>
+                  <TableCell align="right">{row.examDate}</TableCell>
+                  <TableCell align="right">{row.hour}</TableCell>
+                  <TableCell align="right">{row.room}</TableCell>
                 </TableRow>
               ))}
               {emptyRows > 0 && (
@@ -170,15 +176,11 @@ class CustomPaginationActionsTable extends React.Component {
               <TableRow>
                 <TablePagination
                   rowsPerPageOptions={[5, 10, 25]}
-                  colSpan={3}
+                  colSpan={12}
                   count={rows.length}
                   rowsPerPage={rowsPerPage}
                   page={page}
-                  SelectProps={{
-                    native: true,
-                  }}
                   onChangePage={this.handleChangePage}
-                  onChangeRowsPerPage={this.handleChangeRowsPerPage}
                   ActionsComponent={CourseTableWrapped}
                 />
               </TableRow>
