@@ -12,6 +12,7 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import CustomTabs from "components/CustomTabs/CustomTabs.jsx";
 import tabsStyle from "assets/jss/material-kit-react/views/componentsSections/tabsStyle.jsx";
+import CourseTable from "../tables/CourseTable";
 
 class StudentManageTab extends Component {
   render() {
@@ -22,56 +23,26 @@ class StudentManageTab extends Component {
          
             <GridContainer>
               <GridItem xs={12} sm={12} md={12}>
-                
                 <CustomTabs
                   headerColor="primary"
                   tabs={[
                     {
                       tabName: "Môn",
                       tabIcon: Face,
-                      tabContent: (
-                        <p className={classes.textCenter}>
-                          I think that’s a responsibility that I have, to push
-                          possibilities, to show people, this is the level that
-                          things could be at. So when you get something that has
-                          the name Kanye West on it, it’s supposed to be pushing
-                          the furthest possibilities. I will be the leader of a
-                          company that ends up being worth billions of dollars,
-                          because I got the answers. I understand culture. I am
-                          the nucleus.
-                        </p>
-                      )
+                      tabContent: (<CourseTable/>)
                     },
                     {
                       tabName: "Khối",
                       tabIcon: Chat,
                       tabContent: (
-                        <p className={classes.textCenter}>
-                          I think that’s a responsibility that I have, to push
-                          possibilities, to show people, this is the level that
-                          things could be at. I will be the leader of a company
-                          that ends up being worth billions of dollars, because
-                          I got the answers. I understand culture. I am the
-                          nucleus. I think that’s a responsibility that I have,
-                          to push possibilities, to show people, this is the
-                          level that things could be at.
-                        </p>
+                        <CourseTable/>
                       )
                     },
                     {
                       tabName: "Ngành",
                       tabIcon: Build,
                       tabContent: (
-                        <p className={classes.textCenter}>
-                          think that’s a responsibility that I have, to push
-                          possibilities, to show people, this is the level that
-                          things could be at. So when you get something that has
-                          the name Kanye West on it, it’s supposed to be pushing
-                          the furthest possibilities. I will be the leader of a
-                          company that ends up being worth billions of dollars,
-                          because I got the answers. I understand culture. I am
-                          the nucleus.
-                        </p>
+                        <CourseTable/>
                       )
                     }
                   ]}
