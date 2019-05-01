@@ -503,7 +503,7 @@ exports.dangnhap = async(req, res) => {
             if(exist.length > 0){
                 let user = await TaiKhoan.find({username: username, password: password})
                 if(user.length > 0){
-                    res.send({message: "ok"})
+                    res.send({message: "ok", loai: user[0].loai})
                 }else{
                     res.send({message: "Bạn nhập sai mật khẩu!"})
                 }
