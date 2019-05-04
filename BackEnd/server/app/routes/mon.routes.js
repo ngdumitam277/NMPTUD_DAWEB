@@ -6,4 +6,7 @@ module.exports = (app) => {
 
     // lấy tất cả môn thi
     app.get('/web/mon', Mon.getAllMon);
+
+    // sửa 1 môn theo key
+    app.put('/web/mon/:key', Mon.updateMon);
 }

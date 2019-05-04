@@ -44,6 +44,22 @@ exports.getAllKhoi = async(req, res) => {
         res.send(result)
     })
     .catch((err) => {
+        res.send({message: "Lỗi lấy tất cả các khối!"})
         console.log(err, "getAllKhoi")
+    })
+};
+
+// sửa 1 khối theo key
+exports.updateKhoi = async(req, res) => {
+    let key = req.params.key
+    let body = req.body
+
+    Khoi.findOneAndUpdate({key: key}, body, {new: true})
+    .then((result) => {
+        res.send({message: "ok"})
+    })
+    .catch((err) => {
+        res.send({message: "Lỗi sửa khối theo key!"})
+        console.log(err, "updateKhoi")
     })
 };

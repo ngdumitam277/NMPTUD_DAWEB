@@ -6,4 +6,7 @@ module.exports = (app) => {
 
     // lấy tất cả các khối
     app.get('/web/khoi', Khoi.getAllKhoi);
+
+    // sửa 1 khối theo key
+    app.put('/web/khoi/:key', Khoi.updateKhoi);
 }

@@ -46,6 +46,22 @@ exports.getAllMon = async(req, res) => {
         res.send(result)
     })
     .catch((err) => {
+        res.send({message: "Lỗi lấy tất cả các môn thi!"})
         console.log(err, "getAllMon")
+    })
+};
+
+// sửa 1 môn theo key
+exports.updateMon = async(req, res) => {
+    let key = req.params.key
+    let body = req.body
+
+    Mon.findOneAndUpdate({key: key}, body, {new: true})
+    .then((result) => {
+        res.send({message: "ok"})
+    })
+    .catch((err) => {
+        res.send({message: "Lỗi sửa môn theo key!"})
+        console.log(err, "updateMon")
     })
 };

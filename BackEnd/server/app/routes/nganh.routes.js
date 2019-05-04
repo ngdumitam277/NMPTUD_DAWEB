@@ -6,4 +6,7 @@ module.exports = (app) => {
 
     // lấy tất cả ngành
     app.get('/web/nganh', Nganh.getAllNganh);
+
+    // sửa 1 ngành theo key
+    app.put('/web/nganh/:key', Nganh.updateNganh);
 }

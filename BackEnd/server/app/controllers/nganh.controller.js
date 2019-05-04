@@ -44,6 +44,22 @@ exports.getAllNganh = async(req, res) => {
         res.send(result)
     })
     .catch((err) => {
+        res.send({message: "Lỗi lấy tất cả ngành!"})
         console.log(err, "getAllNganh")
+    })
+};
+
+// sửa 1 ngành theo key
+exports.updateNganh = async(req, res) => {
+    let key = req.params.key
+    let body = req.body
+
+    Nganh.findOneAndUpdate({key: key}, body, {new: true})
+    .then((result) => {
+        res.send({message: "ok"})
+    })
+    .catch((err) => {
+        res.send({message: "Lỗi sửa ngành theo key!"})
+        console.log(err, "updateNganh")
     })
 };
