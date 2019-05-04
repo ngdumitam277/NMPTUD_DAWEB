@@ -38,3 +38,14 @@ exports.taoMon = async(req, res) => {
         res.send({message: "Lỗi tạo môn thi"})
     }
 };
+
+// lấy tất cả môn thi
+exports.getAllMon = async(req, res) => {
+    Mon.find({}, {_id: 0, createdAt: 0, updatedAt: 0, __v: 0})
+    .then((result) => {
+        res.send(result)
+    })
+    .catch((err) => {
+        console.log(err, "getAllMon")
+    })
+};

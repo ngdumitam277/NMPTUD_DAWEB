@@ -3,4 +3,7 @@ module.exports = (app) => {
 
     // tạo môn thi
     app.post('/web/create/mon', Mon.taoMon);
+
+    // lấy tất cả môn thi
+    app.get('/web/mon', Mon.getAllMon);
 }

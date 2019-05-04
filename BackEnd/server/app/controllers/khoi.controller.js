@@ -36,3 +36,14 @@ exports.taoKhoi = async(req, res) => {
         res.send({message: "Lỗi tạo khối"})
     }
 };
+
+// lấy tất cả khối
+exports.getAllKhoi = async(req, res) => {
+    Khoi.find({}, {_id: 0, createdAt: 0, updatedAt: 0, __v: 0})
+    .then((result) => {
+        res.send(result)
+    })
+    .catch((err) => {
+        console.log(err, "getAllKhoi")
+    })
+};

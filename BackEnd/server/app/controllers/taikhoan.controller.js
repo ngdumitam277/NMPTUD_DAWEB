@@ -174,7 +174,7 @@ exports.layTinhTrang = async(req, res) => {
 
 // hiện thông tin thí sinh
 exports.hienThongTinThiSinh = async(req, res) => {
-    let username = req.body.username ? req.body.username : ""
+    let username = req.params.username
 
     try{
         if(username !== ""){
