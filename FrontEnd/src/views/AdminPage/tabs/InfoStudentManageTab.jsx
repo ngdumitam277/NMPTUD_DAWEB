@@ -95,9 +95,9 @@ const CourseTableWrapped = withStyles(actionsStyles, { withTheme: true })(
 );
 
 let counter = 0;
-function createData(nameCourse, examDate, hour, room) {
+function createData(userName, hoTen, ngaySinh, cmnd, ngayDk, maCB, ngayGioCB, trangThai) {
   counter += 1;
-  return { id: counter, nameCourse, examDate, hour, room };
+  return { id: counter, userName, hoTen, ngaySinh, cmnd, ngayDk, maCB, ngayGioCB, trangThai };
 }
 
 const styles = theme => ({
@@ -113,19 +113,19 @@ const styles = theme => ({
   },
 });
 
-class CustomPaginationActionsTable extends React.Component {
+class InfoStudentManageTab extends React.Component {
   state = {
     rows: [
-      createData('Toán', "10/10/2012", "8:00", "20B"),
-      createData('Lý', "10/10/2012", "8:00", "20F"),
-      createData('Hóa', "10/10/2012", "8:00", "20G"),
-      createData('Sinh', "10/10/2012", "8:00", "20J"),
-      createData('Sử', "10/10/2012", "8:00", "20L"),
-      createData('Địa', "10/10/2012", "8:00", "20F"),
-      createData('Anh văn', "10/10/2012", "8:00", "20T"),
-      createData('Văn', "10/10/2012", "8:00", "20D"),
+      createData("tamsansi", "Tâm", "27/07/94", "025802254", "03/07/2013","CB1","05/04/2019","Xác nhận"),
+      createData("tamsansi", "Tâm", "27/07/94", "025802254", "03/07/2013","CB2","05/04/2019", "Chưa xác nhận"),
+      createData("tamsansi", "Tâm", "27/07/94", "025802254", "03/07/2013","CB3","05/04/2019","Xác nhận"),
+      createData("tamsansi", "Tâm", "27/07/94", "025802254", "03/07/2013","CB4","05/04/2019","Chưa xác nhận"),
+      createData("tamsansi", "Tâm", "27/07/94", "025802254", "03/07/2013","CB5","05/04/2019", "Chưa xác nhận"),
+      createData("tamsansi", "Tâm", "27/07/94", "025802254", "03/07/2013","CB6","05/04/2019", "Chưa xác nhận"),
+      createData("tamsansi", "Tâm", "27/07/94", "025802254", "03/07/2013","CB7","05/04/2019", "Chưa xác nhận"),
+      createData("tamsansi", "Tâm", "27/07/94", "025802254", "03/07/2013","CB8","05/04/2019", "Chưa xác nhận"),
 
-    ].sort((a, b) => (a.examDate < b.examDate ? -1 : 1)),
+    ].sort((a, b) => (a.ngayDK < b.ngayDk ? -1 : 1)),
     page: 0,
     rowsPerPage: 5,
   };
@@ -138,7 +138,6 @@ class CustomPaginationActionsTable extends React.Component {
     this.setState({ page: 0, rowsPerPage: event.target.value });
   };
 
-
   render() {
     const { classes } = this.props;
     const { rows, rowsPerPage, page } = this.state;
@@ -150,29 +149,37 @@ class CustomPaginationActionsTable extends React.Component {
           <Table classname={classes.table}>
             <TableHead>
               <TableRow>
-                <TableCell>Tên môn</TableCell>
-                <TableCell align="right">Ngày thi</TableCell>
-                <TableCell align="right">Giờ thi</TableCell>
-                <TableCell align="right">Phòng thi</TableCell>
+                <TableCell>Username</TableCell>
+                <TableCell align="right">Họ tên</TableCell>
+                <TableCell align="right">Ngày sinh</TableCell>
+                <TableCell align="right">Số CMND</TableCell>
+                <TableCell align="right">Ngày đăng ký</TableCell>
+                <TableCell align="right">Mã CB(Hủy/Xác nhận)</TableCell>
+                <TableCell align="right">Ngày giờ(Hủy/Xác nhận)</TableCell>
+                <TableCell align="right">Trạng thái</TableCell>
                 <TableCell align="right">Tùy chỉnh</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
+              {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
                 <TableRow key={row.id}>
                   <TableCell component="th" scope="row">
-                    {row.nameCourse}
+                    {row.userName}
                   </TableCell>
-                  <TableCell align="right">{row.examDate}</TableCell>
-                  <TableCell align="right">{row.hour}</TableCell>
-                  <TableCell align="right">{row.room}</TableCell>
+                  <TableCell align="right">{row.hoTen}</TableCell>
+                  <TableCell align="right">{row.ngaySinh}</TableCell>
+                  <TableCell align="right">{row.cmnd}</TableCell>
+                  <TableCell align="right">{row.ngayDk}</TableCell>
+                  <TableCell align="right">{row.maCB}</TableCell>
+                  <TableCell align="right">{row.ngayGioCB}</TableCell>
+                  <TableCell align="right">{row.trangThai}</TableCell>
                   <TableCell align="right">
                     <Button variant="contained" color="secondary" className={classes.button}>
                       Xóa 
                     </Button>
                     &nbsp;
                     <Button variant="contained" color="primary" className={classes.button}>
-                        Sửa
+                        Xác nhận
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -203,8 +210,8 @@ class CustomPaginationActionsTable extends React.Component {
   }
 }
 
-CustomPaginationActionsTable.propTypes = {
+InfoStudentManageTab.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(CustomPaginationActionsTable);
+export default withStyles(styles)(InfoStudentManageTab);

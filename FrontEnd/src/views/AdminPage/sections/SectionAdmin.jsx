@@ -24,6 +24,8 @@ import HeaderLinks from "components/Header/HeaderLinks.jsx";
 import StudentManageTab from '../tabs/StudentManageTab';
 import HistoryTable from '../tables/HistoryTable';
 import ProfileUser from '../tabs/ProfileUser';
+import RegulationManageTab from '../tabs/RegulationManageTab';
+import InfoStudentManageTab from '../tabs/InfoStudentManageTab';
 class SectionAdmin extends Component {
     render() {
         const { classes } = this.props;
@@ -45,41 +47,32 @@ class SectionAdmin extends Component {
                       tabs={[
                         {
                           tabButton: "Cá nhân",
-                          tabIcon: Dashboard,
+                          tabIcon: Schedule,
                           tabContent: (<ProfileUser/>)
                         },
                         {
-                          tabButton: "Quản lý tuyển sinh",
+                          tabButton: "Tuyển sinh",
                           tabIcon: Schedule,
                           tabContent: (
                             <StudentManageTab/>
                           )
                         },
                         {
-                            tabButton: "Quản lý quy chế",
+                          tabButton: "Thông tin-TS",
+                          tabIcon: Schedule,
+                          tabContent: (
+                            <InfoStudentManageTab/>
+                          )
+                        },
+                        {
+                            tabButton: "Quy chế",
                             tabIcon: Schedule,
                             tabContent: (
-                              <span>
-                                <p>
-                                  Efficiently unleash cross-media information without
-                                  cross-media value. Quickly maximize timely
-                                  deliverables for real-time schemas.
-                                </p>
-                                <br />
-                                <p>
-                                  Dramatically maintain clicks-and-mortar solutions
-                                  without functional solutions. Dramatically visualize
-                                  customer directed convergence without revolutionary
-                                  ROI. Collaboratively administrate empowered markets
-                                  via plug-and-play networks. Dynamically
-                                  procrastinate B2C users after installed base
-                                  benefits.
-                                </p>
-                              </span>
+                             <RegulationManageTab/>
                             )
                           },
                           {
-                            tabButton: "Quản lý cán bộ",
+                            tabButton: "Cán bộ",
                             tabIcon: Schedule,
                             tabContent: (
                               <span>
