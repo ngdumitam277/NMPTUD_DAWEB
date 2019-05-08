@@ -24,13 +24,17 @@ import CustomInput from "components/CustomInput/CustomInput.jsx";
 import loginPageStyle from "assets/jss/material-kit-react/views/loginPage.jsx";
 
 import image from "assets/img/bg-login.jpeg";
+import axios from 'axios'
+import { url } from 'variable/general.jsx'
 
 class LoginPage extends React.Component {
   constructor(props) {
     super(props);
     // we use this to make the card to appear after the page has been rendered
     this.state = {
-      cardAnimaton: "cardHidden"
+      cardAnimaton: "cardHidden",
+      username: "",
+      password: ""
     };
   }
   componentDidMount() {
@@ -42,8 +46,38 @@ class LoginPage extends React.Component {
       700
     );
   }
+
+  clickDangNhap = () => {
+    axios.post(`${url}web/taikhoan/dangnhap`, {
+      username: this.state.username,
+      password: this.state.password
+    })
+    .then((response) => {
+      let result = response.data
+      if(result.message === "ok"){
+        alert("Đăng nhập thành công!")
+      }else{
+        alert(result.message)
+      }
+    })
+    .catch((err) => {
+      alert("Đăng nhập thất bại!")
+      console.log(err)
+    })
+  }
+
+  onChangeUsername = (event) => {
+    this.setState({username: event.target.value})
+  }
+
+  onChangePassword = (event) => {
+    this.setState({password: event.target.value})
+  }
+
   render() {
     const { classes, ...rest } = this.props;
+    let { username, password } = this.state
+
     return (
       <div>
         <Header
@@ -107,6 +141,8 @@ class LoginPage extends React.Component {
                           fullWidth: true
                         }}
                         inputProps={{
+                          onChange: this.onChangeUsername,
+                          value: username,
                           type: "email",
                           endAdornment: (
                             <InputAdornment position="end">
@@ -123,6 +159,8 @@ class LoginPage extends React.Component {
                         }}
                         inputProps={{
                           type: "password",
+                          value: password,
+                          onChange: this.onChangePassword,
                           endAdornment: (
                             <InputAdornment position="end">
                               <Icon className={classes.inputIconsColor}>
@@ -135,7 +173,7 @@ class LoginPage extends React.Component {
                     </CardBody>
                     <CardFooter className={classes.cardFooter} style={{display: 'block'}}>
                       <div style={{textAlign:'center'}}>
-                        <Button simple color="primary" size="lg">
+                        <Button onClick={this.clickDangNhap} simple color="primary" size="lg">
                           Đăng Nhập
                         </Button>
                       </div>

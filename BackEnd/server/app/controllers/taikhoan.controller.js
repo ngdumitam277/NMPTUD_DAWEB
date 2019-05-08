@@ -4,6 +4,27 @@ const CanBo = require('../models/canbo.model.js');
 const ThiSinh = require('../models/thiSinh.model.js');
 const moment = require('moment');
 const nodemailer = require("nodemailer");
+var md5 = require('md5');
+var cookie = require('cookie');
+var cookieTime = 3600*24*6; // tính bằng mili giây
+var tokenTime = 3600*24*6; // 6 ngày cho token tính bằng mili giây
+
+var jwt = require('jsonwebtoken');
+var passportJWT = require("passport-jwt");
+var ExtractJwt = passportJWT.ExtractJwt;
+var JwtStrategy = passportJWT.Strategy;
+var passport = require("passport");
+
+var jwtOptions = {}
+jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+jwtOptions.secretOrKey = 'tamquysamg123456';
+
+var strategy = new JwtStrategy(jwtOptions, function (jwt_payload, next) {
+    console.log('payload received', jwt_payload);
+    next(null, jwt_payload)
+});
+
+passport.use(strategy);
 
 // tạo tài khoản thí sinh
 exports.taoTaiKhoanTS = async(req, res) => {
@@ -503,7 +524,16 @@ exports.dangnhap = async(req, res) => {
             if(exist.length > 0){
                 let user = await TaiKhoan.find({username: username, password: password})
                 if(user.length > 0){
-                    res.send({message: "ok", loai: user[0].loai})
+                    var payload = {username: user[0].username, loai: user[0].loai, 
+                        exp: Math.floor(Date.now() / 1000) + tokenTime, hTen: user[0].hTen};
+                    var token = jwt.sign(payload, jwtOptions.secretOrKey);
+                    res.setHeader('Set-Cookie', cookie.serialize('token', token, {
+                        httpOnly: true,
+                        maxAge: cookieTime
+                    }));
+                    res.setHeader('If-None-Match', 'no-match-for-this');
+                    res.setHeader('ETag', 'no-match-for-this');
+                    res.send({message: "ok"})
                 }else{
                     res.send({message: "Bạn nhập sai mật khẩu!"})
                 }

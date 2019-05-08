@@ -28,7 +28,6 @@ function HeaderLinks({ ...props }) {
         <Button
           href="https://www.creative-tim.com/product/material-kit-react"
           color="transparent"
-          target="_blank"
           className={classes.navLink}
         >
           <AccountCircle className={classes.icons} /> Tra cứu tuyển sinh
@@ -56,9 +55,9 @@ function HeaderLinks({ ...props }) {
       </ListItem>
       <ListItem className={classes.listItem}>
         <Button
-          href="https://www.creative-tim.com/product/material-kit-react"
+          href="/login-page"
           color="transparent"
-          target="_blank"
+          target="_top"
           className={classes.navLink}
         >
           <AccountCircle className={classes.icons} /> Đăng Nhập
