@@ -52,46 +52,45 @@ const styles = theme => ({
     ...componentsStyle
 });
 
-class ModalDeleteMonThi extends Component {
+class ModalDeleteNganhThi extends Component {
     constructor(props){
         super(props)
 
         this.state = {
-            tenMon: "",
-            phongThi: "",
-            tgThi: "",
-            diemTBmon: 0
+            tenNganh: "",
+            diemTBkhoi: "",
+            slThiSinh: "",
+            key: ""
         }
     }
 
-    clickDeleteMonThi = (event) => {
+    clickDeleteNganhThi = (event) => {
         event.preventDefault()
 
-        axios.delete(`${url}web/mon/${this.state.key}`)
+        axios.delete(`${url}web/nganh/${this.state.key}`)
         .then((response) => {
             let result = response.data
             if(result.message === "ok"){
-                alert("Xoá môn thi thành công!")
+                alert("Xoá ngành thi thành công!")
             }else{
                 alert(result.message)
             }
 
-            this.props.closeModalDeleteMonThi()
-            this.props.getAllMonThi()
+            this.props.closeModalDeleteNganhThi()
+            this.props.getAllNganhThi()
         })
         .catch((err) => {
-            alert("Xoá môn thi thất bại!")
+            alert("Xoá ngành thi thất bại!")
             console.log(err)
         })
     }
 
-    setDataMonThi = (data) => {
+    setDataNganhThi = (data) => {
         try{
             this.setState({
-                tenMon: data.tenMon,
-                phongThi: data.phongThi,
-                tgThi: moment(data.tgThi).format("YYYY-MM-DD"),
-                diemTBmon: data.diemTBmon,
+                tenNganh: data.maNganh,
+                diemTBkhoi: data.diemTBkhoi,
+                slThiSinh: data.slThiSinh,
                 key: data.key
             })
         }catch(err){
@@ -105,36 +104,36 @@ class ModalDeleteMonThi extends Component {
 
     render() {
         let { isModal, classes, ...rest } = this.props
-        let { tenMon, tgThi, diemTBmon, phongThi } = this.state
+        let { tenNganh } = this.state
 
         return (
             <Modal open={isModal}
                 aria-labelledby="simple-modal-title"
                 aria-describedby="simple-modal-description"
-                onClose={this.props.closeModalDeleteMonThi}
+                onClose={this.props.closeModalDeleteNganhThi}
             >
                 <div style={getModalStyle()} className={classes.paper}>
                     <div className={classes.title}>
-                        <h3>Xoá Môn Thi</h3>
+                        <h3>Xoá Ngành Thi</h3>
                     </div>
                     <Typography variant="h6" gutterBottom>
-                        {`Bạn có chắc chắn muốn xoá môn thi là ${tenMon} này không?`}
+                        {`Bạn có chắc chắn muốn xoá ngành thi là ${tenNganh} này không?`}
                     </Typography>
 
                     <div style={{textAlign: "end"}}>
                         <Button
                             style={{marginRight: 5}}
                             variant="outlined"
-                            href="#huyModalDeleteMonThi"
-                            onClick={this.props.closeModalDeleteMonThi}
+                            href="#huyModalDeleteNganhThi"
+                            onClick={this.props.closeModalDeleteNganhThi}
                         >
                             Huỷ
                         </Button>
                         <Button
                             style={{marginLeft: 5}}
                             variant="outlined"
-                            href="#xoaMonThi"
-                            onClick={this.clickDeleteMonThi}
+                            href="#xoaNganhThi"
+                            onClick={this.clickDeleteNganhThi}
                         >
                             Xoá
                         </Button>
@@ -145,4 +144,4 @@ class ModalDeleteMonThi extends Component {
     }
 }
 
-export default withStyles(styles)(ModalDeleteMonThi)
+export default withStyles(styles)(ModalDeleteNganhThi)

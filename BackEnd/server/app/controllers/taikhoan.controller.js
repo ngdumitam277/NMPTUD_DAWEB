@@ -668,29 +668,56 @@ async function sendMailCodeResetPassword(mailReceivers, code){
     return false
 }
 
-// Retrieve and return all movies from the database.
-exports.findAll = (req, res) => {
-    Movie.find()
-    .then(movies => {
-        res.send(movies);
-    }).catch(err => {
-        res.status(500).send({
-            message: err.message || "Some error occurred while retrieving notes."
-        });
-    });
-};
+exports.checkCookie = async (req, res) => {
+    let user = await checkCookie(req.headers.cookie)
+    if(user.kt){
+        try{
+            let cookies = cookie.parse(req.headers.cookie || '');
+            let decoded = jwt.verify(cookies.token, jwtOptions.secretOrKey)
+            let userInfo = { 
+                username: decoded.username, 
+                loai: decoded.loai, 
+                hTen: decoded.hTen 
+            }
+            res.send({message: "ok", user: userInfo})
+        }catch(err){
+            console.log(err)
+            res.send({message: "error cookie"})
+        }
+    }else{
+        res.send({message: "error cookie"})
+    }
+}
 
-// Find a single note with a noteId
-exports.findOne = (req, res) => {
-
-};
-
-// Update a note identified by the noteId in the request
-exports.update = (req, res) => {
-
-};
-
-// Delete a note with the specified noteId in the request
-exports.delete = (req, res) => {
-
-};
+async function checkCookie(data){
+    let informationUser = {
+        kt: false,
+        user: []
+    }
+    let cookies = cookie.parse(data || '');
+    if(cookies.token){
+        try{
+            let decoded = jwt.verify(cookies.token, jwtOptions.secretOrKey)
+            if(decoded.username){
+                try{
+                    let user = await TaiKhoan.find({username: decoded.username})
+                    if(user.length > 0){
+                        informationUser.kt = true
+                        informationUser.user = user
+                        return informationUser
+                    }else{
+                        return informationUser
+                    }
+                }catch(e) {
+                    return informationUser
+                }
+            }else{
+                return informationUser
+            }
+        }catch(e){
+            return informationUser
+        }
+    }else{
+        return informationUser
+    }   
+}

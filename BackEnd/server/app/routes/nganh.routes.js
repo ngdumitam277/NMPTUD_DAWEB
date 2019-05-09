@@ -9,4 +9,7 @@ module.exports = (app) => {
 
     // sửa 1 ngành theo key
     app.put('/web/nganh/:key', Nganh.updateNganh);
+
+    // xoá 1 ngành theo key
+    app.delete('/web/nganh/:key', Nganh.deleteNganh);
 }

@@ -13,6 +13,8 @@ import GridItem from "components/Grid/GridItem.jsx";
 import CustomTabs from "components/CustomTabs/CustomTabs.jsx";
 import tabsStyle from "assets/jss/material-kit-react/views/componentsSections/tabsStyle.jsx";
 import SubjectTab from "./SubjectTab";
+import KhoiThiTab from "./KhoiThiTab";
+import NganhThiTab from "./NganhThiTab";
 
 class StudentManageTab extends Component {
   render() {
@@ -35,34 +37,12 @@ class StudentManageTab extends Component {
                     {
                       tabName: "Khối",
                       tabIcon: Chat,
-                      tabContent: (
-                        <p className={classes.textCenter}>
-                          I think that’s a responsibility that I have, to push
-                          possibilities, to show people, this is the level that
-                          things could be at. I will be the leader of a company
-                          that ends up being worth billions of dollars, because
-                          I got the answers. I understand culture. I am the
-                          nucleus. I think that’s a responsibility that I have,
-                          to push possibilities, to show people, this is the
-                          level that things could be at.
-                        </p>
-                      )
+                      tabContent: ( <KhoiThiTab/> )
                     },
                     {
                       tabName: "Ngành",
                       tabIcon: Build,
-                      tabContent: (
-                        <p className={classes.textCenter}>
-                          think that’s a responsibility that I have, to push
-                          possibilities, to show people, this is the level that
-                          things could be at. So when you get something that has
-                          the name Kanye West on it, it’s supposed to be pushing
-                          the furthest possibilities. I will be the leader of a
-                          company that ends up being worth billions of dollars,
-                          because I got the answers. I understand culture. I am
-                          the nucleus.
-                        </p>
-                      )
+                      tabContent: ( <NganhThiTab/> )
                     }
                   ]}
                 />

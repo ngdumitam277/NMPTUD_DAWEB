@@ -6,6 +6,7 @@ exports.taoNganh = async(req, res) => {
     let maNganh = req.body.maNganh ? req.body.maNganh : ""
     let chiTieuNganh = Number(req.body.chiTieuNganh)
     let thongTin = req.body.thongTin ? req.body.thongTin : ""
+    let key = req.body.key ? req.body.key : ""
 
     try{
         if(maNganh !== "" && !isNaN(chiTieuNganh)){
@@ -17,7 +18,8 @@ exports.taoNganh = async(req, res) => {
             const nganh = new Nganh({
                 maNganh: maNganh,
                 chiTieuNganh: chiTieuNganh,
-                thongTin: thongTin
+                thongTin: thongTin,
+                key: key
             })
         
             nganh.save()
@@ -61,5 +63,19 @@ exports.updateNganh = async(req, res) => {
     .catch((err) => {
         res.send({message: "Lỗi sửa ngành theo key!"})
         console.log(err, "updateNganh")
+    })
+};
+
+// xoá 1 ngành theo key
+exports.deleteNganh = async(req, res) => {
+    let key = req.params.key
+
+    Nganh.findOneAndRemove({key: key}, {rawResult: true})
+    .then((result) => {
+        res.send({message: "ok"})
+    })
+    .catch((err) => {
+        res.send({message: "Lỗi xoá ngành theo key!"})
+        console.log(err, "deleteNganh")
     })
 };

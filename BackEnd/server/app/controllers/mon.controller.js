@@ -72,8 +72,6 @@ exports.updateMon = async(req, res) => {
 exports.deleteMon = async(req, res) => {
     let key = req.params.key
 
-    console.log(key)
-
     Mon.findOneAndRemove({key: key}, {rawResult: true})
     .then((result) => {
         res.send({message: "ok"})

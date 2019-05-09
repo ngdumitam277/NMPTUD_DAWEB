@@ -9,4 +9,7 @@ module.exports = (app) => {
 
     // sửa 1 khối theo key
     app.put('/web/khoi/:key', Khoi.updateKhoi);
+
+    // xoá 1 khối theo key
+    app.delete('/web/khoi/:key', Khoi.deleteKhoi);
 }

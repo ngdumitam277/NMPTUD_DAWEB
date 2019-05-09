@@ -1,19 +1,5 @@
 module.exports = (app) => {
     const taikhoan = require('../controllers/taikhoan.controller.js')
-    // // Create a new Movie
-    // app.post('/movies', movies.create);
-
-    // // Retrieve all movies
-    // app.get('/movies', movies.findAll);
-
-    // // Retrieve a single Note with movieId
-    // app.get('/movies/:movieId', movies.findOne);
-
-    // // Update a Note with movieId
-    // app.put('/movies/:movieId', movies.update);
-
-    // // Delete a Note with movieId
-    // app.delete('/movies/:movieId', movies.delete);
 
     // tạo tài khoản thí sinh
     app.post('/web/create/taikhoan/thisinh', taikhoan.taoTaiKhoanTS);
@@ -38,4 +24,7 @@ module.exports = (app) => {
 
     // nạp thông tin thí sinh
     app.post('/web/taikhoan/thongtin/themthisinh', taikhoan.napThongTinThiSinh);
+
+    // lấy thông tin đăng nhập
+    app.get('/web/taikhoan/checkCookie', taikhoan.checkCookie);
 }
