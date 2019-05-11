@@ -6,6 +6,7 @@ exports.taoKhoi = async(req, res) => {
     let tenKhoi = req.body.tenKhoi ? req.body.tenKhoi : ""
     let diemTBkhoi = Number(req.body.diemTBkhoi)
     let slThiSinh = Number(req.body.slThiSinh)
+    let key = req.body.key ? req.body.key : ""
 
     try{
         if(tenKhoi !== "" && !isNaN(diemTBkhoi) && !isNaN(slThiSinh)){
@@ -17,7 +18,8 @@ exports.taoKhoi = async(req, res) => {
             const khoi = new Khoi({
                 tenKhoi: tenKhoi,
                 diemTBkhoi: diemTBkhoi,
-                slThiSinh: slThiSinh
+                slThiSinh: slThiSinh,
+                key: key
             })
         
             khoi.save()
@@ -61,5 +63,19 @@ exports.updateKhoi = async(req, res) => {
     .catch((err) => {
         res.send({message: "Lỗi sửa khối theo key!"})
         console.log(err, "updateKhoi")
+    })
+};
+
+// xoá 1 khối theo key
+exports.deleteKhoi = async(req, res) => {
+    let key = req.params.key
+
+    Khoi.findOneAndRemove({key: key}, {rawResult: true})
+    .then((result) => {
+        res.send({message: "ok"})
+    })
+    .catch((err) => {
+        res.send({message: "Lỗi xoá khối theo key!"})
+        console.log(err, "deleteKhoi")
     })
 };

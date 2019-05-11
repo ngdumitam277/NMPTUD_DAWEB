@@ -15,6 +15,9 @@ import tabsStyle from "assets/jss/material-kit-react/views/componentsSections/ta
 import CourseTable from "../tables/CourseTable";
 import BranchTab from "./BranchTab";
 import GradeLevelTable from "../tables/GradeLevelTable";
+import SubjectTab from "./SubjectTab";
+import KhoiThiTab from "./KhoiThiTab";
+import NganhThiTab from "./NganhThiTab";
 
 class StudentManageTab extends Component {
   render() {
@@ -28,8 +31,9 @@ class StudentManageTab extends Component {
                   tabs={[
                     {
                       tabName: "Môn",
-                      
-                      tabContent: (<CourseTable/>)
+                      tabContent: (
+                      <CourseTable/>
+                      )
                     },
                     {
                       tabName: "Khối",

@@ -5,8 +5,9 @@ const moment = require('moment');
 exports.taoMon = async(req, res) => {
     let tenMon = req.body.tenMon ? req.body.tenMon : ""
     let phongThi = req.body.phongThi ? req.body.phongThi : ""
-    let tgThi = req.body.tgThi ? moment(req.body.tgThi, "DD-MM-YYYY HH:mm:ss").toISOString() : ""
+    let tgThi = req.body.tgThi ? moment(req.body.tgThi, "YYYY-MM-DD HH:mm:ss").toISOString() : ""
     let diemTBmon = Number(req.body.diemTBmon)
+    let key = req.body.key ? req.body.key : ""
 
     try{
         if(tenMon !== "" && !isNaN(diemTBmon)){
@@ -19,7 +20,8 @@ exports.taoMon = async(req, res) => {
                 tenMon: tenMon,
                 diemTBmon: diemTBmon,
                 phongThi: phongThi,
-                tgThi: tgThi
+                tgThi: tgThi,
+                key: key
             })
         
             mon.save()
@@ -63,5 +65,19 @@ exports.updateMon = async(req, res) => {
     .catch((err) => {
         res.send({message: "Lỗi sửa môn theo key!"})
         console.log(err, "updateMon")
+    })
+};
+
+// xoá 1 môn theo key
+exports.deleteMon = async(req, res) => {
+    let key = req.params.key
+
+    Mon.findOneAndRemove({key: key}, {rawResult: true})
+    .then((result) => {
+        res.send({message: "ok"})
+    })
+    .catch((err) => {
+        res.send({message: "Lỗi xoá môn theo key!"})
+        console.log(err, "deleteMon")
     })
 };

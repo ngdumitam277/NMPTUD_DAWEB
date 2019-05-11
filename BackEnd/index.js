@@ -5,6 +5,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const app = express()
+var cookieParser = require('cookie-parser');
 
 // Port
 const port = process.env.PORT || 5000
@@ -15,11 +16,35 @@ mongoose.Promise = global.Promise
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }))
 
+app.use(function(req, res, next) {
+    //delete all headers related to cache a
+    req.headers['if-none-match'] = '';
+    req.headers['if-modified-since'] = '';
+    next();
+});
+
+app.use(cookieParser())
+
+var whitelist = ['http://localhost:3000']
+
+app.use(cors({
+    origin: function(origin, callback){
+      // allow requests with no origin 
+      // (like mobile apps or curl requests)
+      if(!origin) return callback(null, true);
+      if(whitelist.indexOf(origin) === -1){
+        var msg = 'The CORS policy for this site does not ' +
+                  'allow access from the specified Origin.';
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
+    credentials: true,
+    // allowedHeaders: ["Cookie"]
+}));
+
 // parse requests of content-type - application/json
 app.use(bodyParser.json())
-
-// Access control allow origin
-app.use(cors())
 
 // define a simple route
 app.get('/', (req, res) => {

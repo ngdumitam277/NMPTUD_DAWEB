@@ -4,6 +4,27 @@ const CanBo = require('../models/canbo.model.js');
 const ThiSinh = require('../models/thiSinh.model.js');
 const moment = require('moment');
 const nodemailer = require("nodemailer");
+var md5 = require('md5');
+var cookie = require('cookie');
+var cookieTime = 3600*24*6; // tính bằng mili giây
+var tokenTime = 3600*24*6; // 6 ngày cho token tính bằng mili giây
+
+var jwt = require('jsonwebtoken');
+var passportJWT = require("passport-jwt");
+var ExtractJwt = passportJWT.ExtractJwt;
+var JwtStrategy = passportJWT.Strategy;
+var passport = require("passport");
+
+var jwtOptions = {}
+jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+jwtOptions.secretOrKey = 'tamquysamg123456';
+
+var strategy = new JwtStrategy(jwtOptions, function (jwt_payload, next) {
+    console.log('payload received', jwt_payload);
+    next(null, jwt_payload)
+});
+
+passport.use(strategy);
 
 // tạo tài khoản thí sinh
 exports.taoTaiKhoanTS = async(req, res) => {
@@ -503,7 +524,16 @@ exports.dangnhap = async(req, res) => {
             if(exist.length > 0){
                 let user = await TaiKhoan.find({username: username, password: password})
                 if(user.length > 0){
-                    res.send({message: "ok", loai: user[0].loai})
+                    var payload = {username: user[0].username, loai: user[0].loai, 
+                        exp: Math.floor(Date.now() / 1000) + tokenTime, hTen: user[0].hTen};
+                    var token = jwt.sign(payload, jwtOptions.secretOrKey);
+                    res.setHeader('Set-Cookie', cookie.serialize('token', token, {
+                        httpOnly: true,
+                        maxAge: cookieTime
+                    }));
+                    res.setHeader('If-None-Match', 'no-match-for-this');
+                    res.setHeader('ETag', 'no-match-for-this');
+                    res.send({message: "ok"})
                 }else{
                     res.send({message: "Bạn nhập sai mật khẩu!"})
                 }
@@ -638,29 +668,56 @@ async function sendMailCodeResetPassword(mailReceivers, code){
     return false
 }
 
-// Retrieve and return all movies from the database.
-exports.findAll = (req, res) => {
-    Movie.find()
-    .then(movies => {
-        res.send(movies);
-    }).catch(err => {
-        res.status(500).send({
-            message: err.message || "Some error occurred while retrieving notes."
-        });
-    });
-};
+exports.checkCookie = async (req, res) => {
+    let user = await checkCookie(req.headers.cookie)
+    if(user.kt){
+        try{
+            let cookies = cookie.parse(req.headers.cookie || '');
+            let decoded = jwt.verify(cookies.token, jwtOptions.secretOrKey)
+            let userInfo = { 
+                username: decoded.username, 
+                loai: decoded.loai, 
+                hTen: decoded.hTen 
+            }
+            res.send({message: "ok", user: userInfo})
+        }catch(err){
+            console.log(err)
+            res.send({message: "error cookie"})
+        }
+    }else{
+        res.send({message: "error cookie"})
+    }
+}
 
-// Find a single note with a noteId
-exports.findOne = (req, res) => {
-
-};
-
-// Update a note identified by the noteId in the request
-exports.update = (req, res) => {
-
-};
-
-// Delete a note with the specified noteId in the request
-exports.delete = (req, res) => {
-
-};
+async function checkCookie(data){
+    let informationUser = {
+        kt: false,
+        user: []
+    }
+    let cookies = cookie.parse(data || '');
+    if(cookies.token){
+        try{
+            let decoded = jwt.verify(cookies.token, jwtOptions.secretOrKey)
+            if(decoded.username){
+                try{
+                    let user = await TaiKhoan.find({username: decoded.username})
+                    if(user.length > 0){
+                        informationUser.kt = true
+                        informationUser.user = user
+                        return informationUser
+                    }else{
+                        return informationUser
+                    }
+                }catch(e) {
+                    return informationUser
+                }
+            }else{
+                return informationUser
+            }
+        }catch(e){
+            return informationUser
+        }
+    }else{
+        return informationUser
+    }   
+}
