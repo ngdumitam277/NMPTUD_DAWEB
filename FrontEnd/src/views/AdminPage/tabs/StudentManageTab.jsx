@@ -12,6 +12,9 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import CustomTabs from "components/CustomTabs/CustomTabs.jsx";
 import tabsStyle from "assets/jss/material-kit-react/views/componentsSections/tabsStyle.jsx";
+import CourseTable from "../tables/CourseTable";
+import BranchTab from "./BranchTab";
+import GradeLevelTable from "../tables/GradeLevelTable";
 import SubjectTab from "./SubjectTab";
 import KhoiThiTab from "./KhoiThiTab";
 import NganhThiTab from "./NganhThiTab";
@@ -20,36 +23,37 @@ class StudentManageTab extends Component {
   render() {
     const { classes, ...rest } = this.props;
     return (
-      
         <div className={classes.container}>
-         
             <GridContainer>
               <GridItem xs={12} sm={12} md={12}>
-                
                 <CustomTabs
                   headerColor="primary"
                   tabs={[
                     {
                       tabName: "Môn",
-                      tabIcon: Face,
-                      tabContent: ( <SubjectTab/> )
+                      tabContent: (
+                      <CourseTable/>
+                      )
                     },
                     {
                       tabName: "Khối",
-                      tabIcon: Chat,
-                      tabContent: ( <KhoiThiTab/> )
+                     
+                      tabContent: (
+                        <GradeLevelTable/>
+                      )
                     },
                     {
                       tabName: "Ngành",
-                      tabIcon: Build,
-                      tabContent: ( <NganhThiTab/> )
+                     
+                      tabContent: (
+                        <BranchTab/>
+                      )
                     }
                   ]}
                 />
               </GridItem>
             </GridContainer>
         </div>
-      
     )
   }
 }

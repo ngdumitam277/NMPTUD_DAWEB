@@ -23,8 +23,8 @@ ReactDOM.render(
       <Route path="/login-page" component={LoginPage} />
       <Route path="/register-page" component={RegisterPage} />
       <Route path="/admin-page" component={AdminPage} />
-      <Route path="/" component={Components}/>
+      <Route path="/" component={Components} />
     </Switch>
-  </Router>, 
+  </Router>,
   document.getElementById("root")
 );
