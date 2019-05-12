@@ -71,12 +71,6 @@ exports.getAllNganh = async(req, res) => {
 exports.updateNganh = async(req, res) => {
     let key = req.params.key
     let body = req.body
-    let maNganh = req.body.maNganh ? req.body.maNganh : ""
-
-    let exist = await Nganh.find({maNganh: maNganh})
-    if(exist.length > 0){
-        res.send({message: "Ngành đã tồn tại!"})
-    }
 
     Nganh.findOneAndUpdate({key: key}, body, {new: true})
     .then((result) => {
