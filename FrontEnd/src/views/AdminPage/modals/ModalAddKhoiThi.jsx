@@ -145,6 +145,7 @@ class ModalAddKhoiThi extends Component {
                             id="diem-tb-khoi"
                             label="Điểm trung bình khối"
                             value={diemTBkhoi}
+                            type="number"
                             onChange={this.onChangeDiemTBkhoi}
                             className={classes.textField}
                             margin="normal"
@@ -154,6 +155,7 @@ class ModalAddKhoiThi extends Component {
                             id="so-luong-ts"
                             label="Số lượng thí sinh"
                             value={slThiSinh}
+                            type="number"
                             onChange={this.onChangeSoLuongTS}
                             className={classes.textField}
                             margin="normal"
