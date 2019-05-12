@@ -60,7 +60,8 @@ class ModalEditNganhThi extends Component {
             tenNganh: "",
             chiTieuNganh: "",
             thongTin: "",
-            key: ""
+            key: "",
+            maNganh: ""
         }
     }
 
@@ -86,7 +87,8 @@ class ModalEditNganhThi extends Component {
         event.preventDefault()
 
         axios.put(`${url}web/nganh/${this.state.key}`, {
-            maNganh: this.state.tenNganh,
+            maNganh: this.state.maNganh,
+            tenNganh: this.state.tenNganh,
             chiTieuNganh: this.state.chiTieuNganh,
             thongTin: this.state.thongTin,
             key: this.getKeyFromString(this.state.tenNganh)
@@ -108,6 +110,10 @@ class ModalEditNganhThi extends Component {
         })
     }
 
+    onChangeMaNganh = (event) => {
+        this.setState({maNganh: event.target.value})
+    }
+
     onChangeTenNganh = (event) => {
         this.setState({tenNganh: event.target.value})
     }
@@ -127,10 +133,11 @@ class ModalEditNganhThi extends Component {
     setDataNganhThi = (data) => {
         try{
             this.setState({
-                tenNganh: data.maNganh,
+                tenNganh: data.tenNganh,
                 chiTieuNganh: data.chiTieuNganh,
                 thongTin: data.thongTin,
-                key: data.key
+                key: data.key,
+                maNganh: data.maNganh
             })
         }catch(err){
             console.log(err)
@@ -139,7 +146,7 @@ class ModalEditNganhThi extends Component {
 
     render() {
         let { isModal, classes, ...rest } = this.props
-        let { tenNganh, thongTin, chiTieuNganh } = this.state
+        let { tenNganh, thongTin, chiTieuNganh, maNganh } = this.state
 
         return (
             <Modal open={isModal}
@@ -152,6 +159,15 @@ class ModalEditNganhThi extends Component {
                         <h3>Sửa Ngành Thi</h3>
                     </div>
                     <form className={classes.container} noValidate autoComplete="off">
+                        <TextField
+                            id="ma-nganh"
+                            label="Mã Ngành"
+                            value={maNganh}
+                            onChange={this.onChangeMaNganh}
+                            className={classes.textField}
+                            margin="normal"
+                            variant="outlined"
+                        />
                         <TextField
                             id="ten-nganh"
                             label="Tên Ngành"
