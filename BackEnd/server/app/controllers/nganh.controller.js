@@ -1,5 +1,6 @@
 const Nganh = require('../models/nganh.model.js');
 const moment = require('moment');
+const NganhKhoi = require('../models/nganhKhoi.model.js');
 
 // tạo ngành
 exports.taoNganh = async(req, res) => {
@@ -68,6 +69,12 @@ exports.getAllNganh = async(req, res) => {
 exports.updateNganh = async(req, res) => {
     let key = req.params.key
     let body = req.body
+    let maNganh = req.body.maNganh ? req.body.maNganh : ""
+
+    let exist = await Nganh.find({maNganh: maNganh})
+    if(exist.length > 0){
+        res.send({message: "Ngành đã tồn tại!"})
+    }
 
     Nganh.findOneAndUpdate({key: key}, body, {new: true})
     .then((result) => {
@@ -85,7 +92,15 @@ exports.deleteNganh = async(req, res) => {
 
     Nganh.findOneAndRemove({key: key}, {rawResult: true})
     .then((result) => {
-        res.send({message: "ok"})
+        let maNganh = result.maNganh
+        NganhKhoi.remove({maNganh: maNganh})
+        .then((result) => {
+            res.send({message: "ok"})
+        })
+        .catch((err) => {
+            res.send({message: "Lỗi xoá ngành theo key!"})
+            console.log(err, "deleteNganh")
+        })
     })
     .catch((err) => {
         res.send({message: "Lỗi xoá ngành theo key!"})
