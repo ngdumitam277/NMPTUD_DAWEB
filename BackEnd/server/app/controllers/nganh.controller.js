@@ -5,6 +5,7 @@ const NganhKhoi = require('../models/nganhKhoi.model.js');
 // tạo ngành
 exports.taoNganh = async(req, res) => {
     let maNganh = req.body.maNganh ? req.body.maNganh : ""
+    let tenNganh = req.body.tenNganh ? req.body.tenNganh : ""
     let chiTieuNganh = Number(req.body.chiTieuNganh)
     let thongTin = req.body.thongTin ? req.body.thongTin : ""
     let key = req.body.key ? req.body.key : ""
@@ -20,7 +21,8 @@ exports.taoNganh = async(req, res) => {
                 maNganh: maNganh,
                 chiTieuNganh: chiTieuNganh,
                 thongTin: thongTin,
-                key: key
+                key: key,
+                tenNganh: tenNganh
             })
         
             nganh.save()
