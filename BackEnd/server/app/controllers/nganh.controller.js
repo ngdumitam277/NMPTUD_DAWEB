@@ -41,7 +41,20 @@ exports.taoNganh = async(req, res) => {
 
 // lấy tất cả ngành
 exports.getAllNganh = async(req, res) => {
-    Nganh.find({}, {_id: 0, createdAt: 0, updatedAt: 0, __v: 0})
+    Nganh.aggregate([
+        {$lookup: {from: "nganhkhois", localField: "maNganh", foreignField: "maNganh", as: "khoi"}},
+        {$project: { 
+            _id: 0, 
+            __v: 0, 
+            createdAt: 0, 
+            updatedAt: 0,
+            "khoi._id": 0,
+            "khoi.maNganh": 0,
+            "khoi.createdAt": 0,
+            "khoi.updatedAt": 0,
+            "khoi.__v": 0
+        }}
+    ])
     .then((result) => {
         res.send(result)
     })
