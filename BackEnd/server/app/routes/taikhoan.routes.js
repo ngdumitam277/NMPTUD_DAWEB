@@ -19,8 +19,8 @@ module.exports = (app) => {
     // lấy tình trạng của tài khoản
     app.post('/web/taikhoan/tinhtrang', taikhoan.layTinhTrang);
 
-    // hiện thông tin thí sinh
-    app.get('/web/taikhoan/thongtin/:username', taikhoan.hienThongTinThiSinh);
+    // lấy thông tin thí sinh
+    app.get('/web/taikhoan/thongtin', taikhoan.hienThongTinThiSinh);
 
     // nạp thông tin thí sinh
     app.post('/web/taikhoan/thongtin/themthisinh', taikhoan.napThongTinThiSinh);
