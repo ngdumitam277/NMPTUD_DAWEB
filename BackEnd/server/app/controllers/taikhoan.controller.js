@@ -195,64 +195,73 @@ exports.layTinhTrang = async(req, res) => {
 
 // hiện thông tin thí sinh
 exports.hienThongTinThiSinh = async(req, res) => {
-    let username = req.params.username
+    let user = await checkCookie(req.headers.cookie)
 
-    try{
-        if(username !== ""){
-            TaiKhoan.aggregate([
-                { $match: { username: username } },
-                { $project: {
-                        _id: 0,
-                        username: 1,
-                        hTen: 1,
-                        ngSinh: 1,
-                        gioiTinh: 1,
-                        danToc: 1,
-                        soCMND: 1,
-                        ngCapCMND: 1,
-                        noiSinh: 1,
-                        diaChi: 1,
-                        email: 1,
-                        SDT: 1
-                    } 
-                },
-                { 
-                    $lookup: {from: "thisinhs", localField: "username", foreignField: "usernamets", as: "thisinh"}
-                },
-                { $unwind: "$thisinh" },
-                { $project: {
-                        username: 1,
-                        hTen: 1,
-                        ngSinh: 1,
-                        gioiTinh: 1,
-                        danToc: 1,
-                        soCMND: 1,
-                        ngCapCMND: 1,
-                        noiSinh: 1,
-                        diaChi: 1,
-                        email: 1,
-                        SDT: 1,
-                        namTotNghiep: "$thisinh.namTotNghiep",
-                        tenTHPT: "$thisinh.tenTHPT",
-                        anhMinhChung: "$thisinh.anhMinhChung",
-                        maKhuVuc: "$thisinh.maKhuVuc",
-                        maDoiTuong: "$thisinh.maDoiTuong"
-                    } 
-                }
-            ])  
-            .then((result) => {
-                res.send(result)
-            })          
-            .catch((err) => {
-                console.log("hienThongTinThiSinh", err)
-                res.send({message: "Lỗi lấy thông tin thí sinh!"})
-            })
-        }else{
-            console.log("hienThongTinThiSinh", "username không được rỗng!")
-            res.send({message: "Username không được rỗng!"})
+    if(user.kt){
+        try{
+            let cookies = cookie.parse(req.headers.cookie || '');
+            let decoded = jwt.verify(cookies.token, jwtOptions.secretOrKey)
+            let username = decoded.username
+
+            if(username !== ""){
+                TaiKhoan.aggregate([
+                    { $match: { username: username } },
+                    { $project: {
+                            _id: 0,
+                            username: 1,
+                            hTen: 1,
+                            ngSinh: 1,
+                            gioiTinh: 1,
+                            danToc: 1,
+                            soCMND: 1,
+                            ngCapCMND: 1,
+                            noiSinh: 1,
+                            diaChi: 1,
+                            email: 1,
+                            SDT: 1
+                        } 
+                    },
+                    { 
+                        $lookup: {from: "thisinhs", localField: "username", foreignField: "usernamets", as: "thisinh"}
+                    },
+                    { $unwind: "$thisinh" },
+                    { $project: {
+                            username: 1,
+                            hTen: 1,
+                            ngSinh: 1,
+                            gioiTinh: 1,
+                            danToc: 1,
+                            soCMND: 1,
+                            ngCapCMND: 1,
+                            noiSinh: 1,
+                            diaChi: 1,
+                            email: 1,
+                            SDT: 1,
+                            namTotNghiep: "$thisinh.namTotNghiep",
+                            tenTHPT: "$thisinh.tenTHPT",
+                            anhMinhChung: "$thisinh.anhMinhChung",
+                            maKhuVuc: "$thisinh.maKhuVuc",
+                            maDoiTuong: "$thisinh.maDoiTuong"
+                        } 
+                    }
+                ])  
+                .then((result) => {
+                    res.send(result)
+                })          
+                .catch((err) => {
+                    console.log("hienThongTinThiSinh", err)
+                    res.send({message: "Lỗi lấy thông tin thí sinh!"})
+                })
+            }else{
+                console.log("hienThongTinThiSinh", "username không được rỗng!")
+                res.send({message: "Username không được rỗng!"})
+            }
+        }catch(err){
+            console.log("hienThongTinThiSinh", err)
+            res.send({message: "Lỗi lấy thông tin thí sinh!"})
         }
-    }catch(err){
-        console.log("hienThongTinThiSinh", err)
+    }else{
+        console.log("hienThongTinThiSinh", "error cookie")
         res.send({message: "Lỗi lấy thông tin thí sinh!"})
     }
 };
