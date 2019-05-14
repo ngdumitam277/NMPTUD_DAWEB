@@ -4,6 +4,9 @@ module.exports = (app) => {
     // tạo tài khoản thí sinh
     app.post('/web/create/taikhoan/thisinh', taikhoan.taoTaiKhoanTS);
 
+    // xoá tài khoản thí sinh
+    app.delete('/web/delete/taikhoan/:username', taikhoan.deleteTaiKhoan);
+
     // tạo tài khoản cán bộ
     app.post('/web/create/taikhoan/canbo', taikhoan.taoTaiKhoanCB);
 
@@ -27,4 +30,10 @@ module.exports = (app) => {
 
     // lấy thông tin đăng nhập
     app.get('/web/taikhoan/checkCookie', taikhoan.checkCookie);
+
+    // lấy tất cả thí sinh
+    app.get('/web/taikhoan/thisinh', taikhoan.getAllThiSinh);
+
+    // lấy tất cả cán bộ
+    app.get('/web/taikhoan/canbo', taikhoan.getAllCanBo);
 }
