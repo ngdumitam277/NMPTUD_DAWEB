@@ -55,12 +55,6 @@ exports.getAllKhoi = async(req, res) => {
 exports.updateKhoi = async(req, res) => {
     let key = req.params.key
     let body = req.body
-    let tenKhoi = req.body.tenKhoi ? req.body.tenKhoi : ""
-
-    let exist = await Khoi.find({tenKhoi: tenKhoi})
-    if(exist.length > 0){
-        res.send({message: "Khối đã tồn tại!"})
-    }
 
     Khoi.findOneAndUpdate({key: key}, body, {new: true})
     .then((result) => {
