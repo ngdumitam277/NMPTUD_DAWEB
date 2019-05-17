@@ -46,6 +46,22 @@ class LoginPage extends React.Component {
       }.bind(this),
       700
     );
+    //this.checkLogin()
+  }
+
+  checkLogin = () => {
+    axios.get(`${url}web/taikhoan/checkCookie`, {
+      withCredentials: true
+    })
+    .then((response) => {
+      let result = response.data
+      if(result.message === "ok"){
+        this.props.history.push("/");
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
   }
 
   clickDangNhap = () => {

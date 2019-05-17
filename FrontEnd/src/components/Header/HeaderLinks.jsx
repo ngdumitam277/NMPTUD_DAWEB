@@ -34,7 +34,7 @@ class HeaderLinks extends Component {
       }
     }
 
-    componentDidMount = () => {
+    handleLogin = () => {
       axios.get(`${url}web/taikhoan/checkCookie`, {
         withCredentials: true
       })
@@ -50,12 +50,24 @@ class HeaderLinks extends Component {
       })
     }
 
+    componentDidMount = () => {
+      this.handleLogin()
+    }
+
     handleClick = event => {
       this.setState({ anchorEl: event.currentTarget });
     };
   
     handleClose = () => {
-      this.setState({ anchorEl: null });
+      axios.get(`${url}web/taikhoan/dangxuat`, {withCredentials: true})
+      .then((result) => {
+        alert("Đăng xuất thành công!")
+        this.setState({user: null})
+      })
+      .catch((err) => {
+        alert("Lỗi đăng xuất tài khoản!")
+        console.log(err)
+      })
     };
 
     render() {
@@ -117,10 +129,10 @@ class HeaderLinks extends Component {
                     id="simple-menu"
                     anchorEl={anchorEl}
                     open={Boolean(anchorEl)}
-                    onClose={this.handleClose}
+                    onClose={() => {this.setState({ anchorEl: null });}}
                   >
-                    <MenuItem onClick={this.handleClose}>Profile</MenuItem>
-                    <MenuItem onClick={this.handleClose}>My account</MenuItem>
+                    <MenuItem onClick={this.handleClose}>Cá nhân</MenuItem>
+                    <MenuItem onClick={this.handleClose}>Quản lý tuyển sinh</MenuItem>
                     <MenuItem onClick={this.handleClose}>Logout</MenuItem>
                   </Menu>
               </>

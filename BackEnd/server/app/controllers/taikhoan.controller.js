@@ -560,6 +560,14 @@ exports.dangnhap = async(req, res) => {
     }
 };
 
+// đăng xuất bằng tài khoản
+exports.dangxuat = (req, res) => {
+    res.setHeader('Set-Cookie', cookie.serialize('token', null));
+    res.setHeader('If-None-Match', 'no-match-for-this')
+    res.setHeader('ETag', 'no-match-for-this')
+    res.end()
+};
+
 // thay đổi mật khẩu
 exports.thayDoiMatKhau = async(req, res) => {
     let email = req.body.email ? req.body.email : ""

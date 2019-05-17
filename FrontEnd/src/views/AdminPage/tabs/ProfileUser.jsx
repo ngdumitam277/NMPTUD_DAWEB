@@ -28,11 +28,12 @@ class ProfileUser extends Component {
         }
     }
     componentDidMount() {
-        axios.get(`${url}web/taikhoan/thongtin/tamle`, {
+        axios.get(`${url}web/taikhoan/thongtin`, {
             withCredentials: true
           })
           .then((response) => {
             let result = response.data
+            console.log(result)
             this.setState({data: result})            
           })
           .catch((err) => {

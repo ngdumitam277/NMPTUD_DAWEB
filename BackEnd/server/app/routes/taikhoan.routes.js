@@ -10,8 +10,11 @@ module.exports = (app) => {
     // tạo tài khoản cán bộ
     app.post('/web/create/taikhoan/canbo', taikhoan.taoTaiKhoanCB);
 
-    // đăng nhập bằng tài khoản
+    // đăng nhập tài khoản
     app.post('/web/taikhoan/dangnhap', taikhoan.dangnhap);
+
+    // đăng xuất tài khoản
+    app.get('/web/taikhoan/dangxuat', taikhoan.dangxuat);
 
     // đổi mật khẩu tài khoản
     app.post('/web/taikhoan/thaydoi/matkhau', taikhoan.thayDoiMatKhau);
