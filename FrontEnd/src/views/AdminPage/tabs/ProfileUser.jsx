@@ -16,10 +16,33 @@ import FormControl from "@material-ui/core/FormControl";
 import Button from '@material-ui/core/Button';
 // react plugin for creating date-time-picker
 import Datetime from "react-datetime";
+import axios from 'axios'
+import { url } from 'variable/general.jsx'
+import moment from 'moment'
 
 class ProfileUser extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            data: []
+        }
+    }
+    componentDidMount() {
+        axios.get(`${url}web/taikhoan/thongtin/tamle`, {
+            withCredentials: true
+          })
+          .then((response) => {
+            let result = response.data
+            this.setState({data: result})            
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+    }
+
     render() {
         const { classes } = this.props;
+        const { data } = this.state;
         return (
             <div className={classes.container}>
                 <div className={classes.title}>
@@ -40,20 +63,20 @@ class ProfileUser extends Component {
                                 <InputLabel className={classes.label}>
                                     Họ Tên
                                 </InputLabel>
-                                <p>Nguyễn Văn A</p>
+                                <p>{data[0] ? data[0].hTen : null}</p>
                             </GridItem>
                             <GridItem xs={4} sm={4} md={4}>
                                 <InputLabel className={classes.label}>
                                     Giới tính
                                 </InputLabel>
-                                <p>Nam</p>
+                                <p>{data[0] ? data[0].gioiTinh : null}</p>
                             </GridItem>
                             <GridItem xs={4} sm={4} md={4}>
                                 <InputLabel className={classes.label}>
                                     Ngày sinh
                                 </InputLabel>
                                 <br />
-                                <p>28/12/2019</p>
+                                <p>{data[0] ? moment(data[0].ngSinh).format("YYYY-MM-DD") : null}</p>
                             </GridItem>
                             
                         </GridContainer>
@@ -64,20 +87,20 @@ class ProfileUser extends Component {
                                     Dân tộc
                                 </InputLabel>
                                 <br />
-                                <p>Kinh</p>
+                                <p>{data[0] ? data[0].danToc : null}</p>
                             </GridItem>
                             <GridItem xs={4} sm={4} md={4}>
                                 <InputLabel className={classes.label}>
                                     Số CMND
                                 </InputLabel>
-                                <p>02483628</p>
+                                <p>{data[0] ? data[0].soCMND : null}</p>
                             </GridItem>
                             <GridItem xs={4} sm={4} md={4}>
                                 <InputLabel className={classes.label}>
                                     Ngày Cấp CMND
                                 </InputLabel>
                                 <br />
-                                <p>28/12/2019</p>
+                                <p>{data[0] ? moment(data[0].ngCapCMND).format("YYYY-MM-DD") : null}</p>
                                 
                             </GridItem>
                         </GridContainer>
@@ -87,20 +110,20 @@ class ProfileUser extends Component {
                                 <InputLabel className={classes.label}>
                                    Địa chỉ
                                 </InputLabel>
-                                <p>Lữ gia , TP.HCM</p>
+                                <p>{data[0] ? data[0].diaChi : null}</p>
                             </GridItem>
                             <GridItem xs={4} sm={4} md={4}>
                                 <InputLabel className={classes.label}>
                                     Số điện thoại
                                 </InputLabel>
-                                <p>0123456789</p>
+                                <p>{data[0] ? data[0].SDT : null}</p>
                             </GridItem>
                             <GridItem xs={4} sm={4} md={4}>
                                 <InputLabel className={classes.label}>
                                     Email
                                 </InputLabel>
                                 <br />
-                                <p>nguyennguyen@gmail.com</p>
+                                <p>{data[0] ? data[0].email : null}</p>
                             </GridItem>
                             
                         </GridContainer>
@@ -113,32 +136,29 @@ class ProfileUser extends Component {
                         <InputLabel className={classes.label}>
                             Mã khu vực
                         </InputLabel>
-                        <p>MTQ345</p>
+                        <p>{data[0] ? data[0].maKhuVuc : null}</p>
                     </GridItem>
                     <GridItem xs={3} sm={3} md={3}>
                         <InputLabel className={classes.label}>
                             Mã đối tượng
                         </InputLabel>
-                        <p>SS345</p>
+                        <p>{data[0] ? data[0].maDoiTuong : null}</p>
                     </GridItem>
                     <GridItem xs={3} sm={3} md={3}>
                         <InputLabel className={classes.label}>
                             Tên trường THPT
                         </InputLabel>
-                        <p>SS345</p>
+                        <p>{data[0] ? data[0].tenTHPT : null}</p>
                     </GridItem>
                     <GridItem xs={3} sm={3} md={3}>
                         <InputLabel className={classes.label}>
                             Năm tốt nghiệp
                         </InputLabel>
-                        <p>12/12/2015</p>
+                        <p>{data[0] ? data[0].namTotNghiep : null}</p>
                     </GridItem>
                 </GridContainer>
                 <br/>
                 <hr/>
-                <div>
-                    Thêm ảnh chứng minh
-                </div>
                 <div style={{textAlign:"right"}}>
                 <Button variant="contained" color="primary" className={classes.button}>
                     Thay đổi thông tin 

@@ -7,6 +7,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import Button from '@material-ui/core/Button';
 
 const styles = theme => ({
   root: {
@@ -32,7 +33,7 @@ const rows = [
 ];
 
 function UnitTable(props) {
-  const { classes } = props;
+  const { classes, data } = props;
 
   return (
     <Paper className={classes.root}>
@@ -40,17 +41,26 @@ function UnitTable(props) {
         <TableHead>
           <TableRow>
             <TableCell>Tên khối</TableCell>
-            <TableCell align="right">Điểm chuẩn</TableCell>
+            <TableCell align="center">Điểm chuẩn</TableCell>
+            <TableCell align="center">Tùy chỉnh</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map(row => (
+          {data.map(row => (
             <TableRow key={row.id}>
               <TableCell component="th" scope="row">
-                {row.nameCourse}
+                {row.tenKhoi}
               </TableCell>
-              <TableCell align="right">{row.score}</TableCell>
-             
+              <TableCell align="right">{row.diemChuan}</TableCell>
+              <TableCell>
+                <Button variant="contained" color="secondary" className={classes.button}>
+                    Xóa
+                </Button>
+                &nbsp;
+                <Button variant="contained" color="primary" className={classes.button}>
+                    Sửa
+                </Button>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

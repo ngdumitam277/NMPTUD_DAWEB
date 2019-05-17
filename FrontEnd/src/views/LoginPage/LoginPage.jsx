@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import withStyles from "@material-ui/core/styles/withStyles";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Icon from "@material-ui/core/Icon";
+import { Redirect } from 'react-router-dom';
 // @material-ui/icons
 import Email from "@material-ui/icons/Email";
 import People from "@material-ui/icons/People";
@@ -51,11 +52,13 @@ class LoginPage extends React.Component {
     axios.post(`${url}web/taikhoan/dangnhap`, {
       username: this.state.username,
       password: this.state.password
-    })
+    }, {withCredentials: true})
     .then((response) => {
       let result = response.data
       if(result.message === "ok"){
         alert("Đăng nhập thành công!")
+        //return <Redirect to='/' />
+        this.props.history.push("/");
       }else{
         alert(result.message)
       }
