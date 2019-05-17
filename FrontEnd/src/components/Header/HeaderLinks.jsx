@@ -10,6 +10,8 @@ import ListItem from "@material-ui/core/ListItem";
 import Tooltip from "@material-ui/core/Tooltip";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import Explore from "@material-ui/icons/Explore";
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 
 // @material-ui/icons
 import { Apps, CloudDownload } from "@material-ui/icons";
@@ -27,17 +29,18 @@ class HeaderLinks extends Component {
       super(props)
 
       this.state = {
-        user: null
+        user: null,
+        anchorEl: null
       }
     }
 
     componentDidMount = () => {
-      axios.get(`${url}web/taikhoan/thongtin/checkCookie`, {
+      axios.get(`${url}web/taikhoan/checkCookie`, {
         withCredentials: true
       })
       .then((response) => {
         let result = response.data
-
+        console.log("result ===" + JSON.stringify(result))
         if(result.message === "ok"){
           this.setState({user: result.user})
         }
@@ -47,9 +50,17 @@ class HeaderLinks extends Component {
       })
     }
 
+    handleClick = event => {
+      this.setState({ anchorEl: event.currentTarget });
+    };
+  
+    handleClose = () => {
+      this.setState({ anchorEl: null });
+    };
+
     render() {
       const { classes } = this.props;
-      let { user } = this.state
+      let { user, anchorEl } = this.state
       console.log(user)
 
         return (
@@ -84,6 +95,7 @@ class HeaderLinks extends Component {
               </Button>
             </ListItem>
             <ListItem className={classes.listItem}>
+            {user == null ?
               <Button
                 href="/login-page"
                 color="transparent"
@@ -91,7 +103,28 @@ class HeaderLinks extends Component {
                 className={classes.navLink}
               >
                 <AccountCircle className={classes.icons} /> Đăng Nhập
-              </Button>
+              </Button> : 
+              <>
+                <Button
+                    color="transparent"
+                    aria-owns={anchorEl ? 'simple-menu' : undefined}
+                    aria-haspopup="true"
+                    onClick={this.handleClick}
+                  >
+                    <AccountCircle className={classes.icons} /> {user ? user.username : null}
+                  </Button>
+                  <Menu
+                    id="simple-menu"
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={this.handleClose}
+                  >
+                    <MenuItem onClick={this.handleClose}>Profile</MenuItem>
+                    <MenuItem onClick={this.handleClose}>My account</MenuItem>
+                    <MenuItem onClick={this.handleClose}>Logout</MenuItem>
+                  </Menu>
+              </>
+            }
             </ListItem>
           </List>
         );
