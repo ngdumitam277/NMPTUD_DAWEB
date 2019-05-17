@@ -15,6 +15,10 @@ import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
 import Button from '@material-ui/core/Button';
+import axios from 'axios'
+import { url } from 'variable/general.jsx'
+import moment from 'moment';
+import ModalDeleteStudent from '../modals/ModalDeleteStudent';
 
 const actionsStyles = theme => ({
   root: {
@@ -114,21 +118,36 @@ const styles = theme => ({
 });
 
 class InfoStudentManageTab extends React.Component {
-  state = {
-    rows: [
-      createData("tamsansi", "Tâm", "27/07/94", "025802254", "03/07/2013","CB1","05/04/2019","Xác nhận"),
-      createData("tamsansi", "Tâm", "27/07/94", "025802254", "03/07/2013","CB2","05/04/2019", "Chưa xác nhận"),
-      createData("tamsansi", "Tâm", "27/07/94", "025802254", "03/07/2013","CB3","05/04/2019","Xác nhận"),
-      createData("tamsansi", "Tâm", "27/07/94", "025802254", "03/07/2013","CB4","05/04/2019","Chưa xác nhận"),
-      createData("tamsansi", "Tâm", "27/07/94", "025802254", "03/07/2013","CB5","05/04/2019", "Chưa xác nhận"),
-      createData("tamsansi", "Tâm", "27/07/94", "025802254", "03/07/2013","CB6","05/04/2019", "Chưa xác nhận"),
-      createData("tamsansi", "Tâm", "27/07/94", "025802254", "03/07/2013","CB7","05/04/2019", "Chưa xác nhận"),
-      createData("tamsansi", "Tâm", "27/07/94", "025802254", "03/07/2013","CB8","05/04/2019", "Chưa xác nhận"),
+  constructor(props){
+    super(props)
 
-    ].sort((a, b) => (a.ngayDK < b.ngayDk ? -1 : 1)),
-    page: 0,
-    rowsPerPage: 5,
-  };
+    this.state = {
+      data: [],
+      page: 0,
+      rowsPerPage: 5,
+      isModalDeleteStudent: false
+    }
+
+    this.modalDeleteStudentRef = React.createRef()
+  }
+
+  getAllStudent = () => {
+    axios.get(`${url}web/taikhoan/thisinh`)
+    .then((result) => {
+      let data = result.data
+
+      if(data.length > 0){
+        this.setState({data: data})
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+  }
+
+  componentDidMount = () => {
+    this.getAllStudent()
+  }
 
   handleChangePage = (event, page) => {
     this.setState({ page });
@@ -138,10 +157,23 @@ class InfoStudentManageTab extends React.Component {
     this.setState({ page: 0, rowsPerPage: event.target.value });
   };
 
+  setModalDeleteStudent = (isModal) => this.setState({isModalDeleteStudent: isModal})
+
+  openModalDeleteStudent = (data) => {
+    this.modalDeleteStudentRef.setDataStudent(data)
+    this.setModalDeleteStudent(true)
+  }
+
+  closeModalDeleteStudent = () => {
+    this.setModalDeleteStudent(true)
+  }
+
+  onRefModalDeleteStudent = (ref) => this.modalDeleteStudentRef = ref
+
   render() {
     const { classes } = this.props;
-    const { rows, rowsPerPage, page } = this.state;
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+    const { rowsPerPage, page, data, isModalDeleteStudent } = this.state;
+    const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
     return (
       <Paper classname={classes.root}>
@@ -154,27 +186,33 @@ class InfoStudentManageTab extends React.Component {
                 <TableCell align="right">Ngày sinh</TableCell>
                 <TableCell align="right">Số CMND</TableCell>
                 <TableCell align="right">Ngày đăng ký</TableCell>
-                <TableCell align="right">Mã CB(Hủy/Xác nhận)</TableCell>
-                <TableCell align="right">Ngày giờ(Hủy/Xác nhận)</TableCell>
-                <TableCell align="right">Trạng thái</TableCell>
+                <TableCell align="right">Dân tộc</TableCell>
+                <TableCell align="right">Địa chỉ</TableCell>
+                <TableCell align="right">Email</TableCell>
+                <TableCell align="right">Giới tính</TableCell>
+                <TableCell align="right">Nơi sinh</TableCell>
+                <TableCell align="right">Tình trạng</TableCell>
                 <TableCell align="right">Tùy chỉnh</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
+              {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
                 <TableRow key={row.id}>
                   <TableCell component="th" scope="row">
-                    {row.userName}
+                    {row.username}
                   </TableCell>
-                  <TableCell align="right">{row.hoTen}</TableCell>
-                  <TableCell align="right">{row.ngaySinh}</TableCell>
-                  <TableCell align="right">{row.cmnd}</TableCell>
-                  <TableCell align="right">{row.ngayDk}</TableCell>
-                  <TableCell align="right">{row.maCB}</TableCell>
-                  <TableCell align="right">{row.ngayGioCB}</TableCell>
-                  <TableCell align="right">{row.trangThai}</TableCell>
+                  <TableCell align="right">{row.hTen}</TableCell>
+                  <TableCell align="right">{moment(row.ngSinh).format("DD/MM/YYYY")}</TableCell>
+                  <TableCell align="right">{row.soCMND}</TableCell>
+                  <TableCell align="right">{moment(row.createdAt).format("DD/MM/YYYY")}</TableCell>
+                  <TableCell align="right">{row.danToc}</TableCell>
+                  <TableCell align="right">{row.diaChi}</TableCell>
+                  <TableCell align="right">{row.email}</TableCell>
+                  <TableCell align="right">{row.gioiTinh}</TableCell>
+                  <TableCell align="right">{row.noiSinh}</TableCell>
+                  <TableCell align="right">{Number(row.tinhTrang)}</TableCell>
                   <TableCell align="right">
-                    <Button variant="contained" color="secondary" className={classes.button}>
+                    <Button onClick={() => this.openModalDeleteStudent(row)} variant="contained" color="secondary" className={classes.button}>
                       Xóa 
                     </Button>
                     &nbsp;
@@ -195,7 +233,7 @@ class InfoStudentManageTab extends React.Component {
                 <TablePagination
                   rowsPerPageOptions={[5, 10, 25]}
                   colSpan={12}
-                  count={rows.length}
+                  count={data.length}
                   rowsPerPage={rowsPerPage}
                   page={page}
                   onChangePage={this.handleChangePage}
@@ -204,6 +242,11 @@ class InfoStudentManageTab extends React.Component {
               </TableRow>
             </TableFooter>
           </Table>
+
+          <ModalDeleteStudent isModal={isModalDeleteStudent} 
+            onRef={this.onRefModalDeleteStudent}
+            closeModalDeleteStudent={this.closeModalDeleteStudent}
+            getAllStudent={this.getAllStudent}/>
         </div>
       </Paper>
     );
