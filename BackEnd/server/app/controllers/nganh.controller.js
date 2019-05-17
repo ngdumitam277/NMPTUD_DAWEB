@@ -88,7 +88,7 @@ exports.deleteNganh = async(req, res) => {
 
     Nganh.findOneAndRemove({key: key}, {rawResult: true})
     .then((result) => {
-        let maNganh = result.maNganh
+        let maNganh = result.value.maNganh
         NganhKhoi.remove({maNganh: maNganh})
         .then((result) => {
             res.send({message: "ok"})
