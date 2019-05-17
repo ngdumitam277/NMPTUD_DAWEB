@@ -698,6 +698,41 @@ exports.checkCookie = async (req, res) => {
     }
 }
 
+exports.getAllThiSinh = async (req, res) => {
+    TaiKhoan.find({loai: "TS"}, {_id: 0, __v: 0, anh34: 0, password: 0, tgDangKy: 0})
+    .then((result) => {
+        res.send(result)
+    })
+    .catch((err) => {
+        res.send({message: "Lỗi lấy tất cả thí sinh!"})
+        console.log("Lỗi lấy tất cả thí sinh!", err)
+    })
+}
+
+exports.getAllCanBo = async (req, res) => {
+    TaiKhoan.find({loai: "CB"}, {_id: 0, __v: 0, anh34: 0, password: 0, tgDangKy: 0})
+    .then((result) => {
+        res.send(result)
+    })
+    .catch((err) => {
+        res.send({message: "Lỗi lấy tất cả cán bộ!"})
+        console.log("Lỗi lấy tất cả cán bộ!", err)
+    })
+}
+
+exports.deleteTaiKhoan = async (req, res) => {
+    let username = req.params.username
+
+    TaiKhoan.findOneAndRemove({username: username}, {rawResult: true})
+    .then((result) => {
+        res.send({message: "ok"})
+    })
+    .catch((err) => {
+        res.send({message: "Lỗi xoá tài khoản theo username!"})
+        console.log(err, "deleteTaiKhoan")
+    })
+}
+
 async function checkCookie(data){
     let informationUser = {
         kt: false,
