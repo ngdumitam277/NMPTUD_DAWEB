@@ -37,7 +37,7 @@ const rows = [
     createData('KV5', 5)
 ];
 
-function RegulationManageTab(props) {
+function QuyChe(props) {
     const { classes } = props;
 
     return (
@@ -88,8 +88,8 @@ function RegulationManageTab(props) {
     );
 }
 
-RegulationManageTab.propTypes = {
+QuyChe.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(RegulationManageTab);
+export default withStyles(styles)(QuyChe);

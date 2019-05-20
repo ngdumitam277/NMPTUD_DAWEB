@@ -117,7 +117,7 @@ const styles = theme => ({
   },
 });
 
-class InfoStudentManageTab extends React.Component {
+class ThongTinTuyenSinh extends React.Component {
   constructor(props){
     super(props)
 
@@ -253,8 +253,8 @@ class InfoStudentManageTab extends React.Component {
   }
 }
 
-InfoStudentManageTab.propTypes = {
+ThongTinTuyenSinh.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(InfoStudentManageTab);
+export default withStyles(styles)(ThongTinTuyenSinh);
