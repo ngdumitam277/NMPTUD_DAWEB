@@ -113,7 +113,7 @@ const styles = theme => ({
     },
 });
 
-class CustomPaginationActionsTable extends React.Component {
+class LichSuDiem extends React.Component {
     state = {
         rows: [
             createData('P001', "Lý", 3.7, 10, "AD001", "20-12-2012", "sửa"),
@@ -204,8 +204,8 @@ class CustomPaginationActionsTable extends React.Component {
     }
 }
 
-CustomPaginationActionsTable.propTypes = {
+LichSuDiem.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(CustomPaginationActionsTable);
+export default withStyles(styles)(LichSuDiem);

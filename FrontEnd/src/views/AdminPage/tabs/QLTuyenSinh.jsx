@@ -19,7 +19,7 @@ import SubjectTab from "./SubjectTab";
 import KhoiThiTab from "./KhoiThiTab";
 import NganhThiTab from "./NganhThiTab";
 
-class StudentManageTab extends Component {
+class QLTuyenSinh extends Component {
   render() {
     const { classes, ...rest } = this.props;
     return (
@@ -58,4 +58,4 @@ class StudentManageTab extends Component {
   }
 }
 
-export default withStyles(tabsStyle)(StudentManageTab)
+export default withStyles(tabsStyle)(QLTuyenSinh)
