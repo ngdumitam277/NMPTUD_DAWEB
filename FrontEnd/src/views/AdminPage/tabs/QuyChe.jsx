@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -11,6 +11,11 @@ import Button from '@material-ui/core/Button';
 import red from '@material-ui/core/colors/red';
 import Icon from '@material-ui/core/Icon';
 import InputLabel from "@material-ui/core/InputLabel";
+import axios from 'axios'
+import { url } from 'variable/general.jsx'
+import ModalAddQuyChe from '../modals/ModalAddQuyChe';
+import ModalDeleteQuyChe from '../modals/ModalDeleteQuyChe';
+import ModalEditQuyChe from '../modals/ModalEditQuyChe';
 
 const styles = theme => ({
     root: {
@@ -29,23 +34,81 @@ function createData(name, diem) {
     return { id, name, diem };
 }
 
-const rows = [
-    createData('KV1', 1),
-    createData('KV2', 2),
-    createData('KV3', 3),
-    createData('KV4', 4),
-    createData('KV5', 5)
-];
+class QuyChe extends Component {
+    constructor(props){
+        super(props)
 
-function QuyChe(props) {
-    const { classes } = props;
+        this.state = {
+            data: [],
+            isModalAddQuyChe: false,
+            isModalDeleteQuyChe: false,
+            isModalEditQuyChe: false
+        }
+    }
 
-    return (
-        <div className={classes.container}>
+    getAllQuyChe = () => {
+        axios.get(`${url}web/khuvuc`)
+        .then((result) => {
+            let data = result.data
+
+            this.setState({data: data})
+        })
+        .catch((err) => {
+            console.log(err)
+        })
+    }
+
+    componentDidMount = () => {
+        this.getAllQuyChe()
+    }
+
+    setModalAddQuyChe = (isModal) => this.setState({isModalAddQuyChe: isModal})
+
+    openModalAddQuyChe = (event) => {
+        event.preventDefault()
+        this.setModalAddQuyChe(true)
+    }
+
+    closeModalAddQuyChe = () => {
+        this.setModalAddQuyChe(false)
+    }
+
+    setModalEditQuyChe = (isModal) => this.setState({isModalEditQuyChe: isModal})
+
+    openModalEditQuyChe = (data) => {
+        this.modalEditQuyCheRef.setDataQuyChe(data)
+        this.setModalEditQuyChe(true)
+    }
+
+    closeModalEditQuyChe = () => {
+        this.setModalEditQuyChe(false)
+    }
+
+    setModalDeleteQuyChe = (isModal) => this.setState({isModalDeleteQuyChe: isModal})
+
+    openModalDeleteQuyChe = (data) => {
+        this.modalDeleteQuyCheRef.setDataQuyChe(data)
+        this.setModalDeleteQuyChe(true)
+    }
+
+    closeModalDeleteQuyChe = () => {
+        this.setModalDeleteQuyChe(false)
+    }
+
+    onRefModalDeleteQuyChe = (ref) => this.modalDeleteQuyCheRef = ref
+
+    onRefModalEditQuyChe = (ref) => this.modalEditQuyCheRef = ref
+
+    render() {
+        const { data, isModalAddQuyChe, isModalDeleteQuyChe, isModalEditQuyChe } = this.state
+        const { classes } = this.props;
+
+        return (
+            <div className={classes.container}>
             <div className={classes.title}>
                 <h3>Quản lý quy chế</h3>
             </div>
-            <Button variant="contained" color="green" className={classes.button}>
+            <Button onClick={this.openModalAddQuyChe} variant="contained" color="green" className={classes.button}>
                 <Icon className={classes.iconHover} color="error" style={{ fontSize: 30 }}>
                     add_circle
             </Icon>
@@ -64,18 +127,18 @@ function QuyChe(props) {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows.map(row => (
+                        {data.map(row => (
                             <TableRow key={row.id}>
                                 <TableCell component="th" scope="row">
-                                    {row.name}
+                                    {row.maKhuVuc}
                                 </TableCell>
-                                <TableCell align="right">{row.diem}</TableCell>
+                                <TableCell align="right">{row.diemCong}</TableCell>
                                 <TableCell align="right">
-                                    <Button variant="contained" color="secondary" className={classes.button}>
+                                    <Button onClick={() => this.openModalDeleteQuyChe(row)} variant="contained" color="secondary" className={classes.button}>
                                         Xóa
                                     </Button>
                                     &nbsp;
-                                    <Button variant="contained" color="primary" className={classes.button}>
+                                    <Button onClick={() => this.openModalEditQuyChe(row)} variant="contained" color="primary" className={classes.button}>
                                         Sửa
                                     </Button>
                                 </TableCell>
@@ -84,8 +147,23 @@ function QuyChe(props) {
                     </TableBody>
                 </Table>
             </Paper>
+
+            <ModalAddQuyChe isModal={isModalAddQuyChe} 
+                closeModalAddQuyChe={this.closeModalAddQuyChe}
+                getAllQuyChe={this.getAllQuyChe}/>
+
+            <ModalEditQuyChe isModal={isModalEditQuyChe} 
+                onRef={this.onRefModalEditQuyChe}
+                closeModalEditQuyChe={this.closeModalEditQuyChe}
+                getAllQuyChe={this.getAllQuyChe}/>
+            
+            <ModalDeleteQuyChe isModal={isModalDeleteQuyChe} 
+                onRef={this.onRefModalDeleteQuyChe}
+                closeModalDeleteQuyChe={this.closeModalDeleteQuyChe}
+                getAllQuyChe={this.getAllQuyChe}/>
         </div>
-    );
+        )
+    }
 }
 
 QuyChe.propTypes = {
