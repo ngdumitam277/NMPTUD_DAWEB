@@ -23,6 +23,9 @@ import { url } from 'variable/general.jsx'
 import ModalAddNganhThi from '../modals/ModalAddNganhThi';
 import ModalEditNganhThi from '../modals/ModalEditNganhThi';
 import ModalDeleteNganhThi from '../modals/ModalDeleteNganhThi';
+import ModalAddNganhKhoi from '../modals/ModalAddNganhKhoi';
+import ModalEditNganhKhoi from '../modals/ModalEditNganhKhoi';
+import ModalDeleteNganhKhoi from '../modals/ModalDeleteNganhKhoi';
 
 class BranchTab extends Component {
     constructor(props) {
@@ -32,7 +35,10 @@ class BranchTab extends Component {
             data: [],
             isModalAddNganhThi: false,
             isModalEditNganhThi: false,
-            isModalDeleteNganhThi: false
+            isModalDeleteNganhThi: false,
+            isModalAddKhoiThi: false,
+            isModalEditKhoiThi: false,
+            isModalDeleteKhoiThi: false,
         }
 
         this.modalEditNganhThiRef = React.createRef()
@@ -65,6 +71,17 @@ class BranchTab extends Component {
         this.setModalAddNganhThi(false)
     }
 
+    setModalAddKhoiThi = (isModal) => this.setState({ isModalAddKhoiThi: isModal })
+
+    openModalAddKhoiThi = (data) => {
+        this.modalAddKhoiThiRef.setDataKhoiThi(data)
+        this.setModalAddKhoiThi(true)
+    }
+
+    closeModalAddKhoiThi = () => {
+        this.setModalAddKhoiThi(false)
+    }
+
     setModalEditNganhThi = (isModal) => this.setState({ isModalEditNganhThi: isModal })
 
     openModalEditNganhThi = (data) => {
@@ -87,13 +104,42 @@ class BranchTab extends Component {
         this.setModalDeleteNganhThi(false)
     }
 
+    setModalEditKhoiThi = (isModal) => this.setState({ isModalEditKhoiThi: isModal })
+
+    openModalEditKhoiThi = (data, maNganh) => {
+        this.modalEditKhoiThiRef.setDataKhoiThi(data, maNganh)
+        this.setModalEditKhoiThi(true)
+    }
+
+    closeModalEditKhoiThi = () => {
+        this.setModalEditKhoiThi(false)
+    }
+
+    setModalDeleteKhoiThi = (isModal) => this.setState({ isModalDeleteKhoiThi: isModal })
+
+    openModalDeleteKhoiThi = (data, maNganh) => {
+        this.modalDeleteKhoiThiRef.setDataKhoiThi(data, maNganh)
+        this.setModalDeleteKhoiThi(true)
+    }
+
+    closeModalDeleteKhoiThi = () => {
+        this.setModalDeleteKhoiThi(false)
+    }
+
     onRefModalDeleteNganhThi = (ref) => this.modalDeleteNganhThiRef = ref
 
     onRefModalEditNganhThi = (ref) => this.modalEditNganhThiRef = ref
 
+    onRefModalDeleteKhoiThi = (ref) => this.modalDeleteKhoiThiRef = ref
+
+    onRefModalEditKhoiThi = (ref) => this.modalEditKhoiThiRef = ref
+
+    onRefModalAddKhoiThi = (ref) => this.modalAddKhoiThiRef = ref
+
     render() {
         const { classes } = this.props;
-        let { data, isModalAddNganhThi, isModalDeleteNganhThi, isModalEditNganhThi } = this.state
+        let { data, isModalAddNganhThi, isModalDeleteNganhThi, isModalEditNganhThi,
+        isModalAddKhoiThi, isModalDeleteKhoiThi, isModalEditKhoiThi } = this.state
    
         return (
             <div className={classes.container}>
@@ -150,10 +196,14 @@ class BranchTab extends Component {
                                         <InputLabel className={classes.label}>
                                             Khối thi
                                         </InputLabel>
-                                        <UnitTable data={rows.khoi}/>
+                                        <UnitTable 
+                                            data={rows.khoi}
+                                            maNganh={rows.maNganh}
+                                            openModalEditKhoiThi={this.openModalEditKhoiThi}
+                                            openModalDeleteKhoiThi={this.openModalDeleteKhoiThi}/>
                                     </GridItem>
                                     <GridItem xs={4} sm={4} md={4}>
-                                        <Button style={{ marginTop: 50 }} variant="contained" color="green" className={classes.button}>
+                                        <Button onClick={() => this.openModalAddKhoiThi(rows)} style={{ marginTop: 50 }} variant="contained" color="green" className={classes.button}>
                                             Thêm khối
                                         </Button>
                                     </GridItem>
@@ -185,6 +235,21 @@ class BranchTab extends Component {
                 <ModalDeleteNganhThi isModal={isModalDeleteNganhThi} 
                     onRef={this.onRefModalDeleteNganhThi}
                     closeModalDeleteNganhThi={this.closeModalDeleteNganhThi}
+                    getAllNganhThi={this.getAllNganhThi}/>
+
+                <ModalAddNganhKhoi isModal={isModalAddKhoiThi} 
+                    onRef={this.onRefModalAddKhoiThi}
+                    closeModalAddKhoiThi={this.closeModalAddKhoiThi}
+                    getAllNganhThi={this.getAllNganhThi}/>
+
+                <ModalEditNganhKhoi isModal={isModalEditKhoiThi} 
+                    onRef={this.onRefModalEditKhoiThi}
+                    closeModalEditKhoiThi={this.closeModalEditKhoiThi}
+                    getAllNganhThi={this.getAllNganhThi}/>
+                
+                <ModalDeleteNganhKhoi isModal={isModalDeleteKhoiThi} 
+                    onRef={this.onRefModalDeleteKhoiThi}
+                    closeModalDeleteKhoiThi={this.closeModalDeleteKhoiThi}
                     getAllNganhThi={this.getAllNganhThi}/>
             </div>
         )

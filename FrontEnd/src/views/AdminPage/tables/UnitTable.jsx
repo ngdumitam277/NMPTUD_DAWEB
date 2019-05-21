@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -32,41 +32,43 @@ const rows = [
 
 ];
 
-function UnitTable(props) {
-  const { classes, data } = props;
+class UnitTable extends Component {
+  render() {
+    const { classes, data } = this.props;
 
-  return (
-    <Paper className={classes.root}>
-      <Table className={classes.table}>
-        <TableHead>
-          <TableRow>
-            <TableCell>Tên khối</TableCell>
-            <TableCell align="center">Điểm chuẩn</TableCell>
-            <TableCell align="center">Tùy chỉnh</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {data.map(row => (
-            <TableRow key={row.id}>
-              <TableCell component="th" scope="row">
-                {row.tenKhoi}
-              </TableCell>
-              <TableCell align="right">{row.diemChuan}</TableCell>
-              <TableCell>
-                <Button variant="contained" color="secondary" className={classes.button}>
-                    Xóa
-                </Button>
-                &nbsp;
-                <Button variant="contained" color="primary" className={classes.button}>
-                    Sửa
-                </Button>
-              </TableCell>
+    return (
+      <Paper className={classes.root}>
+        <Table className={classes.table}>
+          <TableHead>
+            <TableRow>
+              <TableCell>Tên khối</TableCell>
+              <TableCell align="center">Điểm chuẩn</TableCell>
+              <TableCell align="center">Tùy chỉnh</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </Paper>
-  );
+          </TableHead>
+          <TableBody>
+            {data.map(row => (
+              <TableRow key={row.id}>
+                <TableCell component="th" scope="row">
+                  {row.tenKhoi}
+                </TableCell>
+                <TableCell align="right">{row.diemChuan}</TableCell>
+                <TableCell>
+                  <Button onClick={() => this.props.openModalDeleteKhoiThi(row, this.props.maNganh)} variant="contained" color="secondary" className={classes.button}>
+                      Xóa
+                  </Button>
+                  &nbsp;
+                  <Button onClick={() => this.props.openModalEditKhoiThi(row, this.props.maNganh)} variant="contained" color="primary" className={classes.button}>
+                      Sửa
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Paper>
+    );
+  }
 }
 
 UnitTable.propTypes = {
