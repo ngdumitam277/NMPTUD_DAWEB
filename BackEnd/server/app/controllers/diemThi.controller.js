@@ -38,3 +38,44 @@ exports.taoDiemThi = async(req, res) => {
         res.send({message: "Lỗi tạo điểm thi"})
     }
 };
+
+// lấy tất cả điểm thi
+exports.getAllDiemThi = async(req, res) => {
+    DiemThi.find({}, {_id: 0, createdAt: 0, updatedAt: 0, __v: 0})
+    .then((result) => {
+        res.send(result)
+    })
+    .catch((err) => {
+        res.send({message: "Lỗi lấy tất cả các điểm thi!"})
+        console.log(err, "getAllDiemThi")
+    })
+};
+
+// sửa 1 điểm thi theo mã điểm
+exports.updateDiemThi = async(req, res) => {
+    let maDiem = req.params.maDiem
+    let body = req.body
+
+    DiemThi.findOneAndUpdate({maDiem: maDiem}, body, {new: true})
+    .then((result) => {
+        res.send({message: "ok"})
+    })
+    .catch((err) => {
+        res.send({message: "Lỗi sửa điểm thi theo key!"})
+        console.log(err, "updateDiemThi")
+    })
+};
+
+// xoá 1 điểm thi theo mã điểm
+exports.deleteDiemThi = async(req, res) => {
+    let maDiem = req.params.maDiem
+
+    DiemThi.findOneAndRemove({maDiem: maDiem}, {rawResult: true})
+    .then((result) => {
+        res.send({message: "ok"})
+    })
+    .catch((err) => {
+        res.send({message: "Lỗi xoá điểm thi theo key!"})
+        console.log(err, "deleteDiemThi")
+    })
+};
