@@ -165,7 +165,7 @@ class ThongTinTuyenSinh extends React.Component {
   }
 
   closeModalDeleteStudent = () => {
-    this.setModalDeleteStudent(true)
+    this.setModalDeleteStudent(false)
   }
 
   onRefModalDeleteStudent = (ref) => this.modalDeleteStudentRef = ref
