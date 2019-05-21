@@ -9,10 +9,10 @@ exports.taoDiemThi = async(req, res) => {
     let phach = Number(req.body.phach)
 
     try{
-        if(maDiem !== "" && !isNaN(diem) && !isNaN(phach)){
-            let exist = await DiemThi.find({maDiem: maDiem})
+        if(!isNaN(diem) && !isNaN(phach)){
+            let exist = await DiemThi.find({phach: phach})
             if(exist.length > 0){
-                res.send({message: "Điểm thi đã tồn tại!"})
+                res.send({message: "Phách này đã tồn tại!"})
             }
     
             const diemthi = new DiemThi({
@@ -30,8 +30,8 @@ exports.taoDiemThi = async(req, res) => {
                 res.send({message: "Lỗi tạo điểm thi"})
             })
         }else{
-            console.log("taoDiemThi", "maDiem không được rỗng!")
-            res.send({message: "maDiem không được rỗng!"})
+            console.log("taoDiemThi", "Lỗi phách hoặc điểm không phải là số!")
+            res.send({message: "Lỗi phách hoặc điểm không phải là số!"})
         }
     }catch(err){
         console.log("taoDiemThi", err)
@@ -41,7 +41,7 @@ exports.taoDiemThi = async(req, res) => {
 
 // lấy tất cả điểm thi
 exports.getAllDiemThi = async(req, res) => {
-    DiemThi.find({}, {_id: 0, createdAt: 0, updatedAt: 0, __v: 0})
+    DiemThi.find({}, {createdAt: 0, updatedAt: 0, __v: 0})
     .then((result) => {
         res.send(result)
     })
@@ -51,31 +51,31 @@ exports.getAllDiemThi = async(req, res) => {
     })
 };
 
-// sửa 1 điểm thi theo mã điểm
+// sửa 1 điểm thi theo id
 exports.updateDiemThi = async(req, res) => {
-    let maDiem = req.params.maDiem
+    let id = req.params.id
     let body = req.body
 
-    DiemThi.findOneAndUpdate({maDiem: maDiem}, body, {new: true})
+    DiemThi.findOneAndUpdate({_id: id}, body, {new: true})
     .then((result) => {
         res.send({message: "ok"})
     })
     .catch((err) => {
-        res.send({message: "Lỗi sửa điểm thi theo key!"})
+        res.send({message: "Lỗi sửa điểm thi theo id!"})
         console.log(err, "updateDiemThi")
     })
 };
 
-// xoá 1 điểm thi theo mã điểm
+// xoá 1 điểm thi theo id
 exports.deleteDiemThi = async(req, res) => {
-    let maDiem = req.params.maDiem
+    let id = req.params.id
 
-    DiemThi.findOneAndRemove({maDiem: maDiem}, {rawResult: true})
+    DiemThi.findOneAndRemove({_id: id}, {rawResult: true})
     .then((result) => {
         res.send({message: "ok"})
     })
     .catch((err) => {
-        res.send({message: "Lỗi xoá điểm thi theo key!"})
+        res.send({message: "Lỗi xoá điểm thi theo id!"})
         console.log(err, "deleteDiemThi")
     })
 };

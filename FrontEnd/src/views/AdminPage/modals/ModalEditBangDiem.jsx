@@ -52,58 +52,68 @@ const styles = theme => ({
     ...componentsStyle
 });
 
-class ModalEditQuyChe extends Component {
+class ModalEditBangDiem extends Component {
     constructor(props){
         super(props)
 
         this.state = {
-            maKhuVuc: "",
-            diemCong: 0
+            tenMon: "",
+            diem: 0,
+            phach: 0,
+            id: ""
         }
     }
 
-    clickEditQuyChe = (event) => {
+    clickEditBangDiem = (event) => {
         event.preventDefault()
 
-        axios.put(`${url}web/khuvuc/${this.state.maKhuVuc}`, {
-            diemCong: this.state.diemCong
+        axios.put(`${url}web/diemthi/${this.state.id}`, {
+            mon: this.state.tenMon,
+            diem: this.state.diem,
+            phach: this.state.phach
         })
         .then((response) => {
             let result = response.data
             if(result.message === "ok"){
-                alert("Sửa quy chế thành công!")
+                alert("Sửa điểm thi thành công!")
             }else{
                 alert(result.message)
             }
 
-            this.props.closeModalEditQuyChe()
-            this.props.getAllQuyChe()
+            this.props.closeModalEditBangDiem()
+            this.props.getAllBangDiem()
         })
         .catch((err) => {
-            alert("Sửa quy chế thất bại!")
+            alert("Sửa điểm thi thất bại!")
             console.log(err)
         })
     }
 
-    onChangeMaKhuVuc = (event) => {
-        this.setState({maKhuVuc: event.target.value})
+    onChangeTenMon = (event) => {
+        this.setState({tenMon: event.target.value})
     }
 
-    onChangeDiemCong = (event) => {
-        if(Number(event.target.value) >= 0 && Number(event.target.value) <= 99){
-            this.setState({diemCong: Number(event.target.value)})
+    onChangeDiem = (event) => {
+        if(Number(event.target.value) >= 0 && Number(event.target.value) <= 10){
+            this.setState({diem: Number(event.target.value)})
         }
+    }
+
+    onChangePhach = (event) => {
+        this.setState({phach: Number(event.target.value)})
     }
 
     componentDidMount = () => {
         this.props.onRef(this)
     }
 
-    setDataQuyChe = (data) => {
+    setDataBangDiem = (data) => {
         try{
             this.setState({
-                maKhuVuc: data.maKhuVuc,
-                diemCong: data.diemCong
+                tenMon: data.mon,
+                diem: data.diem,
+                phach: data.phach,
+                id: data._id
             })
         }catch(err){
             console.log(err)
@@ -112,33 +122,43 @@ class ModalEditQuyChe extends Component {
 
     render() {
         let { isModal, classes, ...rest } = this.props
-        let { maKhuVuc, diemCong } = this.state
+        let { tenMon, diem, phach } = this.state
 
         return (
             <Modal open={isModal}
                 aria-labelledby="simple-modal-title"
                 aria-describedby="simple-modal-description"
-                onClose={this.props.closeModalEditQuyChe}
+                onClose={this.props.closeModalEditBangDiem}
             >
                 <div style={getModalStyle()} className={classes.paper}>
                     <div className={classes.title}>
                         <h3>Sửa Ngành Thi</h3>
                     </div>
                     <form className={classes.container} noValidate autoComplete="off">
-                    <TextField
-                            id="ten-khu-vuc"
-                            label="Tên Khu Vực"
-                            value={maKhuVuc}
-                            onChange={this.onChangeMaKhuVuc}
+                        <TextField
+                            id="ten-mon"
+                            label="Tên Môn"
+                            value={tenMon}
+                            onChange={this.onChangeTenMon}
                             className={classes.textField}
                             margin="normal"
                             variant="outlined"
                         />
                         <TextField
-                            id="diem-cong"
-                            label="Điểm Cộng"
-                            value={diemCong}
-                            onChange={this.onChangeDiemCong}
+                            id="diem"
+                            label="Điểm"
+                            value={diem}
+                            onChange={this.onChangeDiem}
+                            className={classes.textField}
+                            type="number"
+                            margin="normal"
+                            variant="outlined"
+                        />
+                        <TextField
+                            id="phach"
+                            label="Phách"
+                            value={phach}
+                            onChange={this.onChangePhach}
                             className={classes.textField}
                             type="number"
                             margin="normal"
@@ -150,16 +170,16 @@ class ModalEditQuyChe extends Component {
                         <Button
                             style={{marginRight: 5}}
                             variant="outlined"
-                            href="#huyModalEditQuyChe"
-                            onClick={this.props.closeModalEditQuyChe}
+                            href="#huyModalEditBangDiem"
+                            onClick={this.props.closeModalEditBangDiem}
                         >
                             Huỷ
                         </Button>
                         <Button
                             style={{marginLeft: 5}}
                             variant="outlined"
-                            href="#themNganhThi"
-                            onClick={this.clickEditQuyChe}
+                            href="#editBangDiem"
+                            onClick={this.clickEditBangDiem}
                         >
                             Sửa
                         </Button>
@@ -170,4 +190,4 @@ class ModalEditQuyChe extends Component {
     }
 }
 
-export default withStyles(styles)(ModalEditQuyChe)
+export default withStyles(styles)(ModalEditBangDiem)

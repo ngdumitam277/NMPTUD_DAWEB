@@ -88,7 +88,7 @@ class ModalAddQuyChe extends Component {
         this.setState({maKhuVuc: event.target.value})
     }
 
-    onChangediemCong = (event) => {
+    onChangeDiemCong = (event) => {
         if(event.target.value >= 0 && event.target.value <= 99){
             this.setState({diemCong: event.target.value})
         }
@@ -122,7 +122,7 @@ class ModalAddQuyChe extends Component {
                             id="diem-cong"
                             label="Điểm Cộng"
                             value={diemCong}
-                            onChange={this.onChangediemCong}
+                            onChange={this.onChangeDiemCong}
                             className={classes.textField}
                             type="number"
                             margin="normal"
