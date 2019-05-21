@@ -27,74 +27,82 @@ import ProfileUser from '../tabs/ProfileUser';
 import QuyChe from '../tabs/QuyChe';
 import ThongTinTuyenSinh from '../tabs/ThongTinTuyenSinh';
 import BangDiem from '../tabs/BangDiem';
+import ThongKeTab from '../tabs/thongke/ThongKeTab';
 class SectionAdmin extends Component {
-    render() {
-        const { classes } = this.props;
-        return (
-            <div className={classes.section}>
-            <div className={classes.container}>
-              <div id="navigation-pills">
-                <div className={classes.title}>
-                  <h3>Quản lý tuyển sinh</h3>
-                </div>
-                <GridContainer>
-                <GridItem xs={12} sm={12} md={12} lg={12}>
-                    <NavPills
-                      color="rose"
-                      horizontal={{
-                        tabsGrid: { xs: 12, sm: 2, md: 2 },
-                        contentGrid: { xs: 12, sm: 10, md: 10 }
-                      }}
-                      tabs={[
-                        {
-                          tabButton: "Cá nhân",
-                          tabIcon: Schedule,
-                          tabContent: (<ProfileUser/>)
-                        },
-                        {
-                          tabButton: "Tuyển sinh",
-                          tabIcon: Schedule,
-                          tabContent: (
-                            <QLTuyenSinh/>
-                          )
-                        },
-                        {
-                          tabButton: "Thông tin-TS",
-                          tabIcon: Schedule,
-                          tabContent: (
-                            <ThongTinTuyenSinh/>
-                          )
-                        },
-                        {
-                            tabButton: "Quy chế",
-                            tabIcon: Schedule,
-                            tabContent: (
-                             <QuyChe/>
-                            )
-                          },
-                          {
-                            tabButton: "Q.L Điểm",
-                            tabIcon: Schedule,
-                            tabContent: (
-                              <BangDiem/>
-                            )
-                          },
-                          {
-                            tabButton: "Lịch sử điểm",
-                            tabIcon: Schedule,
-                            tabContent: (
-                              <LichSuDiem/>
-                            )
-                          }
-                      ]}
-                    />
-                  </GridItem>
-                </GridContainer>
-              </div>
+  render() {
+    const { classes } = this.props;
+    return (
+      <div className={classes.section}>
+        <div className={classes.container}>
+          <div id="navigation-pills">
+            <div className={classes.title}>
+              <h3>Quản lý tuyển sinh</h3>
             </div>
+            <GridContainer>
+              <GridItem xs={12} sm={12} md={12} lg={12}>
+                <NavPills
+                  color="rose"
+                  horizontal={{
+                    tabsGrid: { xs: 12, sm: 2, md: 2 },
+                    contentGrid: { xs: 12, sm: 10, md: 10 }
+                  }}
+                  tabs={[
+                    {
+                      tabButton: "Cá nhân",
+                      tabIcon: Schedule,
+                      tabContent: (<ProfileUser />)
+                    },
+                    {
+                      tabButton: "Tuyển sinh",
+                      tabIcon: Schedule,
+                      tabContent: (
+                        <QLTuyenSinh />
+                      )
+                    },
+                    {
+                      tabButton: "Thông tin-TS",
+                      tabIcon: Schedule,
+                      tabContent: (
+                        <ThongTinTuyenSinh />
+                      )
+                    },
+                    {
+                      tabButton: "Quy chế",
+                      tabIcon: Schedule,
+                      tabContent: (
+                        <QuyChe />
+                      )
+                    },
+                    {
+                      tabButton: "Q.L Điểm",
+                      tabIcon: Schedule,
+                      tabContent: (
+                        <BangDiem />
+                      )
+                    },
+                    {
+                      tabButton: "Lịch sử điểm",
+                      tabIcon: Schedule,
+                      tabContent: (
+                        <LichSuDiem />
+                      )
+                    },
+                    {
+                      tabButton: "Thống kê",
+                      tabIcon: Schedule,
+                      tabContent: (
+                        <ThongKeTab />
+                      )
+                    }
+                  ]}
+                />
+              </GridItem>
+            </GridContainer>
           </div>
-        )
-    }
+        </div>
+      </div>
+    )
+  }
 }
 
 export default withStyles(componentsStyle)(SectionAdmin);
