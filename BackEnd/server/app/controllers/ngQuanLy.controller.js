@@ -18,27 +18,27 @@ exports.taonguoiquanly = async(req, res) => {
             let exist = await ngQuanLy.find({username: username})
             if(exist.length > 0){
                 res.send({message: "Người quản lý đã tồn tại!"})
+            }else{
+                const quanly = new ngQuanLy({
+                    username: username,
+                    namTuyenSinh: namTuyenSinh,
+                    tgNhanHoSo: tgNhanHoSo,
+                    tgKTnhanHoSo: tgKTnhanHoSo,
+                    tgCongBoKQ: tgCongBoKQ,
+                    tgKTcongBoKQ: tgKTcongBoKQ,
+                    tgPhucKhao: tgPhucKhao,
+                    tgKTphucKhao: tgKTphucKhao,
+                    maXacThucCB: maXacThucCB
+                })
+            
+                quanly.save()
+                .then((result) => {
+                    res.send({message: "ok"});
+                }).catch(err => {
+                    console.log("taonguoiquanly", err)
+                    res.send({message: "Lỗi tạo người quản lý"})
+                })
             }
-    
-            const quanly = new ngQuanLy({
-                username: username,
-                namTuyenSinh: namTuyenSinh,
-                tgNhanHoSo: tgNhanHoSo,
-                tgKTnhanHoSo: tgKTnhanHoSo,
-                tgCongBoKQ: tgCongBoKQ,
-                tgKTcongBoKQ: tgKTcongBoKQ,
-                tgPhucKhao: tgPhucKhao,
-                tgKTphucKhao: tgKTphucKhao,
-                maXacThucCB: maXacThucCB
-            })
-        
-            quanly.save()
-            .then((result) => {
-                res.send({message: "ok"});
-            }).catch(err => {
-                console.log("taonguoiquanly", err)
-                res.send({message: "Lỗi tạo người quản lý"})
-            })
         }else{
             console.log("taonguoiquanly", "username không được rỗng!")
             res.send({message: "Username không được rỗng!"})

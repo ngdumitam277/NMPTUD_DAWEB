@@ -18,27 +18,27 @@ exports.taoThiSinh = async(req, res) => {
             let exist = await ThiSinh.find({usernamets: usernamets})
             if(exist.length > 0){
                 res.send({message: "Thí sinh đã tồn tại!"})
+            }else{
+                const thisinh = new ThiSinh({
+                    usernamets: usernamets,
+                    SBD: SBD,
+                    tenTHPT: tenTHPT,
+                    namTotNghiep: namTotNghiep,
+                    anhMinhChung: anhMinhChung,
+                    ttTuyenSinh: ttTuyenSinh,
+                    Phach: Phach,
+                    maKhuVuc: maKhuVuc,
+                    maDoiTuong: maDoiTuong
+                })
+            
+                thisinh.save()
+                .then((result) => {
+                    res.send({message: "Tạo thí sinh thành công!"});
+                }).catch(err => {
+                    console.log("taoThiSinh", err)
+                    res.send({message: "Lỗi tạo thí sinh"})
+                })
             }
-    
-            const thisinh = new ThiSinh({
-                usernamets: usernamets,
-                SBD: SBD,
-                tenTHPT: tenTHPT,
-                namTotNghiep: namTotNghiep,
-                anhMinhChung: anhMinhChung,
-                ttTuyenSinh: ttTuyenSinh,
-                Phach: Phach,
-                maKhuVuc: maKhuVuc,
-                maDoiTuong: maDoiTuong
-            })
-        
-            thisinh.save()
-            .then((result) => {
-                res.send({message: "Tạo thí sinh thành công!"});
-            }).catch(err => {
-                console.log("taoThiSinh", err)
-                res.send({message: "Lỗi tạo thí sinh"})
-            })
         }else{
             console.log("taoThiSinh", "usernamets không được rỗng!")
             res.send({message: "usernamets không được rỗng!"})

@@ -10,20 +10,25 @@ exports.taoNganhKhoi = async(req, res) => {
 
     try{
         if(maNganh !== "" && !isNaN(diemChuan) && !isNaN(slTSthiNganhKhoi)){
-            const nganh = new NganhKhoi({
-                maNganh: maNganh,
-                tenKhoi: tenKhoi,
-                diemChuan: diemChuan,
-                slTSthiNganhKhoi: slTSthiNganhKhoi
-            })
-        
-            nganh.save()
-            .then((result) => {
-                res.send({message: "ok"});
-            }).catch(err => {
-                console.log("taoNganhKhoi", err)
-                res.send({message: "Lỗi tạo ngành khối"})
-            })
+            let exist = await NganhKhoi.find({tenKhoi: tenKhoi, maNganh: maNganh})
+            if(exist.length > 0){
+                res.send({message: "Khối đã tồn tại!"})
+            }else{
+                const nganh = new NganhKhoi({
+                    maNganh: maNganh,
+                    tenKhoi: tenKhoi,
+                    diemChuan: diemChuan,
+                    slTSthiNganhKhoi: slTSthiNganhKhoi
+                })
+            
+                nganh.save()
+                .then((result) => {
+                    res.send({message: "ok"});
+                }).catch(err => {
+                    console.log("taoNganhKhoi", err)
+                    res.send({message: "Lỗi tạo ngành khối"})
+                })
+            }
         }else{
             console.log("taoNganhKhoi", "maNganh không được rỗng!")
             res.send({message: "maNganh không được rỗng!"})
@@ -36,12 +41,12 @@ exports.taoNganhKhoi = async(req, res) => {
 
 // sửa 1 ngành khối theo key ngành và tên khối
 exports.updateNganhKhoi = async(req, res) => {
-    let keyNganh = req.params.keyNganh
+    let maNganh = req.params.maNganh
     let tenKhoi = req.params.tenKhoi
     let diemChuan = Number(req.body.diemChuan) ? Number(req.body.diemChuan) : 0
     let slTSthiNganhKhoi = Number(req.body.diemChuan) ? Number(req.body.diemChuan) : 0
 
-    NganhKhoi.findOneAndUpdate({keyNganh: keyNganh, tenKhoi: tenKhoi}, {
+    NganhKhoi.findOneAndUpdate({maNganh: maNganh, tenKhoi: tenKhoi}, {
         diemChuan: diemChuan,
         slTSthiNganhKhoi: slTSthiNganhKhoi
     }, {new: true})
@@ -56,10 +61,10 @@ exports.updateNganhKhoi = async(req, res) => {
 
 // xoá 1 ngành khối theo key ngành và tên khối
 exports.deleteNganhKhoi = async(req, res) => {
-    let keyNganh = req.params.keyNganh
+    let maNganh = req.params.maNganh
     let tenKhoi = req.params.tenKhoi
 
-    NganhKhoi.findOneAndRemove({keyNganh: keyNganh, tenKhoi: tenKhoi}, {rawResult: true})
+    NganhKhoi.findOneAndRemove({maNganh: maNganh, tenKhoi: tenKhoi}, {rawResult: true})
     .then((result) => {
         res.send({message: "ok"})
     })

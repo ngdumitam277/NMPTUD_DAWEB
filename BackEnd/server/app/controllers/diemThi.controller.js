@@ -13,22 +13,22 @@ exports.taoDiemThi = async(req, res) => {
             let exist = await DiemThi.find({phach: phach})
             if(exist.length > 0){
                 res.send({message: "Phách này đã tồn tại!"})
+            }else{
+                const diemthi = new DiemThi({
+                    maDiem: maDiem,
+                    mon: mon,
+                    diem: diem,
+                    phach: phach
+                })
+            
+                diemthi.save()
+                .then((result) => {
+                    res.send({message: "ok"});
+                }).catch(err => {
+                    console.log("taoDiemThi", err)
+                    res.send({message: "Lỗi tạo điểm thi"})
+                })
             }
-    
-            const diemthi = new DiemThi({
-                maDiem: maDiem,
-                mon: mon,
-                diem: diem,
-                phach: phach
-            })
-        
-            diemthi.save()
-            .then((result) => {
-                res.send({message: "ok"});
-            }).catch(err => {
-                console.log("taoDiemThi", err)
-                res.send({message: "Lỗi tạo điểm thi"})
-            })
         }else{
             console.log("taoDiemThi", "Lỗi phách hoặc điểm không phải là số!")
             res.send({message: "Lỗi phách hoặc điểm không phải là số!"})

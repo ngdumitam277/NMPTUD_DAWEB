@@ -13,22 +13,22 @@ exports.taoKhoi = async(req, res) => {
             let exist = await Khoi.find({tenKhoi: tenKhoi})
             if(exist.length > 0){
                 res.send({message: "Khối đã tồn tại!"})
+            }else{
+                const khoi = new Khoi({
+                    tenKhoi: tenKhoi,
+                    diemTBkhoi: diemTBkhoi,
+                    slThiSinh: slThiSinh,
+                    key: key
+                })
+            
+                khoi.save()
+                .then((result) => {
+                    res.send({message: "ok"});
+                }).catch(err => {
+                    console.log("taoKhoi", err)
+                    res.send({message: "Lỗi tạo khối"})
+                })
             }
-    
-            const khoi = new Khoi({
-                tenKhoi: tenKhoi,
-                diemTBkhoi: diemTBkhoi,
-                slThiSinh: slThiSinh,
-                key: key
-            })
-        
-            khoi.save()
-            .then((result) => {
-                res.send({message: "ok"});
-            }).catch(err => {
-                console.log("taoKhoi", err)
-                res.send({message: "Lỗi tạo khối"})
-            })
         }else{
             console.log("taoKhoi", "tenKhoi không được rỗng!")
             res.send({message: "tenKhoi không được rỗng!"})

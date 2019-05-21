@@ -18,27 +18,27 @@ exports.taoPhanHoi = async(req, res) => {
             let exist = await PhanHoi.find({maPH: maPH})
             if(exist.length > 0){
                 res.send({message: "Phản hồi đã tồn tại!"})
+            }else{
+                const phanhoi = new PhanHoi({
+                    maPH: maPH,
+                    usernamecb: usernamecb,
+                    usernamets: usernamets,
+                    noidungTSchat: noidungTSchat,
+                    noidungNgNhapDataChat: noidungNgNhapDataChat,
+                    anhMinhChung: anhMinhChung,
+                    trangThai: trangThai,
+                    tgTSnhap: tgTSnhap,
+                    tgNgNhapDataNhap: tgNgNhapDataNhap
+                })
+            
+                phanhoi.save()
+                .then((result) => {
+                    res.send({message: "ok"});
+                }).catch(err => {
+                    console.log("taoPhanHoi", err)
+                    res.send({message: "Lỗi tạo phản hồi"})
+                })
             }
-    
-            const phanhoi = new PhanHoi({
-                maPH: maPH,
-                usernamecb: usernamecb,
-                usernamets: usernamets,
-                noidungTSchat: noidungTSchat,
-                noidungNgNhapDataChat: noidungNgNhapDataChat,
-                anhMinhChung: anhMinhChung,
-                trangThai: trangThai,
-                tgTSnhap: tgTSnhap,
-                tgNgNhapDataNhap: tgNgNhapDataNhap
-            })
-        
-            phanhoi.save()
-            .then((result) => {
-                res.send({message: "ok"});
-            }).catch(err => {
-                console.log("taoPhanHoi", err)
-                res.send({message: "Lỗi tạo phản hồi"})
-            })
         }else{
             console.log("taoPhanHoi", "maPH không được rỗng!")
             res.send({message: "maPH không được rỗng!"})
