@@ -7,9 +7,9 @@ module.exports = (app) => {
     // lấy tất cả điểm thi
     app.get('/web/diemthi', DiemThi.getAllDiemThi);
 
-    // sửa 1 điểm thi theo mã điểm
-    app.put('/web/diemthi/:maDiem', DiemThi.updateDiemThi);
+    // sửa 1 điểm thi theo id
+    app.put('/web/diemthi/:id', DiemThi.updateDiemThi);
 
-    // xoá 1 điểm thi theo mã điểm
-    app.delete('/web/diemthi/:maDiem', DiemThi.deleteDiemThi);
+    // xoá 1 điểm thi theo id
+    app.delete('/web/diemthi/:id', DiemThi.deleteDiemThi);
 }
