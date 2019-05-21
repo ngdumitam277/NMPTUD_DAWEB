@@ -15,23 +15,23 @@ exports.taoNganh = async(req, res) => {
             let exist = await Nganh.find({maNganh: maNganh})
             if(exist.length > 0){
                 res.send({message: "Ngành đã tồn tại!"})
+            }else{
+                const nganh = new Nganh({
+                    maNganh: maNganh,
+                    chiTieuNganh: chiTieuNganh,
+                    thongTin: thongTin,
+                    key: key,
+                    tenNganh: tenNganh
+                })
+            
+                nganh.save()
+                .then((result) => {
+                    res.send({message: "ok"});
+                }).catch(err => {
+                    console.log("taoNganh", err)
+                    res.send({message: "Lỗi tạo ngành"})
+                })
             }
-    
-            const nganh = new Nganh({
-                maNganh: maNganh,
-                chiTieuNganh: chiTieuNganh,
-                thongTin: thongTin,
-                key: key,
-                tenNganh: tenNganh
-            })
-        
-            nganh.save()
-            .then((result) => {
-                res.send({message: "ok"});
-            }).catch(err => {
-                console.log("taoNganh", err)
-                res.send({message: "Lỗi tạo ngành"})
-            })
         }else{
             console.log("taoNganh", "maNganh không được rỗng!")
             res.send({message: "maNganh không được rỗng!"})
