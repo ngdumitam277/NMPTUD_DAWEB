@@ -14,23 +14,23 @@ exports.taoMon = async(req, res) => {
             let exist = await Mon.find({tenMon: tenMon})
             if(exist.length > 0){
                 res.send({message: "Môn thi đã tồn tại!"})
+            }else{
+                const mon = new Mon({
+                    tenMon: tenMon,
+                    diemTBmon: diemTBmon,
+                    phongThi: phongThi,
+                    tgThi: tgThi,
+                    key: key
+                })
+            
+                mon.save()
+                .then((result) => {
+                    res.send({message: "ok"});
+                }).catch(err => {
+                    console.log("taoMon", err)
+                    res.send({message: "Lỗi tạo môn thi"})
+                })
             }
-    
-            const mon = new Mon({
-                tenMon: tenMon,
-                diemTBmon: diemTBmon,
-                phongThi: phongThi,
-                tgThi: tgThi,
-                key: key
-            })
-        
-            mon.save()
-            .then((result) => {
-                res.send({message: "ok"});
-            }).catch(err => {
-                console.log("taoMon", err)
-                res.send({message: "Lỗi tạo môn thi"})
-            })
         }else{
             console.log("taoMon", "tenMon không được rỗng!")
             res.send({message: "tenMon không được rỗng!"})
