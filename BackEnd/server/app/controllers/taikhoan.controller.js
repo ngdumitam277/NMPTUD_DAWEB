@@ -48,35 +48,35 @@ exports.taoTaiKhoanTS = async(req, res) => {
             let exist = await TaiKhoan.find({username: username})
             if(exist.length > 0){
                 res.send({message: "Tài khoản đã tồn tại!"})
+            }else{
+                const taikhoan = new TaiKhoan({
+                    username: username,
+                    password: password,
+                    soCMND: soCMND,
+                    ngCapCMND: ngCapCMND,
+                    hTen: hTen,
+                    ngSinh: ngSinh,
+                    danToc: danToc,
+                    gioiTinh: gioiTinh,
+                    anh34: anh34,
+                    SDT: SDT,
+                    noiSinh: noiSinh,
+                    diaChi: diaChi,
+                    email: email,
+                    loai: "TS",
+                    tinhTrang: 0,
+                    tgDangKy: tgDangKy,
+                    maXacNhan: ""
+                })
+            
+                taikhoan.save()
+                .then((result) => {
+                    res.send({message: "ok"});
+                }).catch(err => {
+                    console.log("taoTaiKhoanTS", err)
+                    res.send({message: "Lỗi tạo tài khoản thí sinh thất bại!"})
+                })
             }
-    
-            const taikhoan = new TaiKhoan({
-                username: username,
-                password: password,
-                soCMND: soCMND,
-                ngCapCMND: ngCapCMND,
-                hTen: hTen,
-                ngSinh: ngSinh,
-                danToc: danToc,
-                gioiTinh: gioiTinh,
-                anh34: anh34,
-                SDT: SDT,
-                noiSinh: noiSinh,
-                diaChi: diaChi,
-                email: email,
-                loai: "TS",
-                tinhTrang: 0,
-                tgDangKy: tgDangKy,
-                maXacNhan: ""
-            })
-        
-            taikhoan.save()
-            .then((result) => {
-                res.send({message: "ok"});
-            }).catch(err => {
-                console.log("taoTaiKhoanTS", err)
-                res.send({message: "Lỗi tạo tài khoản thí sinh thất bại!"})
-            })
         }else{
             console.log("taoTaiKhoanTS", "username không được rỗng!")
             res.send({message: "Username không được rỗng!"})
@@ -731,7 +731,7 @@ exports.getAllCanBo = async (req, res) => {
 exports.deleteTaiKhoan = async (req, res) => {
     let username = req.params.username
 
-    TaiKhoan.findOneAndRemove({username: username}, {rawResult: true})
+    TaiKhoan.findOneAndUpdate({username: username}, { tinhTrang: 3 }, {rawResult: true})
     .then((result) => {
         res.send({message: "ok"})
     })

@@ -12,21 +12,21 @@ exports.taoTaiKhoanLog = async(req, res) => {
             let exist = await TaiKhoanLog.find({username: username})
             if(exist.length > 0){
                 res.send({message: "Tài khoản log đã tồn tại!"})
+            }else{
+                const taikhoan = new TaiKhoanLog({
+                    username: username,
+                    tgSuaXoa: tgSuaXoa,
+                    ttinLog: ttinLog
+                })
+            
+                taikhoan.save()
+                .then((result) => {
+                    res.send({message: "ok"});
+                }).catch(err => {
+                    console.log("taoTaiKhoanLog", err)
+                    res.send({message: "Lỗi tạo tài khoản log"})
+                })
             }
-    
-            const taikhoan = new TaiKhoanLog({
-                username: username,
-                tgSuaXoa: tgSuaXoa,
-                ttinLog: ttinLog
-            })
-        
-            taikhoan.save()
-            .then((result) => {
-                res.send({message: "ok"});
-            }).catch(err => {
-                console.log("taoTaiKhoanLog", err)
-                res.send({message: "Lỗi tạo tài khoản log"})
-            })
         }else{
             console.log("taoTaiKhoanLog", "username không được rỗng!")
             res.send({message: "Username không được rỗng!"})
