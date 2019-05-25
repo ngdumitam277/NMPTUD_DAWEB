@@ -168,10 +168,10 @@ class TKKhoi extends React.Component {
               {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
                 <TableRow key={row.id}>
                   <TableCell component="th" scope="row">
-                    {row._id}
+                    {row.tenKhoi}
                   </TableCell>
-                  <TableCell align="center">{row.count}</TableCell>
-                  <TableCell align="right">{parseFloat(row.averageDiem).toFixed(2)}</TableCell>
+                  <TableCell align="center">{row.tongTSThi}</TableCell>
+                  <TableCell align="right">{parseFloat(row.diemTB).toFixed(2)}</TableCell>
                 </TableRow>
               ))}
               {emptyRows > 0 && (
