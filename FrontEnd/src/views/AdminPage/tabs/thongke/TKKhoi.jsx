@@ -15,6 +15,8 @@ import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
 import Button from '@material-ui/core/Button';
+import axios from 'axios'
+import { url } from 'variable/general.jsx'
 
 const actionsStyles = theme => ({
   root: {
@@ -114,21 +116,15 @@ const styles = theme => ({
 });
 
 class TKKhoi extends React.Component {
-  state = {
-    rows: [
-      createData('A', 5500, 5),
-      createData('E', 1300, 9),
-      createData('D', 2200, 10),
-      createData('C', 3100, 3),
-      createData('A', 4000, 8),
-      createData('B', 2500, 5),
-      createData('F', 1400, 4),
-      createData('G', 5500, 7),
+  constructor(props){
+    super(props)
 
-    ].sort((a, b) => (a.examDate < b.examDate ? -1 : 1)),
-    page: 0,
-    rowsPerPage: 5,
-  };
+    this.state = {
+      data: [],
+      page: 0,
+      rowsPerPage: 5,
+    }
+  }
 
   handleChangePage = (event, page) => {
     this.setState({ page });
@@ -138,11 +134,24 @@ class TKKhoi extends React.Component {
     this.setState({ page: 0, rowsPerPage: event.target.value });
   };
 
+  componentDidMount = () => {
+    axios.get(`${url}web/thongke/khoi`)
+    .then((result) => {
+      let data = result.data
+
+      if(data.length > 0){
+        this.setState({data: data})
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+  }
 
   render() {
     const { classes } = this.props;
-    const { rows, rowsPerPage, page } = this.state;
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+    const { data, rowsPerPage, page } = this.state;
+    const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
     return (
       <Paper classname={classes.root}>
@@ -156,13 +165,13 @@ class TKKhoi extends React.Component {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
+              {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
                 <TableRow key={row.id}>
                   <TableCell component="th" scope="row">
-                    {row.tenKhoi}
+                    {row._id}
                   </TableCell>
-                  <TableCell align="center">{row.tongTSThi}</TableCell>
-                  <TableCell align="right">{row.diemTB}</TableCell>
+                  <TableCell align="center">{row.count}</TableCell>
+                  <TableCell align="right">{parseFloat(row.averageDiem).toFixed(2)}</TableCell>
                 </TableRow>
               ))}
               {emptyRows > 0 && (
@@ -176,7 +185,7 @@ class TKKhoi extends React.Component {
                 <TablePagination
                   rowsPerPageOptions={[5, 10, 25]}
                   colSpan={12}
-                  count={rows.length}
+                  count={data.length}
                   rowsPerPage={rowsPerPage}
                   page={page}
                   onChangePage={this.handleChangePage}
