@@ -79,3 +79,25 @@ exports.deleteDiemThi = async(req, res) => {
         console.log(err, "deleteDiemThi")
     })
 };
+
+// thống kê môn
+exports.thongKeMon = async(req, res) => {
+    DiemThi.aggregate(
+        [
+            {
+                $group : {
+                    _id: "$mon",
+                    averageDiem: { $avg: "$diem" },
+                    count: { $sum: 1 }
+                }
+            }
+        ]
+    )
+    .then((result) => {
+        res.send(result)
+    })
+    .catch((err) => {
+        res.send({message: "Lỗi thống kê môn!"})
+        console.log(err, "thongKeMon")
+    })
+};

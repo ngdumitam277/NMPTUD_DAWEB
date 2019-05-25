@@ -39,4 +39,7 @@ module.exports = (app) => {
 
     // lấy tất cả cán bộ
     app.get('/web/taikhoan/canbo', taikhoan.getAllCanBo);
+
+    // // lấy tất cả môn thi
+    // app.get('/web/taikhoan/monthi', taikhoan.getAllMonThi);
 }

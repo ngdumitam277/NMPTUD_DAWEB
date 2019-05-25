@@ -12,4 +12,7 @@ module.exports = (app) => {
 
     // xoá 1 điểm thi theo id
     app.delete('/web/diemthi/:id', DiemThi.deleteDiemThi);
+
+    // thống kê môn
+    app.get('/web/thongke/mon', DiemThi.thongKeMon)
 }
