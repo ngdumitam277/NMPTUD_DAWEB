@@ -41,7 +41,7 @@ class TKNganh_Table extends Component {
     return (
         <>
             <div className={classes.title}>
-                <h4>Công nghệ sinh học</h4>
+                <h4>{data.tenNganh}</h4>
             </div>
             <Paper className={classes.root}>
                 <Table className={classes.table}>
@@ -54,21 +54,21 @@ class TKNganh_Table extends Component {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows.map(row => (
+                        {data.khoi.map(row => (
                             <TableRow key={row.id}>
                                 <TableCell component="th" scope="row">
                                     {row.tenKhoi}
                                 </TableCell>
                                 <TableCell align="right">{row.diemChuan}</TableCell>
-                                <TableCell align="right">{row.soTsDuThi}</TableCell>
-                                <TableCell align="right">{row.soTsDau}</TableCell>
+                                <TableCell align="right">{row.tongTSThi}</TableCell>
+                                <TableCell align="right">{row.tongTSThiDau}</TableCell>
                             </TableRow>
                         ))}
                         <TableRow style={{background:"yellow"}}>
                                 <TableCell align="right"></TableCell>
-                                <TableCell align="right">2000</TableCell>
-                                <TableCell align="right">3000</TableCell>
-                                <TableCell align="right">500</TableCell>
+                                <TableCell align="right"></TableCell>
+                                <TableCell align="right">{data.tongTSThi}</TableCell>
+                                <TableCell align="right">{data.tongTSThiDau}</TableCell>
                         </TableRow>
                     </TableBody>
                 </Table>
