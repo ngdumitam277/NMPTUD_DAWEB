@@ -249,7 +249,7 @@ exports.thongKeNganh = async(req, res) => {
             $group : {
                 _id: "$maNganh",
                 tongTSThi: { $addToSet: "$usernamets" },
-                tenKhoi: { $addToSet: { tenKhoi: "$tenKhoi", diemChuan: "$diemChuan" } },
+                khoi: { $addToSet: { tenKhoi: "$tenKhoi", diemChuan: "$diemChuan" } },
                 tongTSThiDau: { $sum: "$thiDau" }
             }
         },
@@ -257,9 +257,22 @@ exports.thongKeNganh = async(req, res) => {
             $project: {
                 _id: 0,
                 maNganh: "$_id",
-                tenKhoi: 1,
+                khoi: 1,
                 tongTSThi: { $size: "$tongTSThi" },
                 tongTSThiDau: 1
+            } 
+        },
+        {
+            $addFields: {
+               "khoi.tongTSThi": "$tongTSThi",
+               "khoi.tongTSThiDau": "$tongTSThiDau"
+            }
+        },
+        {
+            $project: {
+                _id: 0,
+                maNganh: 1,
+                khoi: 1
             } 
         },
         { 
@@ -269,9 +282,9 @@ exports.thongKeNganh = async(req, res) => {
         {
             $project: {
                 tenNganh: "$nganh.tenNganh",
-                tenKhoi: 1,
-                tongTSThi: 1,
-                tongTSThiDau: 1
+                khoi: 1,
+                tongTSThi: { $sum: "$khoi.tongTSThi" },
+                tongTSThiDau: { $sum: "$khoi.tongTSThiDau" }
             } 
         },
     ])
