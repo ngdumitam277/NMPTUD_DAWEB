@@ -129,7 +129,7 @@ exports.thongKeKhoi = async(req, res) => {
         { $unwind: "$thisinhnhap" },
         {
             $project: {
-                usernamets: "$thisinhnhap.usernamets",
+                usernamets: 1,
                 diem: 1,
                 mon: 1,
                 Phach: 1,
@@ -149,6 +149,90 @@ exports.thongKeKhoi = async(req, res) => {
     })
     .catch((err) => {
         res.send({message: "Lỗi thống kê khối!"})
+        console.log(err, "thongKeKhoi")
+    })
+};
+
+// thống kê ngành
+exports.thongKeNganh = async(req, res) => {
+    DiemThi.aggregate([
+        { $project: {
+                diem: 1,
+                mon: 1,
+                Phach: 1
+            } 
+        },
+        { 
+            $lookup: {from: "thisinhs", localField: "Phach", foreignField: "Phach", as: "thisinh"}
+        },
+        { $unwind: "$thisinh" },
+        {
+            $project: {
+                usernamets: "$thisinh.usernamets",
+                diem: 1,
+                mon: 1,
+                Phach: 1
+            } 
+        },
+        { 
+            $lookup: {from: "thisinhnhaps", localField: "usernamets", foreignField: "usernamets", as: "thisinhnhap"}
+        },
+        { $unwind: "$thisinhnhap" },
+        {
+            $project: {
+                usernamets: 1,
+                diem: 1,
+                mon: 1,
+                Phach: 1,
+                tenKhoi: "$thisinhnhap.tenKhoi",
+                maNganh: "$thisinhnhap.maNganh"
+            } 
+        },
+        { 
+            $lookup: {
+                from: "nganhkhois", 
+                let: { order_maNganh: "$maNganh", order_tenKhoi: "$tenKhoi" },
+                pipeline: [
+                    { $match:
+                       { $expr:
+                          { $and:
+                             [
+                               { $eq: [ "$maNganh",  "$$order_maNganh" ] },
+                               { $gte: [ "$tenKhoi", "$$order_tenKhoi" ] }
+                             ]
+                          }
+                       }
+                    },
+                ],
+                as: "nganhkhoi"
+            }
+        },
+        { $unwind: "$nganhkhoi" },
+        {
+            $project: {
+                usernamets: 1,
+                diem: 1,
+                mon: 1,
+                Phach: 1,
+                tenKhoi: 1,
+                maNganh: 1,
+                diemChuan: "$nganhkhoi.diemChuan"
+            } 
+        },
+        {
+            $group : {
+                _id: "$maNganh",
+                tenKhoi: { $addToSet: "$tenKhoi" },
+                averageDiem: { $avg: "$diem" },
+                count: { $sum: 1 }
+            }
+        }
+    ])
+    .then((result) => {
+        res.send(result)
+    })
+    .catch((err) => {
+        res.send({message: "Lỗi thống kê ngành!"})
         console.log(err, "thongKeKhoi")
     })
 };

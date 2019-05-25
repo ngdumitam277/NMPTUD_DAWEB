@@ -18,4 +18,7 @@ module.exports = (app) => {
 
     // thống kê khối
     app.get('/web/thongke/khoi', DiemThi.thongKeKhoi)
+
+    // thống kê ngành
+    app.get('/web/thongke/nganh', DiemThi.thongKeNganh)
 }
