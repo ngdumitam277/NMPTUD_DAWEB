@@ -40,7 +40,6 @@ class HeaderLinks extends Component {
       })
       .then((response) => {
         let result = response.data
-        console.log("result ===" + JSON.stringify(result))
         if(result.message === "ok"){
           this.setState({user: result.user})
         }
@@ -73,7 +72,6 @@ class HeaderLinks extends Component {
     render() {
       const { classes } = this.props;
       let { user, anchorEl } = this.state
-      console.log(user)
 
         return (
           <List className={classes.list}>

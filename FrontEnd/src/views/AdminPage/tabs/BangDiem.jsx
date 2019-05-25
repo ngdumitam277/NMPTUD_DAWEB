@@ -219,7 +219,7 @@ class BangDiem extends React.Component {
                                         <TableCell component="th" scope="row">
                                             {row.mon}
                                         </TableCell>
-                                        <TableCell align="right">{row.phach}</TableCell>
+                                        <TableCell align="right">{row.Phach}</TableCell>
                                         <TableCell align="right">{row.diem}</TableCell>
                                         <TableCell align="right">
                                             <Button onClick={() => this.openModalEditBangDiem(row)} variant="contained" color="primary" className={classes.button}>

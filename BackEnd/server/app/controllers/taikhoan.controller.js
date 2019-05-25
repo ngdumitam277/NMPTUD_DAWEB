@@ -8,6 +8,7 @@ var md5 = require('md5');
 var cookie = require('cookie');
 var cookieTime = 3600*24*6; // tính bằng mili giây
 var tokenTime = 3600*24*6; // 6 ngày cho token tính bằng mili giây
+var mongoose = require('mongoose');
 
 var jwt = require('jsonwebtoken');
 var passportJWT = require("passport-jwt");
@@ -727,6 +728,62 @@ exports.getAllCanBo = async (req, res) => {
         console.log("Lỗi lấy tất cả cán bộ!", err)
     })
 }
+
+// exports.getAllMonThi = async (req, res) => {
+//     TaiKhoan.aggregate([
+//         { $project: {
+//                 username: 1,
+//             } 
+//         },
+//         { 
+//             $lookup: {from: "thisinhs", localField: "username", foreignField: "usernamets", as: "thisinh"}
+//         },
+//         { $unwind: "$thisinh" },
+//         { $project: {
+//                 username: 1,
+//                 Phach: "$thisinh.Phach"
+//             } 
+//         },
+//         {
+//             $lookup: {from: "thisinhnhaps", localField: "username", foreignField: "usernamets", as: "thisinhnhap"}
+//         },
+//         { $unwind: "$thisinhnhap" },
+//         {$project: {
+//                 username: 1,
+//                 Phach: 1,
+//                 tenKhoi: "$thisinhnhap.tenKhoi"
+//             } 
+//         },
+//         {
+//             $lookup: {from: "khoimons", localField: "tenKhoi", foreignField: "tenKhoi", as: "khoimon"}
+//         },
+//         { $unwind: "$khoimon" },
+//         {$project: {
+//                 _id: "$_id",
+//                 maDiem: "",
+//                 Phach: 1,
+//                 mon: "$khoimon.tenMon",
+//                 diem: "0",
+//                 createdAt: "2018-11-02",
+//                 updatedAt: "2018-11-02"
+//             } 
+//         }
+//     ])  
+//     .then((result) => {
+//         let data = result.map((value) => {
+//             let diem = Math.floor(Math.random() * 11); 
+//             value._id = { "$oid": mongoose.Types.ObjectId() }
+//             value.diem = diem
+
+//             return value
+//         })
+//         res.send(data)
+//     })          
+//     .catch((err) => {
+//         console.log("hienThongTinThiSinh", err)
+//         res.send({message: "Lỗi lấy thông tin thí sinh!"})
+//     })
+// }
 
 exports.deleteTaiKhoan = async (req, res) => {
     let username = req.params.username
