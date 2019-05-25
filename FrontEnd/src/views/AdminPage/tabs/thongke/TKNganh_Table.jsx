@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -33,9 +33,11 @@ const rows = [
     createData('E', 23.9, 1700, 1500),
 ];
 
-function TKNganh_Table(props) {
-    const { classes, data } = props;
-    
+class TKNganh_Table extends Component {
+  render() {
+    const { classes, data } = this.props;
+    console.log(data)
+
     return (
         <>
             <div className={classes.title}>
@@ -72,7 +74,8 @@ function TKNganh_Table(props) {
                 </Table>
             </Paper>
         </>
-    );
+    )
+  }
 }
 
 TKNganh_Table.propTypes = {

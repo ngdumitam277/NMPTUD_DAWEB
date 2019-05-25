@@ -139,9 +139,17 @@ exports.thongKeKhoi = async(req, res) => {
         {
             $group : {
                 _id: "$tenKhoi",
-                averageDiem: { $avg: "$diem" },
-                count: { $sum: 1 }
+                diemTB: { $avg: "$diem" },
+                tongTSThi: { $addToSet: "$usernamets" }
             }
+        },
+        {
+            $project: {
+                _id: 0,
+                tenKhoi: "$_id",
+                diemTB: 1,
+                tongTSThi: { $size: "$tongTSThi" }
+            } 
         }
     ])
     .then((result) => {
@@ -174,6 +182,18 @@ exports.thongKeNganh = async(req, res) => {
                 Phach: 1
             } 
         },
+        {
+            $group : {
+                _id: "$usernamets",
+                diem: { $sum: "$diem" }
+            }
+        },
+        {
+            $project: {
+                usernamets: "$_id",
+                diem: 1,
+            } 
+        },
         { 
             $lookup: {from: "thisinhnhaps", localField: "usernamets", foreignField: "usernamets", as: "thisinhnhap"}
         },
@@ -182,8 +202,6 @@ exports.thongKeNganh = async(req, res) => {
             $project: {
                 usernamets: 1,
                 diem: 1,
-                mon: 1,
-                Phach: 1,
                 tenKhoi: "$thisinhnhap.tenKhoi",
                 maNganh: "$thisinhnhap.maNganh"
             } 
@@ -198,7 +216,7 @@ exports.thongKeNganh = async(req, res) => {
                           { $and:
                              [
                                { $eq: [ "$maNganh",  "$$order_maNganh" ] },
-                               { $gte: [ "$tenKhoi", "$$order_tenKhoi" ] }
+                               { $eq: [ "$tenKhoi", "$$order_tenKhoi" ] }
                              ]
                           }
                        }
@@ -212,27 +230,56 @@ exports.thongKeNganh = async(req, res) => {
             $project: {
                 usernamets: 1,
                 diem: 1,
-                mon: 1,
-                Phach: 1,
                 tenKhoi: 1,
                 maNganh: 1,
                 diemChuan: "$nganhkhoi.diemChuan"
             } 
         },
         {
+            $project: {
+                usernamets: 1,
+                diem: 1,
+                tenKhoi: 1,
+                maNganh: 1,
+                diemChuan: 1,
+                thiDau: { $cond: { if: { $gte: [ "$diem", "$diemChuan" ] }, then: 1, else: 0 } }
+            } 
+        },
+        {
             $group : {
                 _id: "$maNganh",
-                tenKhoi: { $addToSet: "$tenKhoi" },
-                averageDiem: { $avg: "$diem" },
-                count: { $sum: 1 }
+                tongTSThi: { $addToSet: "$usernamets" },
+                tenKhoi: { $addToSet: { tenKhoi: "$tenKhoi", diemChuan: "$diemChuan" } },
+                tongTSThiDau: { $sum: "$thiDau" }
             }
-        }
+        },
+        {
+            $project: {
+                _id: 0,
+                maNganh: "$_id",
+                tenKhoi: 1,
+                tongTSThi: { $size: "$tongTSThi" },
+                tongTSThiDau: 1
+            } 
+        },
+        { 
+            $lookup: {from: "nganhs", localField: "maNganh", foreignField: "maNganh", as: "nganh"}
+        },
+        { $unwind: "$nganh" },
+        {
+            $project: {
+                tenNganh: "$nganh.tenNganh",
+                tenKhoi: 1,
+                tongTSThi: 1,
+                tongTSThiDau: 1
+            } 
+        },
     ])
     .then((result) => {
         res.send(result)
     })
     .catch((err) => {
         res.send({message: "Lỗi thống kê ngành!"})
-        console.log(err, "thongKeKhoi")
+        console.log(err, "thongKeNganh")
     })
 };
