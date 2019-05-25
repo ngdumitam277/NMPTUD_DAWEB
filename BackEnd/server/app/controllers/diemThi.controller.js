@@ -101,3 +101,54 @@ exports.thongKeMon = async(req, res) => {
         console.log(err, "thongKeMon")
     })
 };
+
+// thống kê khối
+exports.thongKeKhoi = async(req, res) => {
+    DiemThi.aggregate([
+        { $project: {
+                diem: 1,
+                mon: 1,
+                Phach: 1
+            } 
+        },
+        { 
+            $lookup: {from: "thisinhs", localField: "Phach", foreignField: "Phach", as: "thisinh"}
+        },
+        { $unwind: "$thisinh" },
+        {
+            $project: {
+                usernamets: "$thisinh.usernamets",
+                diem: 1,
+                mon: 1,
+                Phach: 1
+            } 
+        },
+        { 
+            $lookup: {from: "thisinhnhaps", localField: "usernamets", foreignField: "usernamets", as: "thisinhnhap"}
+        },
+        { $unwind: "$thisinhnhap" },
+        {
+            $project: {
+                usernamets: "$thisinhnhap.usernamets",
+                diem: 1,
+                mon: 1,
+                Phach: 1,
+                tenKhoi: "$thisinhnhap.tenKhoi"
+            } 
+        },
+        {
+            $group : {
+                _id: "$tenKhoi",
+                averageDiem: { $avg: "$diem" },
+                count: { $sum: 1 }
+            }
+        }
+    ])
+    .then((result) => {
+        res.send(result)
+    })
+    .catch((err) => {
+        res.send({message: "Lỗi thống kê khối!"})
+        console.log(err, "thongKeKhoi")
+    })
+};
