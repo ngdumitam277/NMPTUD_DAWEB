@@ -267,6 +267,25 @@ exports.hienThongTinThiSinh = async(req, res) => {
     }
 };
 
+// sửa thông tin thí sinh
+exports.suaThongTinThiSinh = async(req, res) => {
+    let username = req.body.username ? req.body.username : ""
+    let updateTaiKhoan = getUpdateTaiKhoan(req.body)
+    let updateThiSinh = getUpdateThiSinh(req.body)
+
+    let taikhoan = TaiKhoan.findOneAndUpdate({username: username}, updateTaiKhoan, {new: true})
+    let thisinh = ThiSinh.findOneAndUpdate({usernamets: username}, updateThiSinh, {new: true})
+
+    Promise.all([taikhoan, thisinh])
+    .then((result) => {
+        res.send({message: "ok"})
+    })
+    .catch((err) => {
+        res.send({message: "Lỗi sửa thông tin!"})
+        console.log(err, "suaThongTinThiSinh")
+    })
+};
+
 // nạp thông tin thí sinh
 exports.napThongTinThiSinh = async(req, res) => {
     let username = req.body.username ? req.body.username : ""
@@ -332,6 +351,84 @@ exports.napThongTinThiSinh = async(req, res) => {
         res.send({message: "Lỗi nạp thông tin thí sinh!"})
     }
 };
+
+function getUpdateTaiKhoan(body){
+    let taikhoan = {}
+    if(body.soCMND){
+        taikhoan.soCMND = body.soCMND
+    }
+
+    if(body.ngCapCMND){
+        taikhoan.ngCapCMND = body.ngCapCMND
+    }
+
+    if(body.hTen){
+        taikhoan.hTen = body.hTen
+    }
+
+    if(body.ngSinh){
+        taikhoan.ngSinh = body.ngSinh
+    }
+
+    if(body.danToc){
+        taikhoan.danToc = body.danToc
+    }
+
+    if(body.gioiTinh){
+        taikhoan.gioiTinh = body.gioiTinh
+    }
+
+    if(body.anh34){
+        taikhoan.anh34 = body.anh34
+    }
+
+    if(body.SDT){
+        taikhoan.SDT = body.SDT
+    }
+
+    if(body.noiSinh){
+        taikhoan.noiSinh = body.noiSinh
+    }
+
+    if(body.diaChi){
+        taikhoan.diaChi = body.diaChi
+    }
+
+    if(body.email){
+        taikhoan.email = body.email
+    }
+
+    return taikhoan
+}
+
+function getUpdateThiSinh(body){
+    let thisinh = {}
+    if(body.tenTHPT){
+        thisinh.tenTHPT = body.tenTHPT
+    }
+
+    if(body.namTotNghiep){
+        thisinh.namTotNghiep = body.namTotNghiep
+    }
+
+    if(body.anhMinhChung){
+        thisinh.anhMinhChung = body.anhMinhChung
+    }
+
+    if(body.ttTuyenSinh){
+        thisinh.ttTuyenSinh = body.ttTuyenSinh
+    }
+
+    if(body.maKhuVuc){
+        thisinh.maKhuVuc = body.maKhuVuc
+    }
+
+    if(body.maDoiTuong){
+        thisinh.maDoiTuong = body.maDoiTuong
+    }
+
+    return thisinh
+}
 
 async function kiemTraEmail(email){
     try{
