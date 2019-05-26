@@ -29,7 +29,7 @@ module.exports = (app) => {
     app.get('/web/taikhoan/thongtin', taikhoan.hienThongTinThiSinh);
 
     // sửa thông tin thí sinh
-    app.put('/web/taikhoan/sua/thongtin', taikhoan.suaThongTinThiSinh);
+    app.put('/web/taikhoan/sua/thongtin/:username', taikhoan.suaThongTinThiSinh);
 
     // nạp thông tin thí sinh
     app.post('/web/taikhoan/thongtin/themthisinh', taikhoan.napThongTinThiSinh);

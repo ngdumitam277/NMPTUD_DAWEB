@@ -1,5 +1,28 @@
 const DiemThi = require('../models/diemThi.model.js');
 const moment = require('moment');
+const nodemailer = require("nodemailer");
+var md5 = require('md5');
+var cookie = require('cookie');
+var cookieTime = 3600*24*6; // tính bằng mili giây
+var tokenTime = 3600*24*6; // 6 ngày cho token tính bằng mili giây
+var mongoose = require('mongoose');
+
+var jwt = require('jsonwebtoken');
+var passportJWT = require("passport-jwt");
+var ExtractJwt = passportJWT.ExtractJwt;
+var JwtStrategy = passportJWT.Strategy;
+var passport = require("passport");
+
+var jwtOptions = {}
+jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+jwtOptions.secretOrKey = 'tamquysamg123456';
+
+var strategy = new JwtStrategy(jwtOptions, function (jwt_payload, next) {
+    console.log('payload received', jwt_payload);
+    next(null, jwt_payload)
+});
+
+passport.use(strategy);
 
 // tạo điểm thi
 exports.taoDiemThi = async(req, res) => {
@@ -179,20 +202,29 @@ exports.thongKeNganh = async(req, res) => {
                 usernamets: "$thisinh.usernamets",
                 diem: 1,
                 mon: 1,
-                Phach: 1
+                Phach: 1,
+                maKhuVuc: "$thisinh.maKhuVuc",
+                maDoiTuong: "$thisinh.maDoiTuong"
             } 
         },
         {
             $group : {
-                _id: "$usernamets",
+                _id: {
+                    "usernamets": "$usernamets", 
+                    "maKhuVuc": "$maKhuVuc",
+                    "maDoiTuong": "$maDoiTuong"
+                },
                 diem: { $sum: "$diem" }
             }
         },
         {
-            $project: {
-                usernamets: "$_id",
-                diem: 1,
-            } 
+            $project : {
+                _id: 0,
+                usernamets: "$_id.usernamets",
+                maKhuVuc: "$_id.maKhuVuc",
+                maDoiTuong: "$_id.maDoiTuong",
+                diem: { $sum: "$diem" }
+            }
         },
         { 
             $lookup: {from: "thisinhnhaps", localField: "usernamets", foreignField: "usernamets", as: "thisinhnhap"}
@@ -203,7 +235,9 @@ exports.thongKeNganh = async(req, res) => {
                 usernamets: 1,
                 diem: 1,
                 tenKhoi: "$thisinhnhap.tenKhoi",
-                maNganh: "$thisinhnhap.maNganh"
+                maNganh: "$thisinhnhap.maNganh",
+                maKhuVuc: 1,
+                maDoiTuong: 1
             } 
         },
         { 
@@ -232,7 +266,50 @@ exports.thongKeNganh = async(req, res) => {
                 diem: 1,
                 tenKhoi: 1,
                 maNganh: 1,
-                diemChuan: "$nganhkhoi.diemChuan"
+                diemChuan: "$nganhkhoi.diemChuan",
+                maKhuVuc: 1,
+                maDoiTuong: 1
+            } 
+        },
+        { 
+            $lookup: {from: "khuvucs", localField: "maKhuVuc", foreignField: "maKhuVuc", as: "khuvuc"}
+        },
+        { $unwind: "$khuvuc" },
+        {
+            $project: {
+                usernamets: 1,
+                diem: 1,
+                tenKhoi: 1,
+                maNganh: 1,
+                diemCongKhuVuc: "$khuvuc.diemCong",
+                maDoiTuong: 1,
+                diemChuan: 1
+            } 
+        },
+        { 
+            $lookup: {from: "doituongs", localField: "maDoiTuong", foreignField: "maDoiTuong", as: "doituong"}
+        },
+        { $unwind: "$doituong" },
+        {
+            $project: {
+                usernamets: 1,
+                diem: 1,
+                tenKhoi: 1,
+                maNganh: 1,
+                diemCongKhuVuc: 1,
+                diemCongDoiTuong: "$doituong.diemCong",
+                diemChuan: 1
+            } 
+        },
+        {
+            $project: {
+                usernamets: 1,
+                diem: { $sum: [ "$diem", "$diemCongKhuVuc", "$diemCongDoiTuong" ] },
+                tenKhoi: 1,
+                maNganh: 1,
+                diemCongKhuVuc: 1,
+                diemCongDoiTuong: 1,
+                diemChuan: 1
             } 
         },
         {
@@ -296,3 +373,203 @@ exports.thongKeNganh = async(req, res) => {
         console.log(err, "thongKeNganh")
     })
 };
+
+// lấy điểm thi theo tài khoản
+exports.layDiemThiTheoTaiKhoan = async(req, res) => {
+    let user = await checkCookie(req.headers.cookie)
+    console.log(user)
+
+    if(user.kt){
+        try{
+            let cookies = cookie.parse(req.headers.cookie || '');
+            let decoded = jwt.verify(cookies.token, jwtOptions.secretOrKey)
+            let username = decoded.username
+
+            DiemThi.aggregate([
+                { $project: {
+                        diem: 1,
+                        mon: 1,
+                        Phach: 1
+                    } 
+                },
+                { 
+                    $lookup: {from: "thisinhs", localField: "Phach", foreignField: "Phach", as: "thisinh"}
+                },
+                { $unwind: "$thisinh" },
+                {
+                    $project: {
+                        usernamets: "$thisinh.usernamets",
+                        diem: 1,
+                        mon: 1,
+                        Phach: 1,
+                        maKhuVuc: "$thisinh.maKhuVuc",
+                        maDoiTuong: "$thisinh.maDoiTuong"
+                    } 
+                },
+                { $match: { usernamets: username } },
+                {
+                    $group : {
+                        _id: {
+                            "usernamets": "$usernamets", 
+                            "maKhuVuc": "$maKhuVuc",
+                            "maDoiTuong": "$maDoiTuong"
+                        },
+                        diem: { $sum: "$diem" }
+                    }
+                },
+                {
+                    $project : {
+                        _id: 0,
+                        usernamets: "$_id.usernamets",
+                        maKhuVuc: "$_id.maKhuVuc",
+                        maDoiTuong: "$_id.maDoiTuong",
+                        diem: { $sum: "$diem" }
+                    }
+                },
+                { 
+                    $lookup: {from: "thisinhnhaps", localField: "usernamets", foreignField: "usernamets", as: "thisinhnhap"}
+                },
+                { $unwind: "$thisinhnhap" },
+                {
+                    $project: {
+                        usernamets: 1,
+                        diem: 1,
+                        maKhuVuc: 1,
+                        maDoiTuong: 1,
+                        tenKhoi: "$thisinhnhap.tenKhoi",
+                        maNganh: "$thisinhnhap.maNganh"
+                    } 
+                },
+                { 
+                    $lookup: {
+                        from: "nganhkhois", 
+                        let: { order_maNganh: "$maNganh", order_tenKhoi: "$tenKhoi" },
+                        pipeline: [
+                            { $match:
+                               { $expr:
+                                  { $and:
+                                     [
+                                       { $eq: [ "$maNganh",  "$$order_maNganh" ] },
+                                       { $eq: [ "$tenKhoi", "$$order_tenKhoi" ] }
+                                     ]
+                                  }
+                               }
+                            },
+                        ],
+                        as: "nganhkhoi"
+                    }
+                },
+                { $unwind: "$nganhkhoi" },
+                {
+                    $project: {
+                        usernamets: 1,
+                        diem: 1,
+                        tenKhoi: 1,
+                        maNganh: 1,
+                        maKhuVuc: 1,
+                        maDoiTuong: 1,
+                        diemChuan: "$nganhkhoi.diemChuan"
+                    } 
+                },
+                { 
+                    $lookup: {from: "khuvucs", localField: "maKhuVuc", foreignField: "maKhuVuc", as: "khuvuc"}
+                },
+                { $unwind: "$khuvuc" },
+                {
+                    $project: {
+                        usernamets: 1,
+                        diem: 1,
+                        tenKhoi: 1,
+                        maNganh: 1,
+                        diemCongKhuVuc: "$khuvuc.diemCong",
+                        maDoiTuong: 1,
+                        diemChuan: 1
+                    } 
+                },
+                { 
+                    $lookup: {from: "doituongs", localField: "maDoiTuong", foreignField: "maDoiTuong", as: "doituong"}
+                },
+                { $unwind: "$doituong" },
+                {
+                    $project: {
+                        usernamets: 1,
+                        diem: 1,
+                        tenKhoi: 1,
+                        maNganh: 1,
+                        diemCongKhuVuc: 1,
+                        diemCongDoiTuong: "$doituong.diemCong",
+                        diemChuan: 1
+                    } 
+                },
+                {
+                    $project: {
+                        usernamets: 1,
+                        diem: { $sum: [ "$diem", "$diemCongKhuVuc", "$diemCongDoiTuong" ] },
+                        tenKhoi: 1,
+                        maNganh: 1,
+                        diemCongKhuVuc: 1,
+                        diemCongDoiTuong: 1,
+                        diemChuan: 1
+                    } 
+                },
+                {
+                    $project: {
+                        usernamets: 1,
+                        diem: 1,
+                        tenKhoi: 1,
+                        maNganh: 1,
+                        diemChuan: 1,
+                        diemCongDoiTuong: 1,
+                        diemCongKhuVuc: 1,
+                        thiDau: { $cond: { if: { $gte: [ "$diem", "$diemChuan" ] }, then: 1, else: 0 } }
+                    } 
+                }
+            ])
+            .then((result) => {
+                res.send(result)
+            })
+            .catch((err) => {
+                res.send({message: "Lỗi lây môn thi theo tài khoản!"})
+                console.log(err, "layDiemThiTheoTaiKhoan")
+            })       
+        }catch(err){
+            console.log(err)
+            res.send({message: "error cookie"})
+        }
+    }else{
+        res.send({message: "error cookie"})
+    }
+};
+
+async function checkCookie(data){
+    let informationUser = {
+        kt: false,
+        user: []
+    }
+    let cookies = cookie.parse(data || '');
+    if(cookies.token){
+        try{
+            let decoded = jwt.verify(cookies.token, jwtOptions.secretOrKey)
+            if(decoded.username){
+                try{
+                    let user = await TaiKhoan.find({username: decoded.username})
+                    if(user.length > 0){
+                        informationUser.kt = true
+                        informationUser.user = user
+                        return informationUser
+                    }else{
+                        return informationUser
+                    }
+                }catch(e) {
+                    return informationUser
+                }
+            }else{
+                return informationUser
+            }
+        }catch(e){
+            return informationUser
+        }
+    }else{
+        return informationUser
+    }   
+}

@@ -25,6 +25,7 @@ class ProfileUser extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            username: "",
             hTen: "",
             gioiTinh: "",
             ngSinh: "",
@@ -55,6 +56,7 @@ class ProfileUser extends Component {
             let item = data[0] 
 
             this.setState({
+                username: item.username,
                 hTen: item.hTen,
                 gioiTinh: item.gioiTinh,
                 ngSinh: item.ngSinh,
@@ -83,7 +85,7 @@ class ProfileUser extends Component {
     setModalEditProfileUser = (isModal) => this.setState({ isModalEditProfileUser: isModal })
 
     openModalEditProfileUser = () => {
-        this.modalEditProfileUserRef.setDataProfileUser(this.state.hTen, this.state.gioiTinh, this.state.ngSinh, 
+        this.modalEditProfileUserRef.setDataProfileUser(this.state.username, this.state.hTen, this.state.gioiTinh, this.state.ngSinh, 
             this.state.danToc, this.state.soCMND, this.state.ngCapCMND, this.state.diaChi, this.state.email, 
             this.state.SDT, this.state.maKhuVuc, this.state.maDoiTuong, this.state.tenTHPT, this.state.namTotNghiep)
         this.setModalEditProfileUser(true)
