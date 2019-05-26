@@ -28,6 +28,9 @@ module.exports = (app) => {
     // lấy thông tin thí sinh
     app.get('/web/taikhoan/thongtin', taikhoan.hienThongTinThiSinh);
 
+    // sửa thông tin thí sinh
+    app.put('/web/taikhoan/sua/thongtin', taikhoan.suaThongTinThiSinh);
+
     // nạp thông tin thí sinh
     app.post('/web/taikhoan/thongtin/themthisinh', taikhoan.napThongTinThiSinh);
 
