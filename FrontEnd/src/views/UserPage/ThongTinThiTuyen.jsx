@@ -29,23 +29,103 @@ class ProfileUser extends Component {
         super(props)
         this.state = {
             data: [],
+            dataNganh: [],
+            dataKhoi: [],
             dataSelectNganh:'Chọn ngành',
             dataSelectKhoi:'Chọn khối',
+            thongTin: "",
+            SBD: "",
+            tenNganh: "",
+            maNganh: "",
+            tenKhoi: "",
+            chiTieuNganh: 0,
+            diemCongKhuVuc: 0,
+            diemCongDoiTuong: 0,
+            diemChuan: 0,
+            tongDiem: 0,
+            diemTB: 0,
+            ketQua: ""
         }
         
     }
 
+    componentDidMount = () => {
+        axios.get(`${url}web/diemthi/monthi`, {withCredentials: true})
+        .then((result) => {
+            console.log(result)
+        })
+        .catch((err) => {
+            console.log(err)
+        })
+        // let taikhoan = axios.get(`${url}web/taikhoan/thongtin`, {withCredentials: true})
+        // let nganh = axios.get(`${url}web/nganh`)
+        // let khoi = axios.get(`${url}web/khoi`)
+        // let monthi = axios.get(`${url}web/diemthi/monthi`, {withCredentials: true})
+
+        // Promise.all([taikhoan, nganh, khoi, monthi])
+        // .then((result) => {
+        //     let dataTaiKhoan = result[0].data
+        //     let dataNganh = result[1].data
+        //     let dataKhoi = result[2].data
+        //     let dataMon = result[3].data
+
+        //     if(dataTaiKhoan.length > 0){
+        //         let itemTaiKhoan = dataTaiKhoan[0]
+        //         let itemMon = dataMon[0]
+
+        //         console.log(itemMon)
+
+        //         this.setState({
+        //             tenNganh: itemTaiKhoan.tenNganh,
+        //             maNganh: itemTaiKhoan.maNganh,
+        //             tenKhoi: itemTaiKhoan.tenKhoi,
+        //             SBD: itemTaiKhoan.SBD,
+        //             chiTieuNganh: itemTaiKhoan.chiTieuNganh,
+        //             thongTin: itemTaiKhoan.thongTin,
+        //             dataNganh: dataNganh,
+        //             dataKhoi: dataKhoi,
+        //             diemCongKhuVuc: itemMon.diemCongKhuVuc,
+        //             diemCongDoiTuong: itemMon.diemCongDoiTuong,
+        //             diemChuan: itemMon.diemChuan,
+        //             tongDiem: itemMon.diem,
+        //             diemTB: parseFloat(itemMon.diem/3).toFixed(2),
+        //             ketQua: itemMon.thiDau === 1 ? "Đậu" : "Rớt"
+        //         })
+        //     }
+        // })
+        // .catch((err) => {
+        //     console.log(err)
+        // })
+    }
+
     handleChangeNganh = (event) => {
-        this.setState({dataSelectNganh: event.target.value})
+        let value = event.target.value
+        let dataNganh = this.state.dataNganh.filter((item, index) => item.maNganh === value)
+        let chiTieuNganh = this.state.chiTieuNganh
+        let thongTin = this.state.thongTin
+
+        if(dataNganh.length > 0){
+            chiTieuNganh = dataNganh[0].chiTieuNganh
+            thongTin = dataNganh[0].thongTin
+        }
+
+        this.setState({
+            maNganh: event.target.value,
+            chiTieuNganh: chiTieuNganh,
+            thongTin: thongTin
+        })
     }
 
     handleChangeKhoi = (event) => {
-        this.setState({dataSelectKhoi: event.target.value})
+        this.setState({tenKhoi: event.target.value})
     }
 
     render() {
         const { classes } = this.props;
-        const { data } = this.state;
+        const { data, SBD, dataSelectNganh, tenNganh, maNganh, chiTieuNganh, tenKhoi, thongTin, 
+            dataSelectKhoi, dataKhoi, dataNganh, diemChuan, diemCongDoiTuong, diemCongKhuVuc, diemTB, 
+            ketQua, tongDiem } = this.state;
+
         return (
             <div style={{marginBottom:20}} className={classes.container}>
                 <div className={classes.title}>
@@ -56,7 +136,7 @@ class ProfileUser extends Component {
                         <InputLabel className={classes.label}>
                             SBD: 
                         </InputLabel>
-                        <span>190087</span>
+                        <span>{SBD}</span>
                     </GridItem>
                     <GridItem xs={3} sm={3} md={3}>
                         <InputLabel className={classes.label}>
@@ -64,11 +144,13 @@ class ProfileUser extends Component {
                         </InputLabel>
                         &nbsp;
                         <Select
-                            value={this.state.dataSelectNganh}
+                            value={maNganh}
                             onChange={this.handleChangeNganh}>
-                            <MenuItem value={'CNTT'}>CNTT</MenuItem>
-                            <MenuItem value={'HOAHOC'}>Hóa học</MenuItem>
-                            <MenuItem value={'LICHSUHOC'}>Lịch sử học</MenuItem>
+                            {
+                                dataNganh.map((row, index) => (
+                                    <MenuItem value={row.maNganh}>{row.tenNganh}</MenuItem>
+                                ))
+                            }
                         </Select>
                     </GridItem>
                     <GridItem xs={3} sm={3} md={3}>
@@ -77,11 +159,13 @@ class ProfileUser extends Component {
                         </InputLabel>
                         &nbsp;
                         <Select
-                            value={this.state.dataSelectKhoi}
+                            value={tenKhoi}
                             onChange={this.handleChangeKhoi}>
-                            <MenuItem value={'A'}>A</MenuItem>
-                            <MenuItem value={'B'}>B</MenuItem>
-                            <MenuItem value={'C'}>C</MenuItem>
+                            {
+                                dataKhoi.map((row, index) => (
+                                    <MenuItem value={row.tenKhoi}>{row.tenKhoi}</MenuItem>        
+                                ))   
+                            }
                         </Select>
                     </GridItem>
                     <GridItem xs={3} sm={3} md={3}>
@@ -89,7 +173,7 @@ class ProfileUser extends Component {
                             Chỉ tiêu:
                         </InputLabel>
                         &nbsp;
-                        <span>5000</span>
+                        <span>{chiTieuNganh}</span>
                     </GridItem>
                 </GridContainer>
                 <GridContainer>
@@ -97,9 +181,7 @@ class ProfileUser extends Component {
                     <InputLabel className={classes.label}>
                         Thông tin ngành
                     </InputLabel>
-                    <div>Ví dụ gõ Xin chào. sẽ tạo ra một khoảng trắng thừa giữa Xin và chào.
-Đây được gọi là khoảng trống không bị ngắt hay không bị phá hủy vì nó ngăn không cho xuống dòng ở vị trí đó. Nếu lạm dụng kí tự này, trình duyệt sẽ khó chèn dấu ngắt dòng đẹp và đúng quy cách.
-Có thể gõ &#160; để tạo khoảng trống.</div>
+                    <div>{thongTin}</div>
                     </GridItem>
                 </GridContainer>
                 <div style={{textAlign:"right"}}>
@@ -116,21 +198,21 @@ Có thể gõ &#160; để tạo khoảng trống.</div>
                             Điểm Trung Bình:
                         </InputLabel>
                         &nbsp;
-                        <span>5</span>
+                        <span>{diemTB}</span>
                     </GridItem>
                     <GridItem xs={4} sm={4} md={4}>
                         <InputLabel className={classes.label}>
                             Điểm Cộng KV:
                         </InputLabel>
                         &nbsp;
-                        <span>2</span>
+                        <span>{diemCongKhuVuc}</span>
                     </GridItem>
                     <GridItem xs={4} sm={4} md={4}>
                         <InputLabel className={classes.label}>
                             Điểm Cộng Đối Tượng:
                         </InputLabel>
                         &nbsp;
-                        <span>1</span>
+                        <span>{diemCongDoiTuong}</span>
                     </GridItem>
                 </GridContainer>
                 &nbsp;
@@ -140,21 +222,21 @@ Có thể gõ &#160; để tạo khoảng trống.</div>
                         TỔNG ĐIỂM:
                         </InputLabel >
                         &nbsp;
-                        <span style={{fontWeight:"bold"}}>20</span>
+                        <span style={{fontWeight:"bold"}}>{tongDiem}</span>
                     </GridItem>
                     <GridItem xs={4} sm={4} md={4}>
                         <InputLabel style={{color:"red"}} className={classes.label}>
                             ĐIỂM CHUẨN:
                         </InputLabel>
                         &nbsp;
-                        <span style={{fontWeight:"bold"}}>22</span>
+                        <span style={{fontWeight:"bold"}}>{diemChuan}</span>
                     </GridItem>
                     <GridItem xs={4} sm={4} md={4}>
                         <InputLabel style={{color:"red"}} className={classes.label}>
                             KẾT QUẢ:
                         </InputLabel>
                         &nbsp;
-                        <span style={{fontWeight:"bold"}}>ĐẬU</span>
+                        <span style={{fontWeight:"bold"}}>{ketQua}</span>
                     </GridItem>
                 </GridContainer>
             </div>

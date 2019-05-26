@@ -21,4 +21,7 @@ module.exports = (app) => {
 
     // thống kê ngành
     app.get('/web/thongke/nganh', DiemThi.thongKeNganh)
+
+    // lấy tất cả môn của một tài khoản
+    app.get('/web/diemthi/monthi', DiemThi.layDiemThiTheoTaiKhoan)
 }

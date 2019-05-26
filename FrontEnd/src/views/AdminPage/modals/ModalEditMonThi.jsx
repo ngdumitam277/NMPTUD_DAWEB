@@ -182,7 +182,7 @@ class ModalEditMonThi extends Component {
                             id="thoi-gian-thi"
                             label="Thời Gian Thi"
                             type="date"
-                            value={tgThi}
+                            value={moment(tgThi).format("YYYY-MM-DD")}
                             onChange={this.onChangeTGThi}
                             className={classes.textField}
                             InputLabelProps={{

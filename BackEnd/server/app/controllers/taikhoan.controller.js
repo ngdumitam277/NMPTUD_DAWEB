@@ -229,6 +229,7 @@ exports.hienThongTinThiSinh = async(req, res) => {
                     { $project: {
                             username: 1,
                             hTen: 1,
+                            SBD: "$thisinh.SBD",
                             ngSinh: 1,
                             gioiTinh: 1,
                             danToc: 1,
@@ -243,6 +244,61 @@ exports.hienThongTinThiSinh = async(req, res) => {
                             anhMinhChung: "$thisinh.anhMinhChung",
                             maKhuVuc: "$thisinh.maKhuVuc",
                             maDoiTuong: "$thisinh.maDoiTuong"
+                        } 
+                    },
+                    { 
+                        $lookup: {from: "thisinhnhaps", localField: "username", foreignField: "usernamets", as: "thisinhnhap"}
+                    },
+                    { $unwind: "$thisinhnhap" },
+                    { $project: {
+                            username: 1,
+                            hTen: 1,
+                            SBD: 1,
+                            ngSinh: 1,
+                            gioiTinh: 1,
+                            danToc: 1,
+                            soCMND: 1,
+                            ngCapCMND: 1,
+                            noiSinh: 1,
+                            diaChi: 1,
+                            email: 1,
+                            SDT: 1,
+                            namTotNghiep: 1,
+                            tenTHPT: 1,
+                            anhMinhChung: 1,
+                            maKhuVuc: 1,
+                            maDoiTuong: 1,
+                            maNganh: "$thisinhnhap.maNganh",
+                            tenKhoi: "$thisinhnhap.tenKhoi"
+                        } 
+                    },
+                    { 
+                        $lookup: {from: "nganhs", localField: "maNganh", foreignField: "maNganh", as: "nganh"}
+                    },
+                    { $unwind: "$nganh" },
+                    { $project: {
+                            username: 1,
+                            hTen: 1,
+                            SBD: 1,
+                            ngSinh: 1,
+                            gioiTinh: 1,
+                            danToc: 1,
+                            soCMND: 1,
+                            ngCapCMND: 1,
+                            noiSinh: 1,
+                            diaChi: 1,
+                            email: 1,
+                            SDT: 1,
+                            namTotNghiep: 1,
+                            tenTHPT: 1,
+                            anhMinhChung: 1,
+                            maKhuVuc: 1,
+                            maDoiTuong: 1,
+                            tenKhoi: 1,
+                            tenNganh: "$nganh.tenNganh",
+                            maNganh: 1,
+                            thongTin: "$nganh.thongTin",
+                            chiTieuNganh: "$nganh.chiTieuNganh"
                         } 
                     }
                 ])  
@@ -269,7 +325,7 @@ exports.hienThongTinThiSinh = async(req, res) => {
 
 // sửa thông tin thí sinh
 exports.suaThongTinThiSinh = async(req, res) => {
-    let username = req.body.username ? req.body.username : ""
+    let username = req.params.username ? req.params.username : ""
     let updateTaiKhoan = getUpdateTaiKhoan(req.body)
     let updateThiSinh = getUpdateThiSinh(req.body)
 

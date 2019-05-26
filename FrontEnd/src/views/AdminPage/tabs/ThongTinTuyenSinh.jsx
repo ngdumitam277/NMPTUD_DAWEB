@@ -176,9 +176,9 @@ class ThongTinTuyenSinh extends React.Component {
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
     return (
-      <Paper classname={classes.root}>
+      <div>
         <div classname={classes.tableWrapper}>
-          <Table classname={classes.table}>
+          <Table  classname={classes.table}>
             <TableHead>
               <TableRow>
                 <TableCell>Username</TableCell>
@@ -248,7 +248,7 @@ class ThongTinTuyenSinh extends React.Component {
             closeModalDeleteStudent={this.closeModalDeleteStudent}
             getAllStudent={this.getAllStudent}/>
         </div>
-      </Paper>
+      </div>
     );
   }
 }

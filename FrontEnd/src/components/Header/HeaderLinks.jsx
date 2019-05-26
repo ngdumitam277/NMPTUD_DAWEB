@@ -69,10 +69,16 @@ class HeaderLinks extends Component {
       })
     };
 
+    handleRedirectCaNhan = (value) => {
+      if(e == "TS") {
+        this.props.history.push("/user-page");
+      }
+    }
+
     render() {
       const { classes } = this.props;
       let { user, anchorEl } = this.state
-
+      console.log("USER==="+JSON.stringify(user))
         return (
           <List className={classes.list}>
             <ListItem className={classes.listItem}>
@@ -129,7 +135,7 @@ class HeaderLinks extends Component {
                     open={Boolean(anchorEl)}
                     onClose={() => {this.setState({ anchorEl: null });}}
                   >
-                    <MenuItem onClick={this.handleClose}>Cá nhân</MenuItem>
+                    <MenuItem onClick={this.handleRedirectCaNhan}>Cá nhân</MenuItem>
                     <MenuItem onClick={this.handleClose}>Quản lý tuyển sinh</MenuItem>
                     <MenuItem onClick={this.handleClose}>Logout</MenuItem>
                   </Menu>
