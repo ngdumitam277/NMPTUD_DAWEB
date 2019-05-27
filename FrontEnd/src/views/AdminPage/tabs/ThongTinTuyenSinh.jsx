@@ -19,6 +19,15 @@ import axios from 'axios'
 import { url } from 'variable/general.jsx'
 import moment from 'moment';
 import ModalDeleteStudent from '../modals/ModalDeleteStudent';
+import SearchIcon from '@material-ui/icons/Search';
+import InputBase from '@material-ui/core/InputBase';
+import GridContainer from "components/Grid/GridContainer.jsx";
+import GridItem from "components/Grid/GridItem.jsx";
+
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormControl from '@material-ui/core/FormControl';
 
 const actionsStyles = theme => ({
   root: {
@@ -51,7 +60,7 @@ class CourseTable extends React.Component {
     const { classes, count, page, rowsPerPage, theme } = this.props;
 
     return (
-      <div style={{width:400}} classname={classes.root}>
+      <div style={{ width: 400 }} classname={classes.root}>
         <IconButton
           onClick={this.handleFirstPageButtonClick}
           disabled={page === 0}
@@ -118,14 +127,15 @@ const styles = theme => ({
 });
 
 class ThongTinTuyenSinh extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props)
 
     this.state = {
       data: [],
       page: 0,
       rowsPerPage: 5,
-      isModalDeleteStudent: false
+      isModalDeleteStudent: false,
+      optionSearch: '',
     }
 
     this.modalDeleteStudentRef = React.createRef()
@@ -133,16 +143,16 @@ class ThongTinTuyenSinh extends React.Component {
 
   getAllStudent = () => {
     axios.get(`${url}web/taikhoan/thisinh`)
-    .then((result) => {
-      let data = result.data
+      .then((result) => {
+        let data = result.data
 
-      if(data.length > 0){
-        this.setState({data: data})
-      }
-    })
-    .catch((err) => {
-      console.log(err)
-    })
+        if (data.length > 0) {
+          this.setState({ data: data })
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   }
 
   componentDidMount = () => {
@@ -157,7 +167,7 @@ class ThongTinTuyenSinh extends React.Component {
     this.setState({ page: 0, rowsPerPage: event.target.value });
   };
 
-  setModalDeleteStudent = (isModal) => this.setState({isModalDeleteStudent: isModal})
+  setModalDeleteStudent = (isModal) => this.setState({ isModalDeleteStudent: isModal })
 
   openModalDeleteStudent = (data) => {
     this.modalDeleteStudentRef.setDataStudent(data)
@@ -170,91 +180,164 @@ class ThongTinTuyenSinh extends React.Component {
 
   onRefModalDeleteStudent = (ref) => this.modalDeleteStudentRef = ref
 
+  handleChangeSearch = (e) => {
+    this.setState({ optionSearch: e.target.value })
+  }
+
   render() {
     const { classes } = this.props;
     const { rowsPerPage, page, data, isModalDeleteStudent } = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
     return (
-      <div>
-        <div classname={classes.tableWrapper}>
-          <Table  classname={classes.table}>
-            <TableHead>
-              <TableRow>
-                <TableCell>Username</TableCell>
-                <TableCell align="right">Họ tên</TableCell>
-                <TableCell align="right">Ngày sinh</TableCell>
-                <TableCell align="right">Số CMND</TableCell>
-                <TableCell align="right">Ngày đăng ký</TableCell>
-                <TableCell align="right">Dân tộc</TableCell>
-                <TableCell align="right">Địa chỉ</TableCell>
-                <TableCell align="right">Email</TableCell>
-                <TableCell align="right">Giới tính</TableCell>
-                <TableCell align="right">Nơi sinh</TableCell>
-                <TableCell align="right">Tình trạng</TableCell>
-                <TableCell align="right">Tùy chỉnh</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
-                <TableRow key={row.id}>
-                  <TableCell component="th" scope="row">
-                    {row.username}
-                  </TableCell>
-                  <TableCell align="right">{row.hTen}</TableCell>
-                  <TableCell align="right">{moment(row.ngSinh).format("DD/MM/YYYY")}</TableCell>
-                  <TableCell align="right">{row.soCMND}</TableCell>
-                  <TableCell align="right">{moment(row.createdAt).format("DD/MM/YYYY")}</TableCell>
-                  <TableCell align="right">{row.danToc}</TableCell>
-                  <TableCell align="right">{row.diaChi}</TableCell>
-                  <TableCell align="right">{row.email}</TableCell>
-                  <TableCell align="right">{row.gioiTinh}</TableCell>
-                  <TableCell align="right">{row.noiSinh}</TableCell>
-                  <TableCell align="right">{Number(row.tinhTrang)}</TableCell>
-                  <TableCell align="right">
-                    <Button onClick={() => this.openModalDeleteStudent(row)} variant="contained" color="secondary" className={classes.button}>
-                      Xóa 
-                    </Button>
-                    &nbsp;
-                    <Button variant="contained" color="primary" className={classes.button}>
-                        Xác nhận
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 48 * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TablePagination
-                  rowsPerPageOptions={[5, 10, 25]}
-                  colSpan={12}
-                  count={data.length}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  onChangePage={this.handleChangePage}
-                  ActionsComponent={CourseTableWrapped}
-                />
-              </TableRow>
-            </TableFooter>
-          </Table>
+      <div className={classes.container}>
+        <div className={classes.search}>
+          <GridContainer>
+            <GridItem xs={3} sm={3} md={3} lg={3}>
+              <label>
+                  Seacrh
+                </label>
+              <InputBase
+                style={{ boder: "red" }}
+                placeholder="Nhập thông tin ...."
+                classes={{
+                  root: classes.inputRoot,
+                  input: classes.inputInput,
+                }}
+              />
 
-          <ModalDeleteStudent isModal={isModalDeleteStudent} 
-            onRef={this.onRefModalDeleteStudent}
-            closeModalDeleteStudent={this.closeModalDeleteStudent}
-            getAllStudent={this.getAllStudent}/>
+            </GridItem>
+            <GridItem xs={7} sm={7} md={7} lg={7}>
+            <FormControl component="fieldset">
+              <RadioGroup
+                aria-label="position" name="position"
+                className={classes.group}
+                value={this.state.optionSearch}
+                onChange={this.handleChangeSearch}
+                row
+              >
+                    <FormControlLabel
+                      value="username"
+                      control={<Radio color="primary" />}
+                      label="Username"
+                      labelPlacement="start"
+                    />
+                    <FormControlLabel
+                      value="cmnd"
+                      control={<Radio color="primary" />}
+                      label="Số CMND"
+                      labelPlacement="start"
+                    />
+                    <FormControlLabel
+                      value="hoTen"
+                      control={<Radio color="primary" />}
+                      label="Họ tên"
+                      labelPlacement="start"
+                    />
+                    <FormControlLabel
+                      value="email"
+                      control={<Radio color="primary" />}
+                      label="Email"
+                      labelPlacement="start"
+                    />
+                    <FormControlLabel
+                      value="sdt"
+                      control={<Radio color="primary" />}
+                      label="SĐT"
+                      labelPlacement="start"
+                    />
+                 
+              </RadioGroup>
+              </FormControl>
+              </GridItem>
+              <GridItem xs={2} sm={2} md={2} lg={2}>
+                <Button variant="outlined" color="secondary" className={classes.button}>
+                  Tìm Kiếm
+              </Button>
+              </GridItem>
+            </GridContainer>
         </div>
-      </div>
-    );
-  }
-}
+        <hr/>
+          <div classname={classes.tableWrapper}>
+            <Table classname={classes.table}>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Username</TableCell>
+                  <TableCell align="center">Họ tên</TableCell>
+                  <TableCell align="center">Ngày sinh</TableCell>
+                  <TableCell align="center">Số CMND</TableCell>
+                  <TableCell align="center">Ngày đăng ký</TableCell>
+                  <TableCell align="center">Dân tộc</TableCell>
+                  <TableCell align="center">Địa chỉ</TableCell>
+                  <TableCell align="center">Email</TableCell>
+                  <TableCell align="center">Giới tính</TableCell>
+                  <TableCell align="center">Nơi sinh</TableCell>
+                  <TableCell align="center">Tình trạng</TableCell>
+                  <TableCell align="center"></TableCell>
+                  <TableCell align="center"></TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
+                  <TableRow key={row.id}>
+                    <TableCell component="th" scope="row">
+                      {row.username}
+                    </TableCell>
+                    <TableCell align="center">{row.hTen}</TableCell>
+                    <TableCell align="center">{moment(row.ngSinh).format("DD/MM/YYYY")}</TableCell>
+                    <TableCell align="center">{row.soCMND}</TableCell>
+                    <TableCell align="center">{moment(row.createdAt).format("DD/MM/YYYY")}</TableCell>
+                    <TableCell align="center">{row.danToc}</TableCell>
+                    <TableCell >{row.diaChi}</TableCell>
+                    <TableCell align="center">{row.email}</TableCell>
+                    <TableCell >{row.gioiTinh}</TableCell>
+                    <TableCell align="center">{row.noiSinh}</TableCell>
+                    <TableCell align="center">{Number(row.tinhTrang)}</TableCell>
+                    <TableCell align="center">
+                      <Button onClick={() => this.openModalDeleteStudent(row)} variant="contained" color="secondary" className={classes.button}>
+                        Xóa
+                    </Button>
+                    </TableCell>
+                    <TableCell align="center">
+                      <Button variant="contained" color="primary" className={classes.button}>
+                        X.nhận
+                    </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {emptyRows > 0 && (
+                  <TableRow style={{ height: 48 * emptyRows }}>
+                    <TableCell colSpan={6} />
+                  </TableRow>
+                )}
+              </TableBody>
+              <TableFooter>
+                <TableRow>
+                  <TablePagination
+                    rowsPerPageOptions={[5, 10, 25]}
+                    colSpan={12}
+                    count={data.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onChangePage={this.handleChangePage}
+                    ActionsComponent={CourseTableWrapped}
+                  />
+                </TableRow>
+              </TableFooter>
+            </Table>
 
+            <ModalDeleteStudent isModal={isModalDeleteStudent}
+              onRef={this.onRefModalDeleteStudent}
+              closeModalDeleteStudent={this.closeModalDeleteStudent}
+              getAllStudent={this.getAllStudent} />
+          </div>
+        </div>
+        );
+      }
+    }
+    
 ThongTinTuyenSinh.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
-
+          classes: PropTypes.object.isRequired,
+      };
+      
 export default withStyles(styles)(ThongTinTuyenSinh);

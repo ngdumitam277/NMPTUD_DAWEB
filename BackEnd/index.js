@@ -25,7 +25,7 @@ app.use(function(req, res, next) {
 
 app.use(cookieParser())
 
-var whitelist = ['http://localhost:3000']
+var whitelist = ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002']
 
 app.use(cors({
     origin: function(origin, callback){
