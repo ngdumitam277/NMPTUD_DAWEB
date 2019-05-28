@@ -44,58 +44,51 @@ class ProfileUser extends Component {
             diemChuan: 0,
             tongDiem: 0,
             diemTB: 0,
-            ketQua: ""
+            ketQua: "",
+            monthi: []
         }
         
     }
 
     componentDidMount = () => {
-        axios.get(`${url}web/diemthi/monthi`, {withCredentials: true})
+        let taikhoan = axios.get(`${url}web/taikhoan/thongtin`, {withCredentials: true})
+        let nganh = axios.get(`${url}web/nganh`)
+        let khoi = axios.get(`${url}web/khoi`)
+        let monthi = axios.get(`${url}web/taikhoan/monthi`, {withCredentials: true})
+
+        Promise.all([taikhoan, nganh, khoi, monthi])
         .then((result) => {
-            console.log(result)
+            let dataTaiKhoan = result[0].data
+            let dataNganh = result[1].data
+            let dataKhoi = result[2].data
+            let dataMon = result[3].data
+
+            if(dataTaiKhoan.length > 0){
+                let itemTaiKhoan = dataTaiKhoan[0]
+                let itemMon = dataMon[0]
+
+                this.setState({
+                    tenNganh: itemTaiKhoan.tenNganh,
+                    maNganh: itemTaiKhoan.maNganh,
+                    tenKhoi: itemTaiKhoan.tenKhoi,
+                    SBD: itemTaiKhoan.SBD,
+                    chiTieuNganh: itemTaiKhoan.chiTieuNganh,
+                    thongTin: itemTaiKhoan.thongTin,
+                    dataNganh: dataNganh,
+                    dataKhoi: dataKhoi,
+                    diemCongKhuVuc: itemMon.diemCongKhuVuc,
+                    diemCongDoiTuong: itemMon.diemCongDoiTuong,
+                    diemChuan: itemMon.diemChuan,
+                    tongDiem: itemMon.diem,
+                    diemTB: parseFloat(itemMon.diem/3).toFixed(2),
+                    ketQua: itemMon.thiDau === 1 ? "Đậu" : "Rớt",
+                    monthi: itemMon.monthi
+                })
+            }
         })
         .catch((err) => {
             console.log(err)
         })
-        // let taikhoan = axios.get(`${url}web/taikhoan/thongtin`, {withCredentials: true})
-        // let nganh = axios.get(`${url}web/nganh`)
-        // let khoi = axios.get(`${url}web/khoi`)
-        // let monthi = axios.get(`${url}web/diemthi/monthi`, {withCredentials: true})
-
-        // Promise.all([taikhoan, nganh, khoi, monthi])
-        // .then((result) => {
-        //     let dataTaiKhoan = result[0].data
-        //     let dataNganh = result[1].data
-        //     let dataKhoi = result[2].data
-        //     let dataMon = result[3].data
-
-        //     if(dataTaiKhoan.length > 0){
-        //         let itemTaiKhoan = dataTaiKhoan[0]
-        //         let itemMon = dataMon[0]
-
-        //         console.log(itemMon)
-
-        //         this.setState({
-        //             tenNganh: itemTaiKhoan.tenNganh,
-        //             maNganh: itemTaiKhoan.maNganh,
-        //             tenKhoi: itemTaiKhoan.tenKhoi,
-        //             SBD: itemTaiKhoan.SBD,
-        //             chiTieuNganh: itemTaiKhoan.chiTieuNganh,
-        //             thongTin: itemTaiKhoan.thongTin,
-        //             dataNganh: dataNganh,
-        //             dataKhoi: dataKhoi,
-        //             diemCongKhuVuc: itemMon.diemCongKhuVuc,
-        //             diemCongDoiTuong: itemMon.diemCongDoiTuong,
-        //             diemChuan: itemMon.diemChuan,
-        //             tongDiem: itemMon.diem,
-        //             diemTB: parseFloat(itemMon.diem/3).toFixed(2),
-        //             ketQua: itemMon.thiDau === 1 ? "Đậu" : "Rớt"
-        //         })
-        //     }
-        // })
-        // .catch((err) => {
-        //     console.log(err)
-        // })
     }
 
     handleChangeNganh = (event) => {
@@ -124,7 +117,7 @@ class ProfileUser extends Component {
         const { classes } = this.props;
         const { data, SBD, dataSelectNganh, tenNganh, maNganh, chiTieuNganh, tenKhoi, thongTin, 
             dataSelectKhoi, dataKhoi, dataNganh, diemChuan, diemCongDoiTuong, diemCongKhuVuc, diemTB, 
-            ketQua, tongDiem } = this.state;
+            ketQua, tongDiem, monthi } = this.state;
 
         return (
             <div style={{marginBottom:20}} className={classes.container}>
@@ -190,7 +183,7 @@ class ProfileUser extends Component {
                 </Button>
                 </div>
                 <hr/>
-                <MonThi/>
+                <MonThi data={monthi}/>
                 &nbsp;
                 <GridContainer style={{marginLeft:10}}>
                     <GridItem xs={4} sm={4} md={4}>

@@ -23,5 +23,5 @@ module.exports = (app) => {
     app.get('/web/thongke/nganh', DiemThi.thongKeNganh)
 
     // lấy tất cả môn của một tài khoản
-    app.get('/web/diemthi/monthi', DiemThi.layDiemThiTheoTaiKhoan)
+    app.get('/web/taikhoan/monthi', DiemThi.layDiemThiTheoTaiKhoan)
 }

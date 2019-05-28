@@ -14,9 +14,14 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import axios from 'axios'
+import { url } from 'variable/general.jsx'
+import moment from 'moment'
+
 class MonThi extends Component {
     render() {
-        const { classes } = this.props;
+        const { classes, data } = this.props;
+
         return (
             <div className={classes.container}>
                 <div className={classes.title}>
@@ -32,30 +37,18 @@ class MonThi extends Component {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        <TableRow key={1}>
-                            <TableCell component="th" scope="row">
-                                Toán
-                            </TableCell>
-                            <TableCell align="right">C32</TableCell>
-                            <TableCell align="right">25/05/2019</TableCell>
-                            <TableCell align="right">10</TableCell>
-                        </TableRow>
-                        <TableRow key={1}>
-                            <TableCell component="th" scope="row">
-                                Lý
-                            </TableCell>
-                            <TableCell align="right">C32</TableCell>
-                            <TableCell align="right">26/05/2019</TableCell>
-                            <TableCell align="right">8</TableCell>
-                        </TableRow>
-                        <TableRow key={1}>
-                            <TableCell component="th" scope="row">
-                                Hóa
-                            </TableCell>
-                            <TableCell align="right">C32</TableCell>
-                            <TableCell align="right">27/05/2019</TableCell>
-                            <TableCell align="right">7</TableCell>
-                        </TableRow>
+                        {
+                            data.map((row, index) => (
+                                <TableRow key={1}>
+                                    <TableCell component="th" scope="row">
+                                        {row.mon}
+                                    </TableCell>
+                                    <TableCell align="right">{row.phongThi}</TableCell>
+                                    <TableCell align="right">{moment(row.tgThi).format("DD-MM-YYYY")}</TableCell>
+                                    <TableCell align="right">{row.diem}</TableCell>
+                                </TableRow>
+                            ))
+                        }
                     </TableBody>
                 </Table>
             </div>

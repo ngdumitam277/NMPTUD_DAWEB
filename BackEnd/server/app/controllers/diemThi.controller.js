@@ -5,24 +5,7 @@ var md5 = require('md5');
 var cookie = require('cookie');
 var cookieTime = 3600*24*6; // tính bằng mili giây
 var tokenTime = 3600*24*6; // 6 ngày cho token tính bằng mili giây
-var mongoose = require('mongoose');
-
-var jwt = require('jsonwebtoken');
-var passportJWT = require("passport-jwt");
-var ExtractJwt = passportJWT.ExtractJwt;
-var JwtStrategy = passportJWT.Strategy;
-var passport = require("passport");
-
-var jwtOptions = {}
-jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-jwtOptions.secretOrKey = 'tamquysamg123456';
-
-var strategy = new JwtStrategy(jwtOptions, function (jwt_payload, next) {
-    console.log('payload received', jwt_payload);
-    next(null, jwt_payload)
-});
-
-passport.use(strategy);
+var { jwt, jwtOptions } = require('../../jwt/jwt.js')
 
 // tạo điểm thi
 exports.taoDiemThi = async(req, res) => {
@@ -377,7 +360,6 @@ exports.thongKeNganh = async(req, res) => {
 // lấy điểm thi theo tài khoản
 exports.layDiemThiTheoTaiKhoan = async(req, res) => {
     let user = await checkCookie(req.headers.cookie)
-    console.log(user)
 
     if(user.kt){
         try{
@@ -393,6 +375,19 @@ exports.layDiemThiTheoTaiKhoan = async(req, res) => {
                     } 
                 },
                 { 
+                    $lookup: {from: "mons", localField: "mon", foreignField: "tenMon", as: "monthi"}
+                },
+                { $unwind: "$monthi" },
+                {
+                    $project: {
+                        diem: 1,
+                        mon: 1,
+                        Phach: 1,
+                        phongThi: "$monthi.phongThi",
+                        tgThi: "$monthi.tgThi"
+                    } 
+                },
+                { 
                     $lookup: {from: "thisinhs", localField: "Phach", foreignField: "Phach", as: "thisinh"}
                 },
                 { $unwind: "$thisinh" },
@@ -402,6 +397,8 @@ exports.layDiemThiTheoTaiKhoan = async(req, res) => {
                         diem: 1,
                         mon: 1,
                         Phach: 1,
+                        phongThi: 1,
+                        tgThi: 1,
                         maKhuVuc: "$thisinh.maKhuVuc",
                         maDoiTuong: "$thisinh.maDoiTuong"
                     } 
@@ -414,6 +411,7 @@ exports.layDiemThiTheoTaiKhoan = async(req, res) => {
                             "maKhuVuc": "$maKhuVuc",
                             "maDoiTuong": "$maDoiTuong"
                         },
+                        monthi: { $addToSet: { mon: "$mon", diem: "$diem", tgThi: "$tgThi", phongThi: "$phongThi" } },
                         diem: { $sum: "$diem" }
                     }
                 },
@@ -423,6 +421,7 @@ exports.layDiemThiTheoTaiKhoan = async(req, res) => {
                         usernamets: "$_id.usernamets",
                         maKhuVuc: "$_id.maKhuVuc",
                         maDoiTuong: "$_id.maDoiTuong",
+                        monthi: 1,
                         diem: { $sum: "$diem" }
                     }
                 },
@@ -436,6 +435,7 @@ exports.layDiemThiTheoTaiKhoan = async(req, res) => {
                         diem: 1,
                         maKhuVuc: 1,
                         maDoiTuong: 1,
+                        monthi: 1,
                         tenKhoi: "$thisinhnhap.tenKhoi",
                         maNganh: "$thisinhnhap.maNganh"
                     } 
@@ -468,6 +468,7 @@ exports.layDiemThiTheoTaiKhoan = async(req, res) => {
                         maNganh: 1,
                         maKhuVuc: 1,
                         maDoiTuong: 1,
+                        monthi: 1,
                         diemChuan: "$nganhkhoi.diemChuan"
                     } 
                 },
@@ -483,7 +484,8 @@ exports.layDiemThiTheoTaiKhoan = async(req, res) => {
                         maNganh: 1,
                         diemCongKhuVuc: "$khuvuc.diemCong",
                         maDoiTuong: 1,
-                        diemChuan: 1
+                        diemChuan: 1,
+                        monthi: 1
                     } 
                 },
                 { 
@@ -498,7 +500,8 @@ exports.layDiemThiTheoTaiKhoan = async(req, res) => {
                         maNganh: 1,
                         diemCongKhuVuc: 1,
                         diemCongDoiTuong: "$doituong.diemCong",
-                        diemChuan: 1
+                        diemChuan: 1,
+                        monthi: 1
                     } 
                 },
                 {
@@ -509,7 +512,8 @@ exports.layDiemThiTheoTaiKhoan = async(req, res) => {
                         maNganh: 1,
                         diemCongKhuVuc: 1,
                         diemCongDoiTuong: 1,
-                        diemChuan: 1
+                        diemChuan: 1,
+                        monthi: 1
                     } 
                 },
                 {
@@ -521,7 +525,8 @@ exports.layDiemThiTheoTaiKhoan = async(req, res) => {
                         diemChuan: 1,
                         diemCongDoiTuong: 1,
                         diemCongKhuVuc: 1,
-                        thiDau: { $cond: { if: { $gte: [ "$diem", "$diemChuan" ] }, then: 1, else: 0 } }
+                        thiDau: { $cond: { if: { $gte: [ "$diem", "$diemChuan" ] }, then: 1, else: 0 } },
+                        monthi: 1
                     } 
                 }
             ])

@@ -135,7 +135,7 @@ class ProfileUser extends Component {
                                     Ngày sinh
                                 </InputLabel>
                                 <br />
-                                <p>{moment(ngSinh).format("YYYY-MM-DD")}</p>
+                                <p>{moment(ngSinh).format("DD-MM-YYYY")}</p>
                             </GridItem>
                             
                         </GridContainer>
@@ -159,7 +159,7 @@ class ProfileUser extends Component {
                                     Ngày Cấp CMND
                                 </InputLabel>
                                 <br />
-                                <p>{moment(ngCapCMND).format("YYYY-MM-DD")}</p>
+                                <p>{moment(ngCapCMND).format("DD-MM-YYYY")}</p>
                                 
                             </GridItem>
                         </GridContainer>

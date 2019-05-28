@@ -8,24 +8,7 @@ var md5 = require('md5');
 var cookie = require('cookie');
 var cookieTime = 3600*24*6; // tính bằng mili giây
 var tokenTime = 3600*24*6; // 6 ngày cho token tính bằng mili giây
-var mongoose = require('mongoose');
-
-var jwt = require('jsonwebtoken');
-var passportJWT = require("passport-jwt");
-var ExtractJwt = passportJWT.ExtractJwt;
-var JwtStrategy = passportJWT.Strategy;
-var passport = require("passport");
-
-var jwtOptions = {}
-jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-jwtOptions.secretOrKey = 'tamquysamg123456';
-
-var strategy = new JwtStrategy(jwtOptions, function (jwt_payload, next) {
-    console.log('payload received', jwt_payload);
-    next(null, jwt_payload)
-});
-
-passport.use(strategy);
+var { jwt, jwtOptions } = require('../../jwt/jwt.js')
 
 // tạo tài khoản thí sinh
 exports.taoTaiKhoanTS = async(req, res) => {
