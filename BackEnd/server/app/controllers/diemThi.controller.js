@@ -1,4 +1,5 @@
 const DiemThi = require('../models/diemThi.model.js');
+const TaiKhoan = require('../models/taikhoan.model.js');
 const moment = require('moment');
 const nodemailer = require("nodemailer");
 var md5 = require('md5');
@@ -546,15 +547,20 @@ exports.layDiemThiTheoTaiKhoan = async(req, res) => {
     }
 };
 
-async function checkCookie(data){
+async function checkCookie(result){
+    let dataSplit = result.split(" ")
+    let data = dataSplit[1] ? dataSplit[1] : ""
+
     let informationUser = {
         kt: false,
         user: []
     }
     let cookies = cookie.parse(data || '');
+    
     if(cookies.token){
         try{
             let decoded = jwt.verify(cookies.token, jwtOptions.secretOrKey)
+
             if(decoded.username){
                 try{
                     let user = await TaiKhoan.find({username: decoded.username})

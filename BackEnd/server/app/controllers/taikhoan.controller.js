@@ -9,6 +9,7 @@ var cookie = require('cookie');
 var cookieTime = 3600*24*6; // tính bằng mili giây
 var tokenTime = 3600*24*6; // 6 ngày cho token tính bằng mili giây
 var { jwt, jwtOptions } = require('../../jwt/jwt.js')
+const mongoose = require('mongoose')
 
 // tạo tài khoản thí sinh
 exports.taoTaiKhoanTS = async(req, res) => {
@@ -52,8 +53,23 @@ exports.taoTaiKhoanTS = async(req, res) => {
                     tgDangKy: tgDangKy,
                     maXacNhan: ""
                 })
+
+                const thisinh = new ThiSinh({
+                    usernamets: username,
+                    SBD: mongoose.Types.ObjectId(),
+                    tenTHPT: "",
+                    namTotNghiep: "",  
+                    anhMinhChung: "",
+                    ttTuyenSinh: "",
+                    Phach: mongoose.Types.ObjectId(),
+                    maKhuVuc: "",
+                    maDoiTuong: ""
+                })
             
-                taikhoan.save()
+                let a = taikhoan.save()
+                let b = thisinh.save()
+
+                Promise.all([a, b])
                 .then((result) => {
                     res.send({message: "ok"});
                 }).catch(err => {
