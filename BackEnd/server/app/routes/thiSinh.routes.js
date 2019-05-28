@@ -6,4 +6,7 @@ module.exports = (app) => {
 
     // tìm kiếm thí sinh
     app.post('/web/thisinh/timkiem', ThiSinh.timKiemThiSinh);
+
+    // nộp hồ sơ
+    app.post('/web/thisinh/nophoso', ThiSinh.nopHoSo);
 }
