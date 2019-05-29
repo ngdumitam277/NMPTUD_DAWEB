@@ -17,7 +17,30 @@ import Parallax from "components/Parallax/Parallax.jsx";
 import HeaderLinks from "components/Header/HeaderLinks.jsx";
 import SectionAdmin from './sections/SectionAdmin';
 
+import axios from 'axios'
+import { url } from 'variable/general.jsx'
+
 class AdminPage extends Component {
+
+    componentDidMount() {
+        this.checkLogin()
+    }
+
+    checkLogin = () => {
+        axios.get(`${url}web/taikhoan/checkCookie`, {
+          withCredentials: true
+        })
+        .then((response) => {
+          let result = response.data
+          if(result.message === "ok" && result.user.loai === 'TS'){
+            this.props.history.push("/");
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+      }
+
     render() {
         const { classes, ...rest } = this.props;
         return (
