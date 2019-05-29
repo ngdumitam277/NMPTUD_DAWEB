@@ -65,8 +65,8 @@ class ProfileUser extends Component {
 
             if(dataTaiKhoan.length > 0){
                 let itemTaiKhoan = dataTaiKhoan[0]
-                let itemMon = dataMon[0]
-
+                let itemMon = dataMon[0] ? dataMon[0] : {} 
+                
                 this.setState({
                     tenNganh: itemTaiKhoan.tenNganh,
                     maNganh: itemTaiKhoan.maNganh,
@@ -76,13 +76,13 @@ class ProfileUser extends Component {
                     thongTin: itemTaiKhoan.thongTin,
                     dataNganh: dataNganh,
                     dataKhoi: dataKhoi,
-                    diemCongKhuVuc: itemMon.diemCongKhuVuc,
-                    diemCongDoiTuong: itemMon.diemCongDoiTuong,
-                    diemChuan: itemMon.diemChuan,
-                    tongDiem: itemMon.diem,
-                    diemTB: parseFloat(itemMon.diem/3).toFixed(2),
-                    ketQua: itemMon.thiDau === 1 ? "Đậu" : "Rớt",
-                    monthi: itemMon.monthi
+                    diemCongKhuVuc: itemMon.diemCongKhuVuc ? itemMon.diemCongKhuVuc : "",
+                    diemCongDoiTuong: itemMon.diemCongDoiTuong ? itemMon.diemCongDoiTuong : "",
+                    diemChuan: itemMon.diemChuan ? itemMon.diemChuan : "",
+                    tongDiem: itemMon.diem ? itemMon.diem : "",
+                    diemTB: itemMon.diem ? parseFloat(itemMon.diem/3).toFixed(2) : "" ,
+                    ketQua: itemMon.thiDau ? itemMon.thiDau === 1 ? "Đậu" : "Rớt" : "",
+                    monthi: itemMon.monthi ? itemMon.monthi : []
                 })
             }
         })
@@ -111,6 +111,20 @@ class ProfileUser extends Component {
 
     handleChangeKhoi = (event) => {
         this.setState({tenKhoi: event.target.value})
+    }
+
+    nopHoSo = () => {
+        axios.post(`${url}web/thisinh/nophoso`, {
+            username: "tamle",
+            maNganh: "DC",
+            tenKhoi: "C"
+        })
+        .then((result) => {
+            let data = result.data
+        })
+        .catch((err) => {
+            console.log(err)
+        })
     }
 
     render() {
@@ -178,7 +192,7 @@ class ProfileUser extends Component {
                     </GridItem>
                 </GridContainer>
                 <div style={{textAlign:"right"}}>
-                <Button variant="contained" color="primary" className={classes.button}>
+                <Button onClick={this.nopHoSo} variant="contained" color="primary" className={classes.button}>
                     Nộp hồ sơ
                 </Button>
                 </div>
