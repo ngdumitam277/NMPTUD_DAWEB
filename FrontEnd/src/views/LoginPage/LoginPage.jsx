@@ -103,7 +103,7 @@ class LoginPage extends React.Component {
           absolute
           color="transparent"
           brand="Trang chủ"
-          rightLinks={<HeaderLinks />}
+          rightLinks={<HeaderLinks {...this.props} />}
           {...rest}
         />
         <div

@@ -15,10 +15,27 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import axios from 'axios'
+import Button from "components/CustomButtons/Button.jsx";
 import { url } from 'variable/general.jsx'
 import moment from 'moment'
+import ModalPhucKhao from '../AdminPage/modals/ModalPhucKhao';
 
 class MonThi extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            isModal: false,
+        }
+    }
+
+    handlePhucKhao = () => {
+        this.setState({isModal: true})
+    }
+
+    closeModalPhucKhao = () => {
+        this.setState({isModal: false})
+    }
+
     render() {
         const { classes, data } = this.props;
 
@@ -31,9 +48,11 @@ class MonThi extends Component {
                     <TableHead>
                         <TableRow>
                             <TableCell>Môn thi</TableCell>
-                            <TableCell align="right">Phòng thi</TableCell>
-                            <TableCell align="right">Ngày giờ thi</TableCell>
-                            <TableCell align="right">Điểm</TableCell>
+                            <TableCell align="center">Phòng thi</TableCell>
+                            <TableCell align="center">Ngày giờ thi</TableCell>
+                            <TableCell align="center">Điểm</TableCell>
+                            <TableCell align="center">Điểm phúc khảo</TableCell>
+                            <TableCell align="center">Tùy chỉnh</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -43,14 +62,21 @@ class MonThi extends Component {
                                     <TableCell component="th" scope="row">
                                         {row.mon}
                                     </TableCell>
-                                    <TableCell align="right">{row.phongThi}</TableCell>
-                                    <TableCell align="right">{moment(row.tgThi).format("DD-MM-YYYY")}</TableCell>
-                                    <TableCell align="right">{row.diem}</TableCell>
+                                    <TableCell align="center">{row.phongThi}</TableCell>
+                                    <TableCell align="center">{moment(row.tgThi).format("DD-MM-YYYY")}</TableCell>
+                                    <TableCell align="center">{row.diem}</TableCell>
+                                    <TableCell align="center">Chưa có</TableCell>
+                                    <TableCell align="center">
+                                    <Button onClick={this.handlePhucKhao} simple color="primary" size="lg">
+                                        Phúc khảo
+                                    </Button>
+                                    </TableCell>
                                 </TableRow>
                             ))
                         }
                     </TableBody>
                 </Table>
+                <ModalPhucKhao isModal={this.state.isModal} closeModalPhucKhao={this.closeModalPhucKhao}/>
             </div>
         )
     }
