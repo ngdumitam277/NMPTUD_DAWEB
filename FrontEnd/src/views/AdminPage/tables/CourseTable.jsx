@@ -17,6 +17,8 @@ import LastPageIcon from '@material-ui/icons/LastPage';
 import Button from '@material-ui/core/Button';
 import axios from 'axios'
 import { url } from 'variable/general.jsx'
+import Icon from '@material-ui/core/Icon';
+import InputLabel from "@material-ui/core/InputLabel";
 import moment from 'moment'
 import ModalAddMonThi from '../modals/ModalAddMonThi';
 import ModalEditMonThi from '../modals/ModalEditMonThi';
@@ -53,7 +55,7 @@ class CourseTable extends React.Component {
     const { classes, count, page, rowsPerPage, theme } = this.props;
 
     return (
-      <div style={{width:400}} classname={classes.root}>
+      <div style={{ width: 400 }} classname={classes.root}>
         <IconButton
           onClick={this.handleFirstPageButtonClick}
           disabled={page === 0}
@@ -120,16 +122,16 @@ const styles = theme => ({
 });
 
 class CustomPaginationActionsTable extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props)
 
     this.state = {
-        data: [],
-        isModalAddMonThi: false,
-        isModalEditMonThi: false,
-        isModalDeleteMonThi: false,
-        page: 0,
-        rowsPerPage: 5,
+      data: [],
+      isModalAddMonThi: false,
+      isModalEditMonThi: false,
+      isModalDeleteMonThi: false,
+      page: 0,
+      rowsPerPage: 5,
     }
 
     this.modalEditMonThiRef = React.createRef()
@@ -137,51 +139,51 @@ class CustomPaginationActionsTable extends React.Component {
   }
 
   getAllMonThi = () => {
-      axios.get(`${url}web/mon`)
+    axios.get(`${url}web/mon`)
       .then((response) => {
-          let result = response.data
-          this.setState({data: result})
+        let result = response.data
+        this.setState({ data: result })
       })
       .catch((err) => {
-          console.log(err)
+        console.log(err)
       })
   }
 
   componentDidMount = () => {
-      this.getAllMonThi()
+    this.getAllMonThi()
   }
 
-  setModalAddMonThi = (isModal) => this.setState({isModalAddMonThi: isModal})
+  setModalAddMonThi = (isModal) => this.setState({ isModalAddMonThi: isModal })
 
   openModalAddMonThi = (event) => {
-      event.preventDefault()
-      this.setModalAddMonThi(true)
+    event.preventDefault()
+    this.setModalAddMonThi(true)
   }
 
   closeModalAddMonThi = () => {
-      this.setModalAddMonThi(false)
+    this.setModalAddMonThi(false)
   }
 
-  setModalEditMonThi = (isModal) => this.setState({isModalEditMonThi: isModal})
+  setModalEditMonThi = (isModal) => this.setState({ isModalEditMonThi: isModal })
 
   openModalEditMonThi = (data) => {
-      this.modalEditMonThiRef.setDataMonThi(data)
-      this.setModalEditMonThi(true)
+    this.modalEditMonThiRef.setDataMonThi(data)
+    this.setModalEditMonThi(true)
   }
 
   closeModalEditMonThi = () => {
-      this.setModalEditMonThi(false)
+    this.setModalEditMonThi(false)
   }
 
-  setModalDeleteMonThi = (isModal) => this.setState({isModalDeleteMonThi: isModal})
+  setModalDeleteMonThi = (isModal) => this.setState({ isModalDeleteMonThi: isModal })
 
   openModalDeleteMonThi = (data) => {
-      this.modalDeleteMonThiRef.setDataMonThi(data)
-      this.setModalDeleteMonThi(true)
+    this.modalDeleteMonThiRef.setDataMonThi(data)
+    this.setModalDeleteMonThi(true)
   }
 
   closeModalDeleteMonThi = () => {
-      this.setModalDeleteMonThi(false)
+    this.setModalDeleteMonThi(false)
   }
 
   onRefModalDeleteMonThi = (ref) => this.modalDeleteMonThiRef = ref
@@ -203,72 +205,85 @@ class CustomPaginationActionsTable extends React.Component {
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
     return (
-      <Paper classname={classes.root}>
-        <div classname={classes.tableWrapper}>
-          <Table classname={classes.table}>
-            <TableHead>
-              <TableRow>
-                <TableCell>Tên môn</TableCell>
-                <TableCell align="right">Ngày thi</TableCell>
-                <TableCell align="right">Phòng thi</TableCell>
-                <TableCell align="right">Tùy chỉnh</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
-                <TableRow key={row.id}>
-                  <TableCell component="th" scope="row">
-                    {row.tenMon}
-                  </TableCell>
-                  <TableCell align="right">{moment(row.tgThi).format("DD-MM-YYYY")}</TableCell>
-                  <TableCell align="right">{row.phongThi}</TableCell>
-                  <TableCell align="right">
-                    <Button onClick={() => this.openModalDeleteMonThi(row)} variant="contained" color="secondary" className={classes.button}>
-                      Xóa 
+      <div>
+        <div style={{marginBottom:10}}>
+        <Button onClick={this.openModalAddKhoiThi} variant="contained" color="green" className={classes.button}>
+          <Icon className={classes.iconHover} color="error" style={{ fontSize: 30 }}>
+            add_circle
+          </Icon>
+        </Button>
+        &nbsp;
+        <InputLabel className={classes.label}>
+          Thêm môn
+        </InputLabel>
+        </div>
+        <Paper classname={classes.root}>
+          <div classname={classes.tableWrapper}>
+            <Table classname={classes.table}>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Tên môn</TableCell>
+                  <TableCell align="right">Ngày thi</TableCell>
+                  <TableCell align="right">Phòng thi</TableCell>
+                  <TableCell align="right">Tùy chỉnh</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
+                  <TableRow key={row.id}>
+                    <TableCell component="th" scope="row">
+                      {row.tenMon}
+                    </TableCell>
+                    <TableCell align="right">{moment(row.tgThi).format("DD-MM-YYYY")}</TableCell>
+                    <TableCell align="right">{row.phongThi}</TableCell>
+                    <TableCell align="right">
+                      <Button onClick={() => this.openModalDeleteMonThi(row)} variant="contained" color="secondary" className={classes.button}>
+                        Xóa
                     </Button>
-                    &nbsp;
+                      &nbsp;
                     <Button onClick={() => this.openModalEditMonThi(row)} variant="contained" color="primary" className={classes.button}>
                         Sửa
                     </Button>
-                  </TableCell>
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {emptyRows > 0 && (
+                  <TableRow style={{ height: 48 * emptyRows }}>
+                    <TableCell colSpan={6} />
+                  </TableRow>
+                )}
+              </TableBody>
+              <TableFooter>
+                <TableRow>
+                  <TablePagination
+                    rowsPerPageOptions={[5, 10, 25]}
+                    colSpan={12}
+                    count={data.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onChangePage={this.handleChangePage}
+                    ActionsComponent={CourseTableWrapped}
+                  />
                 </TableRow>
-              ))}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 48 * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TablePagination
-                  rowsPerPageOptions={[5, 10, 25]}
-                  colSpan={12}
-                  count={data.length}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  onChangePage={this.handleChangePage}
-                  ActionsComponent={CourseTableWrapped}
-                />
-              </TableRow>
-            </TableFooter>
-          </Table>
-        </div>
+              </TableFooter>
+            </Table>
+          </div>
 
-        <ModalAddMonThi isModal={isModalAddMonThi} 
+          <ModalAddMonThi isModal={isModalAddMonThi}
             closeModalAddMonThi={this.closeModalAddMonThi}
-            getAllMonThi={this.getAllMonThi}/>
+            getAllMonThi={this.getAllMonThi} />
 
-        <ModalEditMonThi isModal={isModalEditMonThi} 
+          <ModalEditMonThi isModal={isModalEditMonThi}
             onRef={this.onRefModalEditMonThi}
             closeModalEditMonThi={this.closeModalEditMonThi}
-            getAllMonThi={this.getAllMonThi}/>
-        
-        <ModalDeleteMonThi isModal={isModalDeleteMonThi} 
+            getAllMonThi={this.getAllMonThi} />
+
+          <ModalDeleteMonThi isModal={isModalDeleteMonThi}
             onRef={this.onRefModalDeleteMonThi}
             closeModalDeleteMonThi={this.closeModalDeleteMonThi}
-            getAllMonThi={this.getAllMonThi}/>
-      </Paper>
+            getAllMonThi={this.getAllMonThi} />
+        </Paper>
+      </div>
     );
   }
 }

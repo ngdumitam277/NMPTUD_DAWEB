@@ -86,7 +86,9 @@ class LoginPage extends React.Component {
   }
 
   onChangeUsername = (event) => {
-    this.setState({username: event.target.value})
+    const username = event.target.value
+
+    this.setState({username: username})
   }
 
   onChangePassword = (event) => {
@@ -159,6 +161,8 @@ class LoginPage extends React.Component {
                         formControlProps={{
                           fullWidth: true
                         }}
+                        max="16"
+                        min="5"
                         inputProps={{
                           onChange: this.onChangeUsername,
                           value: username,

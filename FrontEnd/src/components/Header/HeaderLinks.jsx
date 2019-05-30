@@ -63,6 +63,7 @@ class HeaderLinks extends Component {
     axios.get(`${url}web/taikhoan/dangxuat`, { withCredentials: true })
       .then((result) => {
         alert("Đăng xuất thành công!")
+        this.props.history.push("/")
         this.setState({ user: null })
       })
       .catch((err) => {
@@ -90,7 +91,7 @@ class HeaderLinks extends Component {
       <List className={classes.list}>
         <ListItem className={classes.listItem}>
           <Button
-            href="https://www.creative-tim.com/product/material-kit-react"
+            href=""
             color="transparent"
             className={classes.navLink}
           >
@@ -99,7 +100,7 @@ class HeaderLinks extends Component {
         </ListItem>
         <ListItem className={classes.listItem}>
           <Button
-            href="https://www.creative-tim.com/product/material-kit-react"
+            href=""
             color="transparent"
             target="_blank"
             className={classes.navLink}
@@ -109,7 +110,7 @@ class HeaderLinks extends Component {
         </ListItem>
         <ListItem className={classes.listItem}>
           <Button
-            href="https://www.creative-tim.com/product/material-kit-react"
+            href=""
             color="transparent"
             target="_blank"
             className={classes.navLink}
