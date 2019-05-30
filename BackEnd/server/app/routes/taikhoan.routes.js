@@ -28,8 +28,11 @@ module.exports = (app) => {
     // lấy tình trạng của tài khoản
     app.post('/web/taikhoan/tinhtrang', taikhoan.layTinhTrang);
 
+    // lấy thông tin cá nhân
+    app.get('/web/taikhoan/thongtincanhan', taikhoan.hienThongTinCaNhan);
+
     // lấy thông tin thí sinh
-    app.get('/web/taikhoan/thongtin', taikhoan.hienThongTinThiSinh);
+    app.get('/web/taikhoan/thongtinthisinh', taikhoan.hienThongTinThiSinh);
 
     // sửa thông tin thí sinh
     app.put('/web/taikhoan/sua/thongtin/:username', taikhoan.suaThongTinThiSinh);

@@ -53,7 +53,7 @@ class ProfileUser extends Component {
     }
 
     getAllData = () => {
-        let taikhoan = axios.get(`${url}web/taikhoan/thongtin`, {withCredentials: true})
+        let taikhoan = axios.get(`${url}web/taikhoan/thongtinthisinh`, {withCredentials: true})
         let nganh = axios.get(`${url}web/nganh`)
         let khoi = axios.get(`${url}web/nganhkhoi`)
         let monthi = axios.get(`${url}web/taikhoan/monthi`, {withCredentials: true})

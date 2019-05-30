@@ -205,7 +205,110 @@ exports.layTinhTrang = async(req, res) => {
     }
 };
 
-// hiện thông tin thí sinh
+// lấy thông tin cá nhân
+exports.hienThongTinCaNhan = async(req, res) => {
+    let user = await checkCookie(req.headers.cookie)
+
+    if(user.kt){
+        try{
+            let cookies = cookie.parse(req.headers.cookie || '');
+            let decoded = jwt.verify(cookies.token, jwtOptions.secretOrKey)
+            let username = decoded.username
+
+            if(username !== ""){
+                TaiKhoan.aggregate([
+                    { $match: { username: username } },
+                    { $project: {
+                            _id: 0,
+                            username: 1,
+                            hTen: 1,
+                            ngSinh: 1,
+                            gioiTinh: 1,
+                            danToc: 1,
+                            soCMND: 1,
+                            ngCapCMND: 1,
+                            noiSinh: 1,
+                            diaChi: 1,
+                            email: 1,
+                            SDT: 1,
+                            tinhTrang: 1
+                        } 
+                    },
+                    { 
+                        $lookup: {from: "thisinhs", localField: "username", foreignField: "usernamets", as: "thisinh"}
+                    },
+                    { $unwind: "$thisinh" },
+                    { $project: {
+                            username: 1,
+                            hTen: 1,
+                            SBD: "$thisinh.SBD",
+                            ngSinh: 1,
+                            gioiTinh: 1,
+                            danToc: 1,
+                            soCMND: 1,
+                            ngCapCMND: 1,
+                            noiSinh: 1,
+                            diaChi: 1,
+                            email: 1,
+                            SDT: 1,
+                            tinhTrang: 1,
+                            namTotNghiep: "$thisinh.namTotNghiep",
+                            tenTHPT: "$thisinh.tenTHPT",
+                            anhMinhChung: "$thisinh.anhMinhChung",
+                            maKhuVuc: "$thisinh.maKhuVuc",
+                            maDoiTuong: "$thisinh.maDoiTuong"
+                        } 
+                    },
+                    { 
+                        $lookup: {from: "thisinhnhaps", localField: "username", foreignField: "usernamets", as: "thisinhnhap"}
+                    },
+                    { $unwind: "$thisinhnhap" },
+                    { $project: {
+                            username: 1,
+                            hTen: 1,
+                            SBD: 1,
+                            ngSinh: 1,
+                            gioiTinh: 1,
+                            danToc: 1,
+                            soCMND: 1,
+                            ngCapCMND: 1,
+                            noiSinh: 1,
+                            diaChi: 1,
+                            email: 1,
+                            SDT: 1,
+                            namTotNghiep: 1,
+                            tenTHPT: 1,
+                            anhMinhChung: 1,
+                            maKhuVuc: 1,
+                            maDoiTuong: 1,
+                            tinhTrang: 1,
+                            maNganh: "$thisinhnhap.maNganh",
+                            tenKhoi: "$thisinhnhap.tenKhoi"
+                        } 
+                    },
+                ])  
+                .then((result) => {
+                    res.send(result)
+                })          
+                .catch((err) => {
+                    console.log("hienThongTinThiSinh", err)
+                    res.send({message: "Lỗi lấy thông tin thí sinh!"})
+                })
+            }else{
+                console.log("hienThongTinThiSinh", "username không được rỗng!")
+                res.send({message: "Username không được rỗng!"})
+            }
+        }catch(err){
+            console.log("hienThongTinThiSinh", err)
+            res.send({message: "Lỗi lấy thông tin thí sinh!"})
+        }
+    }else{
+        console.log("hienThongTinThiSinh", "error cookie")
+        res.send({message: "Lỗi lấy thông tin thí sinh!"})
+    }
+};
+
+// lấy thông tin thí sinh
 exports.hienThongTinThiSinh = async(req, res) => {
     let user = await checkCookie(req.headers.cookie)
 
@@ -695,12 +798,13 @@ async function taoTaiKhoanCB(username, password, soCMND, ngCapCMND, hTen, ngSinh
 exports.dangnhap = async(req, res) => {
     let username = req.body.username ? req.body.username : ""
     let password = req.body.password ? req.body.password : ""
+    let md5Password = md5(password)
     
     try{
         if(username !== "" && password !== ""){
             let exist = await TaiKhoan.find({username: username})
             if(exist.length > 0){
-                let user = await TaiKhoan.find({username: username, password: password})
+                let user = await TaiKhoan.find({username: username, password: md5Password})
                 if(user.length > 0){
                     var payload = {username: user[0].username, loai: user[0].loai, 
                         exp: Math.floor(Date.now() / 1000) + tokenTime, hTen: user[0].hTen};

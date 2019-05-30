@@ -47,7 +47,7 @@ class ProfileUser extends Component {
     }
 
     getProfileUser = () => {
-        axios.get(`${url}web/taikhoan/thongtin`, {
+        axios.get(`${url}web/taikhoan/thongtincanhan`, {
             withCredentials: true
         })
         .then((response) => {
