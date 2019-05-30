@@ -11,11 +11,6 @@ import Typography from '@material-ui/core/Typography';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
 import moment from 'moment';
 
 function getModalStyle() {
@@ -26,7 +21,6 @@ function getModalStyle() {
       top: `${top}%`,
       left: `${left}%`,
       transform: `translate(-${top}%, -${left}%)`,
-      width: 400,
     };
 }
 
@@ -58,41 +52,44 @@ const styles = theme => ({
     ...componentsStyle
 });
 
-class ModalPhucKhao extends Component {
+class ModalXacNhanStudent extends Component {
     constructor(props){
         super(props)
+
         this.state = {
-            diemPhucKhao: 0,
-            Phach: 0,
-            mon: ""
+            username: ""
         }
     }
 
-    handlePhucKhao = () => {
-        axios.put(`${url}web/diemthi/phuckhao/${this.state.Phach}/${this.state.mon}`,{
-            diemPK: this.state.diemPhucKhao
-        })
-        .then((result) => {
-            let data = result.data
+    clickXacNhanStudent = (event) => {
+        event.preventDefault()
 
-            if(data.message === "ok"){
-                alert("Phúc khảo điểm thi thành công!!!")
-                this.props.getAllData()
+        axios.get(`${url}web/xacnhan/taikhoan/${this.state.username}`)
+        .then((response) => {
+            let result = response.data
+            if(result.message === "ok"){
+                alert("Xác nhận tài khoản thành công!")
             }else{
-                alert(data.message)
+                alert(result.message)
             }
+
+            this.props.closeModalXacNhanStudent()
+            this.props.getAllStudent()
         })
         .catch((err) => {
+            alert("Xác nhận tài khoản thất bại!")
             console.log(err)
-            alert("Lỗi phúc khảo điểm thi")
         })
     }
 
-    setData = (Phach, mon) => {
-        this.setState({
-            Phach: Phach,
-            mon: mon
-        })
+    setDataStudent = (data) => {
+        try{
+            this.setState({
+                username: data.username
+            })
+        }catch(err){
+            console.log(err)
+        }
     }
 
     componentDidMount = () => {
@@ -101,50 +98,38 @@ class ModalPhucKhao extends Component {
 
     render() {
         let { isModal, classes, ...rest } = this.props
+        let { username } = this.state
 
         return (
-            <Modal 
-                open={isModal}
+            <Modal open={isModal}
                 aria-labelledby="simple-modal-title"
                 aria-describedby="simple-modal-description"
+                onClose={this.props.closeModalXacNhanStudent}
             >
                 <div style={getModalStyle()} className={classes.paper}>
                     <div className={classes.title}>
-                        <h3>Phúc khảo</h3>
+                        <h3>Xác nhận thí sinh</h3>
                     </div>
-                    <form className={classes.container}>
-                        <div>
-                        <label>Bạn đang phúc khảo môn: Lý</label>
-                        </div>
-                        
-                        <TextField
-                            id="a"
-                            type="number"
-                            label="Nhập số điểm"
-                            value={this.state.diemPhucKhao}
-                            onChange={(e) => { this.setState({diemPhucKhao: e.target.value})}}
-                            className={classes.textField}
-                            margin="normal"
-                            variant="outlined"
-                        />
-                    </form>
+                    <Typography variant="h6" gutterBottom>
+                        {`Bạn có chắc chắn muốn xác nhận thí sính có username là ${username} này không?`}
+                    </Typography>
+
                     <div style={{textAlign: "end"}}>
                         <Button
                             style={{marginRight: 5}}
                             variant="outlined"
-                            href="#huyModalAddNganhKhoi"
-                            onClick={this.props.closeModalPhucKhao}
+                            href="#huyModalXacNhanStudent"
+                            onClick={this.props.closeModalXacNhanStudent}
                         >
                             Huỷ
                         </Button>
                         <Button
-                            onClick={this.handlePhucKhao}
-                            color="primary"
                             style={{marginLeft: 5}}
                             variant="outlined"
-                            href="#themKhoiThi"
+                            href="#xoaStudent"
+                            onClick={this.clickXacNhanStudent}
                         >
-                            Đồng ý
+                            Xác nhận
                         </Button>
                     </div>
                 </div>
@@ -153,4 +138,4 @@ class ModalPhucKhao extends Component {
     }
 }
 
-export default withStyles(styles)(ModalPhucKhao)
+export default withStyles(styles)(ModalXacNhanStudent)

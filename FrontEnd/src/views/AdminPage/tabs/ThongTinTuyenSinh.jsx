@@ -28,6 +28,7 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
+import ModalXacNhanStudent from '../modals/ModalXacNhanStudent';
 
 const actionsStyles = theme => ({
   root: {
@@ -136,10 +137,12 @@ class ThongTinTuyenSinh extends React.Component {
       rowsPerPage: 5,
       isModalDeleteStudent: false,
       optionSearch: '',
-      keySearch: ""
+      keySearch: "",
+      isModalXacNhanStudent: false
     }
 
     this.modalDeleteStudentRef = React.createRef()
+    this.modalXacNhanStudentRef = React.createRef()
   }
 
   getAllStudent = () => {
@@ -179,6 +182,19 @@ class ThongTinTuyenSinh extends React.Component {
     this.setModalDeleteStudent(false)
   }
 
+  setModalXacNhanStudent = (isModal) => this.setState({ isModalXacNhanStudent: isModal })
+
+  openModalXacNhanStudent = (data) => {
+    this.modalXacNhanStudentRef.setDataStudent(data)
+    this.setModalXacNhanStudent(true)
+  }
+
+  closeModalXacNhanStudent = () => {
+    this.setModalXacNhanStudent(false)
+  }
+
+  onRefModalXacNhanStudent = (ref) => this.modalXacNhanStudentRef = ref
+
   onRefModalDeleteStudent = (ref) => this.modalDeleteStudentRef = ref
 
   handleChangeSearch = (e) => {
@@ -211,9 +227,85 @@ class ThongTinTuyenSinh extends React.Component {
     }
   }
 
+  getTinhTrangThiSinh = (tinhTrang) => {
+    if(tinhTrang === 0){
+      return "Chưa xác nhận"
+    }else if(tinhTrang === 1){
+      return "Đã xác nhận"
+    }else if(tinhTrang === 3){
+      return "Đã xoá"
+    }else{
+      return "Đang phúc khảo"
+    }
+  }
+
+  getTuyChinhThiSinh = (tinhTrang, classes, row) => {
+    if(tinhTrang === 0){
+      return (
+        <>
+          <TableCell align="center">
+            <Button onClick={() => this.openModalDeleteStudent(row)} variant="contained" color="secondary" className={classes.button}>
+                Xóa
+            </Button>
+          </TableCell>
+          <TableCell align="center">
+            <Button onClick={() => this.openModalXacNhanStudent(row)} variant="contained" color="primary" className={classes.button}>
+                X.nhận
+            </Button>
+          </TableCell>
+        </>
+      )
+    }else if(tinhTrang === 1){
+      return (
+        <>
+          <TableCell align="center">
+            <Button onClick={() => this.openModalDeleteStudent(row)} variant="contained" color="secondary" className={classes.button}>
+                Xóa
+            </Button>
+          </TableCell>
+          <TableCell align="center">
+            <Button disabled={true} onClick={() => this.openModalXacNhanStudent(row)} variant="contained" color="primary" className={classes.button}>
+                X.nhận
+            </Button>
+          </TableCell>
+        </>
+      )
+    }else if(tinhTrang === 3){
+      return (
+        <>
+          <TableCell align="center">
+            <Button disabled={true} onClick={() => this.openModalDeleteStudent(row)} variant="contained" color="secondary" className={classes.button}>
+                Xóa
+            </Button>
+          </TableCell>
+          <TableCell align="center">
+            <Button disabled={true} onClick={() => this.openModalXacNhanStudent(row)} variant="contained" color="primary" className={classes.button}>
+                X.nhận
+            </Button>
+          </TableCell>
+        </>
+      )
+    }else{
+      return (
+        <>
+          <TableCell align="center">
+            <Button onClick={() => this.openModalDeleteStudent(row)} variant="contained" color="secondary" className={classes.button}>
+                Xóa
+            </Button>
+          </TableCell>
+          <TableCell align="center">
+            <Button disabled={true} onClick={() => this.openModalXacNhanStudent(row)} variant="contained" color="primary" className={classes.button}>
+                X.nhận
+            </Button>
+          </TableCell>
+        </>
+      )
+    }
+  }
+
   render() {
     const { classes } = this.props;
-    const { rowsPerPage, page, data, isModalDeleteStudent, keySearch } = this.state;
+    const { rowsPerPage, page, data, isModalDeleteStudent, keySearch, isModalXacNhanStudent } = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
     return (
@@ -321,17 +413,8 @@ class ThongTinTuyenSinh extends React.Component {
                     <TableCell align="center">{row.email}</TableCell>
                     <TableCell >{row.gioiTinh}</TableCell>
                     <TableCell align="center">{row.noiSinh}</TableCell>
-                    <TableCell align="center">{Number(row.tinhTrang)}</TableCell>
-                    <TableCell align="center">
-                      <Button onClick={() => this.openModalDeleteStudent(row)} variant="contained" color="secondary" className={classes.button}>
-                        Xóa
-                    </Button>
-                    </TableCell>
-                    <TableCell align="center">
-                      <Button variant="contained" color="primary" className={classes.button}>
-                        X.nhận
-                    </Button>
-                    </TableCell>
+                    <TableCell align="center">{this.getTinhTrangThiSinh(Number(row.tinhTrang))}</TableCell>
+                    {this.getTuyChinhThiSinh(Number(row.tinhTrang), classes, row)}
                   </TableRow>
                 ))}
                 {emptyRows > 0 && (
@@ -358,6 +441,11 @@ class ThongTinTuyenSinh extends React.Component {
             <ModalDeleteStudent isModal={isModalDeleteStudent}
               onRef={this.onRefModalDeleteStudent}
               closeModalDeleteStudent={this.closeModalDeleteStudent}
+              getAllStudent={this.getAllStudent} />
+
+            <ModalXacNhanStudent isModal={isModalXacNhanStudent}
+              onRef={this.onRefModalXacNhanStudent}
+              closeModalXacNhanStudent={this.closeModalXacNhanStudent}
               getAllStudent={this.getAllStudent} />
           </div>
         </div>

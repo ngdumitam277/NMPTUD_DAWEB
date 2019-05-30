@@ -230,7 +230,8 @@ exports.hienThongTinThiSinh = async(req, res) => {
                             noiSinh: 1,
                             diaChi: 1,
                             email: 1,
-                            SDT: 1
+                            SDT: 1,
+                            tinhTrang: 1
                         } 
                     },
                     { 
@@ -250,6 +251,7 @@ exports.hienThongTinThiSinh = async(req, res) => {
                             diaChi: 1,
                             email: 1,
                             SDT: 1,
+                            tinhTrang: 1,
                             namTotNghiep: "$thisinh.namTotNghiep",
                             tenTHPT: "$thisinh.tenTHPT",
                             anhMinhChung: "$thisinh.anhMinhChung",
@@ -279,6 +281,7 @@ exports.hienThongTinThiSinh = async(req, res) => {
                             anhMinhChung: 1,
                             maKhuVuc: 1,
                             maDoiTuong: 1,
+                            tinhTrang: 1,
                             maNganh: "$thisinhnhap.maNganh",
                             tenKhoi: "$thisinhnhap.tenKhoi"
                         } 
@@ -306,6 +309,7 @@ exports.hienThongTinThiSinh = async(req, res) => {
                             maKhuVuc: 1,
                             maDoiTuong: 1,
                             tenKhoi: 1,
+                            tinhTrang: 1,
                             tenNganh: "$nganh.tenNganh",
                             maNganh: 1,
                             thongTin: "$nganh.thongTin",
@@ -1012,6 +1016,19 @@ exports.deleteTaiKhoan = async (req, res) => {
     .catch((err) => {
         res.send({message: "Lỗi xoá tài khoản theo username!"})
         console.log(err, "deleteTaiKhoan")
+    })
+}
+
+exports.xacNhanTaiKhoan = async (req, res) => {
+    let username = req.params.username
+
+    TaiKhoan.findOneAndUpdate({username: username}, { tinhTrang: 1 }, {rawResult: true})
+    .then((result) => {
+        res.send({message: "ok"})
+    })
+    .catch((err) => {
+        res.send({message: "Lỗi xác nhận tài khoản theo username!"})
+        console.log(err, "xacNhanTaiKhoan")
     })
 }
 

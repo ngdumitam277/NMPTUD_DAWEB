@@ -210,6 +210,7 @@ class BangDiem extends React.Component {
                                     <TableCell>Môn</TableCell>
                                     <TableCell align="right">Phách</TableCell>
                                     <TableCell align="right">Điểm</TableCell>
+                                    <TableCell align="right">Điểm phúc khảo</TableCell>
                                     <TableCell align="right">Tùy chỉnh</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -221,6 +222,7 @@ class BangDiem extends React.Component {
                                         </TableCell>
                                         <TableCell align="right">{row.Phach}</TableCell>
                                         <TableCell align="right">{row.diem}</TableCell>
+                                        <TableCell align="right">{row.diemPK === "" ? "Chưa có" : row.diemPK}</TableCell>
                                         <TableCell align="right">
                                             <Button onClick={() => this.openModalEditBangDiem(row)} variant="contained" color="primary" className={classes.button}>
                                                 Sửa

@@ -39,6 +39,7 @@ class ProfileUser extends Component {
             maDoiTuong: "",
             tenTHPT: "",
             namTotNghiep: "",
+            tinhTrang: 0,
             isModalEditProfileUser: false
         }
 
@@ -69,7 +70,8 @@ class ProfileUser extends Component {
                 maKhuVuc: item.maKhuVuc,
                 maDoiTuong: item.maDoiTuong,
                 tenTHPT: item.tenTHPT,
-                namTotNghiep: item.namTotNghiep
+                namTotNghiep: item.namTotNghiep,
+                tinhTrang: item.tinhTrang
             })            
         }
         })
@@ -96,6 +98,24 @@ class ProfileUser extends Component {
     }
 
     onRefModalEditProfileUser = (ref) =>  this.modalEditProfileUserRef = ref
+
+    getTinhTrang = (classes) => {
+        let tinhTrang = Number(this.state.tinhTrang)
+
+        if(tinhTrang === 0){
+            return (
+                <Button onClick={this.openModalEditProfileUser} variant="contained" color="primary" className={classes.button}>
+                    Thay đổi thông tin 
+                </Button>
+            )
+        }else{
+            return (
+                <Button disabled={true} onClick={this.openModalEditProfileUser} variant="contained" color="primary" className={classes.button}>
+                    Thay đổi thông tin 
+                </Button>
+            )
+        }
+    }
 
     render() {
         const { classes } = this.props;
@@ -219,9 +239,7 @@ class ProfileUser extends Component {
                 <br/>
                 <hr/>
                 <div style={{textAlign:"right"}}>
-                <Button onClick={this.openModalEditProfileUser} variant="contained" color="primary" className={classes.button}>
-                    Thay đổi thông tin 
-                </Button>
+                {this.getTinhTrang(classes)}
                 </div>
 
                 <ModalEditProfileUser isModal={isModalEditProfileUser} 

@@ -46,7 +46,8 @@ class ProfileUser extends Component {
             tongDiem: 0,
             diemTB: 0,
             ketQua: "",
-            monthi: []
+            monthi: [],
+            tinhTrang: 0
         }
         
     }
@@ -78,6 +79,7 @@ class ProfileUser extends Component {
                     SBD: itemTaiKhoan.SBD,
                     chiTieuNganh: itemTaiKhoan.chiTieuNganh,
                     thongTin: itemTaiKhoan.thongTin,
+                    tinhTrang: itemTaiKhoan.tinhTrang,
                     dataNganh: dataNganh,
                     dataKhoi: dataKhoi,
                     dataKhoiNganh: dataKhoiNganh,
@@ -87,7 +89,7 @@ class ProfileUser extends Component {
                     tongDiem: itemMon.thiDau ? itemMon.diem : "",
                     diemTB: itemMon.thiDau ? parseFloat(itemMon.diem/3).toFixed(2) : "" ,
                     ketQua: itemMon.thiDau ? itemMon.thiDau === 1 ? "Đậu" : "Rớt" : "",
-                    monthi: itemMon.monthi ? itemMon.monthi : []
+                    monthi: itemMon.monthi ? itemMon.monthi : [],
                 })
             }
         })
@@ -144,6 +146,24 @@ class ProfileUser extends Component {
             console.log(err)
             alert("Nộp hồ sơ thất bại!!!")
         })
+    }
+
+    getNopHoSo = (classes) => {
+        let tinhTrang = Number(this.state.tinhTrang)
+
+        if(tinhTrang === 0){
+            return (
+                <Button onClick={this.nopHoSo} variant="contained" color="primary" className={classes.button}>
+                    Nộp hồ sơ
+                </Button>
+            )
+        }else{
+            return (
+                <Button disabled={true} onClick={this.nopHoSo} variant="contained" color="primary" className={classes.button}>
+                    Nộp hồ sơ
+                </Button>
+            )
+        }
     }
 
     render() {
@@ -211,12 +231,11 @@ class ProfileUser extends Component {
                     </GridItem>
                 </GridContainer>
                 <div style={{textAlign:"right"}}>
-                <Button onClick={this.nopHoSo} variant="contained" color="primary" className={classes.button}>
-                    Nộp hồ sơ
-                </Button>
+                {this.getNopHoSo(classes)}
                 </div>
                 <hr/>
-                <MonThi data={monthi}/>
+                <MonThi data={monthi}
+                    getAllData={this.getAllData}/>
                 &nbsp;
                 <GridContainer style={{marginLeft:10}}>
                     <GridItem xs={4} sm={4} md={4}>

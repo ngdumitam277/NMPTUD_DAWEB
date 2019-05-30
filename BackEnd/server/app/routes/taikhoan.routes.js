@@ -7,6 +7,9 @@ module.exports = (app) => {
     // xoá tài khoản thí sinh
     app.delete('/web/delete/taikhoan/:username', taikhoan.deleteTaiKhoan);
 
+    // xác nhận tài khoản thí sinh
+    app.get('/web/xacnhan/taikhoan/:username', taikhoan.xacNhanTaiKhoan);
+
     // tạo tài khoản cán bộ
     app.post('/web/create/taikhoan/canbo', taikhoan.taoTaiKhoanCB);
 

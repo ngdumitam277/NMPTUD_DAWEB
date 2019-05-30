@@ -26,15 +26,20 @@ class MonThi extends Component {
         this.state = {
             isModal: false,
         }
+
+        this.modalPhucKhaoRef = React.createRef()
     }
 
-    handlePhucKhao = () => {
+    handlePhucKhao = (Phach, mon) => {
+        this.modalPhucKhaoRef.setData(Phach, mon)
         this.setState({isModal: true})
     }
 
     closeModalPhucKhao = () => {
         this.setState({isModal: false})
     }
+
+    onRefModalPhucKhao = (ref) => this.modalPhucKhaoRef = ref
 
     render() {
         const { classes, data } = this.props;
@@ -65,9 +70,9 @@ class MonThi extends Component {
                                     <TableCell align="center">{row.phongThi}</TableCell>
                                     <TableCell align="center">{moment(row.tgThi).format("DD-MM-YYYY")}</TableCell>
                                     <TableCell align="center">{row.diem}</TableCell>
-                                    <TableCell align="center">Chưa có</TableCell>
+                                    <TableCell align="center">{row.diemPK === "" ? "Chưa có" : row.diemPK}</TableCell>
                                     <TableCell align="center">
-                                    <Button onClick={this.handlePhucKhao} simple color="primary" size="lg">
+                                    <Button onClick={() => this.handlePhucKhao(row.Phach, row.mon)} simple color="primary" size="lg">
                                         Phúc khảo
                                     </Button>
                                     </TableCell>
@@ -76,7 +81,11 @@ class MonThi extends Component {
                         }
                     </TableBody>
                 </Table>
-                <ModalPhucKhao isModal={this.state.isModal} closeModalPhucKhao={this.closeModalPhucKhao}/>
+                
+                <ModalPhucKhao isModal={this.state.isModal} 
+                    onRef={this.onRefModalPhucKhao}
+                    getAllData={this.props.getAllData}
+                    closeModalPhucKhao={this.closeModalPhucKhao}/>
             </div>
         )
     }
