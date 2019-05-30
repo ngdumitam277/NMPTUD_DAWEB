@@ -13,19 +13,18 @@ exports.taoDiemThi = async(req, res) => {
     let maDiem = req.body.maDiem ? req.body.maDiem : ""
     let mon = req.body.mon ? req.body.mon : ""
     let diem = Number(req.body.diem)
-    let phach = Number(req.body.phach)
+    let Phach = Number(req.body.Phach)
 
     try{
-        if(!isNaN(diem) && !isNaN(phach)){
-            let exist = await DiemThi.find({phach: phach})
+        if(!isNaN(diem) && !isNaN(Phach)){
+            let exist = await DiemThi.find({Phach: Phach})
             if(exist.length > 0){
                 res.send({message: "Phách này đã tồn tại!"})
             }else{
                 const diemthi = new DiemThi({
                     maDiem: maDiem,
                     mon: mon,
-                    diem: diem,
-                    phach: phach
+                    diem: diem
                 })
             
                 diemthi.save()
@@ -547,20 +546,15 @@ exports.layDiemThiTheoTaiKhoan = async(req, res) => {
     }
 };
 
-async function checkCookie(result){
-    let dataSplit = result.split(" ")
-    let data = dataSplit[1] ? dataSplit[1] : ""
-
+async function checkCookie(data){
     let informationUser = {
         kt: false,
         user: []
     }
     let cookies = cookie.parse(data || '');
-    
     if(cookies.token){
         try{
             let decoded = jwt.verify(cookies.token, jwtOptions.secretOrKey)
-
             if(decoded.username){
                 try{
                     let user = await TaiKhoan.find({username: decoded.username})

@@ -31,6 +31,7 @@ class ProfileUser extends Component {
             data: [],
             dataNganh: [],
             dataKhoi: [],
+            dataKhoiNganh: [],
             dataSelectNganh:'Chọn ngành',
             dataSelectKhoi:'Chọn khối',
             thongTin: "",
@@ -50,10 +51,10 @@ class ProfileUser extends Component {
         
     }
 
-    componentDidMount = () => {
+    getAllData = () => {
         let taikhoan = axios.get(`${url}web/taikhoan/thongtin`, {withCredentials: true})
         let nganh = axios.get(`${url}web/nganh`)
-        let khoi = axios.get(`${url}web/khoi`)
+        let khoi = axios.get(`${url}web/nganhkhoi`)
         let monthi = axios.get(`${url}web/taikhoan/monthi`, {withCredentials: true})
 
         Promise.all([taikhoan, nganh, khoi, monthi])
@@ -61,12 +62,15 @@ class ProfileUser extends Component {
             let dataTaiKhoan = result[0].data
             let dataNganh = result[1].data
             let dataKhoi = result[2].data
-            let dataMon = result[3].data
+            let dataMonThi = result[3].data
 
             if(dataTaiKhoan.length > 0){
                 let itemTaiKhoan = dataTaiKhoan[0]
-                let itemMon = dataMon[0] ? dataMon[0] : {} 
-                
+                let itemMon = dataMonThi[0] ? dataMonThi[0] : {} 
+                let maNganh = itemTaiKhoan.maNganh
+
+                let dataKhoiNganh = dataKhoi.filter((item) => item.maNganh === maNganh)
+
                 this.setState({
                     tenNganh: itemTaiKhoan.tenNganh,
                     maNganh: itemTaiKhoan.maNganh,
@@ -76,11 +80,12 @@ class ProfileUser extends Component {
                     thongTin: itemTaiKhoan.thongTin,
                     dataNganh: dataNganh,
                     dataKhoi: dataKhoi,
+                    dataKhoiNganh: dataKhoiNganh,
                     diemCongKhuVuc: itemMon.diemCongKhuVuc ? itemMon.diemCongKhuVuc : "",
                     diemCongDoiTuong: itemMon.diemCongDoiTuong ? itemMon.diemCongDoiTuong : "",
                     diemChuan: itemMon.diemChuan ? itemMon.diemChuan : "",
-                    tongDiem: itemMon.diem ? itemMon.diem : "",
-                    diemTB: itemMon.diem ? parseFloat(itemMon.diem/3).toFixed(2) : "" ,
+                    tongDiem: itemMon.thiDau ? itemMon.diem : "",
+                    diemTB: itemMon.thiDau ? parseFloat(itemMon.diem/3).toFixed(2) : "" ,
                     ketQua: itemMon.thiDau ? itemMon.thiDau === 1 ? "Đậu" : "Rớt" : "",
                     monthi: itemMon.monthi ? itemMon.monthi : []
                 })
@@ -91,11 +96,17 @@ class ProfileUser extends Component {
         })
     }
 
+    componentDidMount = () => {
+        this.getAllData()
+    }
+
     handleChangeNganh = (event) => {
         let value = event.target.value
         let dataNganh = this.state.dataNganh.filter((item, index) => item.maNganh === value)
         let chiTieuNganh = this.state.chiTieuNganh
         let thongTin = this.state.thongTin
+
+        let dataKhoiNganh = this.state.dataKhoi.filter((item, index) => item.maNganh === value)
 
         if(dataNganh.length > 0){
             chiTieuNganh = dataNganh[0].chiTieuNganh
@@ -103,9 +114,10 @@ class ProfileUser extends Component {
         }
 
         this.setState({
-            maNganh: event.target.value,
+            maNganh: value,
             chiTieuNganh: chiTieuNganh,
-            thongTin: thongTin
+            thongTin: thongTin,
+            dataKhoiNganh: dataKhoiNganh
         })
     }
 
@@ -114,16 +126,23 @@ class ProfileUser extends Component {
     }
 
     nopHoSo = () => {
-        axios.post(`${url}web/thisinh/nophoso`, {
-            username: "tamle",
-            maNganh: "DC",
-            tenKhoi: "C"
-        })
+        axios.post(`${url}web/taikhoan/nophoso`, {
+            maNganh: this.state.maNganh,
+            tenKhoi: this.state.tenKhoi
+        }, {withCredentials: true})
         .then((result) => {
             let data = result.data
+
+            if(data.message === "ok"){
+                alert("Nộp hồ sơ thành công!!!")
+                this.getAllData()
+            }else{
+                alert("Nộp hồ sơ thất bại!!!")
+            }
         })
         .catch((err) => {
             console.log(err)
+            alert("Nộp hồ sơ thất bại!!!")
         })
     }
 
@@ -131,7 +150,7 @@ class ProfileUser extends Component {
         const { classes } = this.props;
         const { data, SBD, dataSelectNganh, tenNganh, maNganh, chiTieuNganh, tenKhoi, thongTin, 
             dataSelectKhoi, dataKhoi, dataNganh, diemChuan, diemCongDoiTuong, diemCongKhuVuc, diemTB, 
-            ketQua, tongDiem, monthi } = this.state;
+            ketQua, tongDiem, monthi, dataKhoiNganh } = this.state;
 
         return (
             <div style={{marginBottom:20}} className={classes.container}>
@@ -169,7 +188,7 @@ class ProfileUser extends Component {
                             value={tenKhoi}
                             onChange={this.handleChangeKhoi}>
                             {
-                                dataKhoi.map((row, index) => (
+                                dataKhoiNganh.map((row, index) => (
                                     <MenuItem value={row.tenKhoi}>{row.tenKhoi}</MenuItem>        
                                 ))   
                             }

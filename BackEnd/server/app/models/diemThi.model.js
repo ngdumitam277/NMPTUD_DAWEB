@@ -4,7 +4,7 @@ const DiemThiSchema = mongoose.Schema({
     maDiem: String,
     mon: String,
     diem: Intl,
-    phach: Intl
+    Phach: Intl
 }, {
     timestamps: true
 })

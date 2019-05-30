@@ -39,6 +39,18 @@ exports.taoNganhKhoi = async(req, res) => {
     }
 };
 
+// tạo ngành khối
+exports.getAllNganhKhoi = async(req, res) => {
+    NganhKhoi.find({}, {_id: 0, createdAt: 0, updatedAt: 0, __v: 0, diemChuan: 0, slTSthiNganhKhoi: 0})
+    .then((result) => {
+        res.send(result)
+    })
+    .catch((err) => {
+        res.send({message: "Lỗi lấy tất cả các ngành khối!"})
+        console.log(err, "getAllNganhKhoi")
+    })
+};
+
 // sửa 1 ngành khối theo key ngành và tên khối
 exports.updateNganhKhoi = async(req, res) => {
     let maNganh = req.params.maNganh

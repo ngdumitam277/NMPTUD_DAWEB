@@ -4,6 +4,12 @@ const moment = require('moment');
 const DiemThi = require('../models/diemThi.model.js');
 const KhoiMon = require('../models/khoiMon.model.js');
 const mongoose = require('mongoose')
+const TaiKhoan = require('../models/taikhoan.model.js');
+var md5 = require('md5');
+var cookie = require('cookie');
+var cookieTime = 3600*24*6; // tính bằng mili giây
+var tokenTime = 3600*24*6; // 6 ngày cho token tính bằng mili giây
+var { jwt, jwtOptions } = require('../../jwt/jwt.js')
 
 // tạo thí sinh
 exports.taoThiSinh = async(req, res) => {
@@ -55,40 +61,47 @@ exports.taoThiSinh = async(req, res) => {
 
 // nộp hồ sơ
 exports.nopHoSo = async(req, res) => {
-    let username = req.body.username ? req.body.username : ""
     let maNganh = req.body.maNganh ? req.body.maNganh : ""
     let tenKhoi = req.body.tenKhoi ? req.body.tenKhoi : ""
 
-    let thisinhnhap = ThiSinhNhap.findOneAndUpdate({usernamets: username}, {maNganh: maNganh, tenKhoi: tenKhoi})
-    let thisinh = ThiSinh.findOne({usernamets: username})
-    let khoimon = KhoiMon.find({tenKhoi: tenKhoi}, {_id: 0, tenKhoi: 0, createdAt: 0, updatedAt: 0, __v: 0})    
+    let user = await checkCookie(req.headers.cookie)
 
-    Promise.all([thisinh, thisinhnhap, khoimon])
-    .then(async(result) => {
-        let dataThiSinh = result[0]
-        let dataKhoiMon = result[2]
-        let Phach = dataThiSinh.Phach
+    if(user.kt){
+        try{
+            let cookies = cookie.parse(req.headers.cookie || '');
+            let decoded = jwt.verify(cookies.token, jwtOptions.secretOrKey)
+            let username = decoded.username
 
-        let dataDiemThiInsert = dataKhoiMon.map((item, index) => {
-            return { _id: mongoose.Types.ObjectId(), mon: item.tenMon, Phach: Phach, maDiem: "", diem: "" }
-        })
-
-        let diemThiInsert = DiemThi.insertMany(dataDiemThiInsert)
-        let diemThiRemove = DiemThi.remove({Phach: Phach})
-
-        Promise.all([diemThiInsert, diemThiRemove])
-        .then((result) => {
-            res.send({message: "ok"})  
-        })
-        .catch((err) => {
+            let thisinhnhap = ThiSinhNhap.findOneAndUpdate({usernamets: username}, {maNganh: maNganh, tenKhoi: tenKhoi})
+            let thisinh = ThiSinh.findOne({usernamets: username})
+            let khoimon = KhoiMon.find({tenKhoi: tenKhoi}, {_id: 0, tenKhoi: 0, createdAt: 0, updatedAt: 0, __v: 0})    
+        
+            Promise.all([thisinh, thisinhnhap, khoimon])
+            .then(async(result) => {
+                let dataThiSinh = result[0]
+                let dataKhoiMon = result[2]
+                let Phach = dataThiSinh.Phach
+        
+                let dataDiemThiInsert = dataKhoiMon.map((item, index) => {
+                    return { mon: item.tenMon, Phach: Phach, maDiem: "", diem: "" }
+                })
+    
+                await DiemThi.remove({Phach: Phach})
+                await DiemThi.insertMany(dataDiemThiInsert)
+        
+                res.send({message: "ok"})  
+            })
+            .catch((err) => {
+                console.log(err)
+                res.send({message: "Lỗi nộp hồ sơ!!!"})
+            })
+        }catch(err){
             console.log(err)
-            res.send({message: "Lỗi nộp hồ sơ!!!"})
-        })
-    })
-    .catch((err) => {
-        console.log(err)
-        res.send({message: "Lỗi nộp hồ sơ!!!"})
-    })
+            res.send({message: "error cookie"})
+        }
+    }else{
+        res.send({message: "error cookie"})
+    }
 };
 
 // tìm kiếm thí sinh
@@ -220,3 +233,36 @@ exports.timKiemThiSinh = async(req, res) => {
         res.send({message: "Lỗi tìm kiếm thí sinh"})
     }
 };
+
+async function checkCookie(data){
+    let informationUser = {
+        kt: false,
+        user: []
+    }
+    let cookies = cookie.parse(data || '');
+    if(cookies.token){
+        try{
+            let decoded = jwt.verify(cookies.token, jwtOptions.secretOrKey)
+            if(decoded.username){
+                try{
+                    let user = await TaiKhoan.find({username: decoded.username})
+                    if(user.length > 0){
+                        informationUser.kt = true
+                        informationUser.user = user
+                        return informationUser
+                    }else{
+                        return informationUser
+                    }
+                }catch(e) {
+                    return informationUser
+                }
+            }else{
+                return informationUser
+            }
+        }catch(e){
+            return informationUser
+        }
+    }else{
+        return informationUser
+    }   
+}
