@@ -53,19 +53,22 @@ class ProfileUser extends Component {
     }
 
     getAllData = () => {
+        let taikhoancanhan = axios.get(`${url}web/taikhoan/thongtincanhan`, {withCredentials: true})
         let taikhoan = axios.get(`${url}web/taikhoan/thongtinthisinh`, {withCredentials: true})
         let nganh = axios.get(`${url}web/nganh`)
         let khoi = axios.get(`${url}web/nganhkhoi`)
         let monthi = axios.get(`${url}web/taikhoan/monthi`, {withCredentials: true})
 
-        Promise.all([taikhoan, nganh, khoi, monthi])
+        Promise.all([taikhoan, nganh, khoi, monthi, taikhoancanhan])
         .then((result) => {
             let dataTaiKhoan = result[0].data
             let dataNganh = result[1].data
             let dataKhoi = result[2].data
             let dataMonThi = result[3].data
+            let dataTaiKhoanCaNhan = result[4].data
 
             if(dataTaiKhoan.length > 0){
+                let itemTaiKhoanCaNhan = dataTaiKhoanCaNhan[0]
                 let itemTaiKhoan = dataTaiKhoan[0]
                 let itemMon = dataMonThi[0] ? dataMonThi[0] : {} 
                 let maNganh = itemTaiKhoan.maNganh
@@ -76,7 +79,7 @@ class ProfileUser extends Component {
                     tenNganh: itemTaiKhoan.tenNganh,
                     maNganh: itemTaiKhoan.maNganh,
                     tenKhoi: itemTaiKhoan.tenKhoi,
-                    SBD: itemTaiKhoan.SBD,
+                    SBD: itemTaiKhoanCaNhan.SBD,
                     chiTieuNganh: itemTaiKhoan.chiTieuNganh,
                     thongTin: itemTaiKhoan.thongTin,
                     tinhTrang: itemTaiKhoan.tinhTrang,
