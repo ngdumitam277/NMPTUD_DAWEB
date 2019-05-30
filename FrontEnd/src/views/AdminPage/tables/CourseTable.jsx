@@ -15,6 +15,12 @@ import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
 import Button from '@material-ui/core/Button';
+import axios from 'axios'
+import { url } from 'variable/general.jsx'
+import moment from 'moment'
+import ModalAddMonThi from '../modals/ModalAddMonThi';
+import ModalEditMonThi from '../modals/ModalEditMonThi';
+import ModalDeleteMonThi from '../modals/ModalDeleteMonThi';
 
 const actionsStyles = theme => ({
   root: {
@@ -114,21 +120,73 @@ const styles = theme => ({
 });
 
 class CustomPaginationActionsTable extends React.Component {
-  state = {
-    rows: [
-      createData('Toán', "10/10/2012", "8:00", "20B"),
-      createData('Lý', "10/10/2012", "8:00", "20F"),
-      createData('Hóa', "10/10/2012", "8:00", "20G"),
-      createData('Sinh', "10/10/2012", "8:00", "20J"),
-      createData('Sử', "10/10/2012", "8:00", "20L"),
-      createData('Địa', "10/10/2012", "8:00", "20F"),
-      createData('Anh văn', "10/10/2012", "8:00", "20T"),
-      createData('Văn', "10/10/2012", "8:00", "20D"),
+  constructor(props){
+    super(props)
 
-    ].sort((a, b) => (a.examDate < b.examDate ? -1 : 1)),
-    page: 0,
-    rowsPerPage: 5,
-  };
+    this.state = {
+        data: [],
+        isModalAddMonThi: false,
+        isModalEditMonThi: false,
+        isModalDeleteMonThi: false,
+        page: 0,
+        rowsPerPage: 5,
+    }
+
+    this.modalEditMonThiRef = React.createRef()
+    this.modalDeleteMonThiRef = React.createRef()
+  }
+
+  getAllMonThi = () => {
+      axios.get(`${url}web/mon`)
+      .then((response) => {
+          let result = response.data
+          this.setState({data: result})
+      })
+      .catch((err) => {
+          console.log(err)
+      })
+  }
+
+  componentDidMount = () => {
+      this.getAllMonThi()
+  }
+
+  setModalAddMonThi = (isModal) => this.setState({isModalAddMonThi: isModal})
+
+  openModalAddMonThi = (event) => {
+      event.preventDefault()
+      this.setModalAddMonThi(true)
+  }
+
+  closeModalAddMonThi = () => {
+      this.setModalAddMonThi(false)
+  }
+
+  setModalEditMonThi = (isModal) => this.setState({isModalEditMonThi: isModal})
+
+  openModalEditMonThi = (data) => {
+      this.modalEditMonThiRef.setDataMonThi(data)
+      this.setModalEditMonThi(true)
+  }
+
+  closeModalEditMonThi = () => {
+      this.setModalEditMonThi(false)
+  }
+
+  setModalDeleteMonThi = (isModal) => this.setState({isModalDeleteMonThi: isModal})
+
+  openModalDeleteMonThi = (data) => {
+      this.modalDeleteMonThiRef.setDataMonThi(data)
+      this.setModalDeleteMonThi(true)
+  }
+
+  closeModalDeleteMonThi = () => {
+      this.setModalDeleteMonThi(false)
+  }
+
+  onRefModalDeleteMonThi = (ref) => this.modalDeleteMonThiRef = ref
+
+  onRefModalEditMonThi = (ref) => this.modalEditMonThiRef = ref
 
   handleChangePage = (event, page) => {
     this.setState({ page });
@@ -141,8 +199,8 @@ class CustomPaginationActionsTable extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { rows, rowsPerPage, page } = this.state;
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+    const { data, rowsPerPage, page, isModalAddMonThi, isModalDeleteMonThi, isModalEditMonThi } = this.state;
+    const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
     return (
       <Paper classname={classes.root}>
@@ -152,26 +210,24 @@ class CustomPaginationActionsTable extends React.Component {
               <TableRow>
                 <TableCell>Tên môn</TableCell>
                 <TableCell align="right">Ngày thi</TableCell>
-                <TableCell align="right">Giờ thi</TableCell>
                 <TableCell align="right">Phòng thi</TableCell>
                 <TableCell align="right">Tùy chỉnh</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
+              {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
                 <TableRow key={row.id}>
                   <TableCell component="th" scope="row">
-                    {row.nameCourse}
+                    {row.tenMon}
                   </TableCell>
-                  <TableCell align="right">{row.examDate}</TableCell>
-                  <TableCell align="right">{row.hour}</TableCell>
-                  <TableCell align="right">{row.room}</TableCell>
+                  <TableCell align="right">{moment(row.tgThi).format("DD-MM-YYYY")}</TableCell>
+                  <TableCell align="right">{row.phongThi}</TableCell>
                   <TableCell align="right">
-                    <Button variant="contained" color="secondary" className={classes.button}>
+                    <Button onClick={() => this.openModalDeleteMonThi(row)} variant="contained" color="secondary" className={classes.button}>
                       Xóa 
                     </Button>
                     &nbsp;
-                    <Button variant="contained" color="primary" className={classes.button}>
+                    <Button onClick={() => this.openModalEditMonThi(row)} variant="contained" color="primary" className={classes.button}>
                         Sửa
                     </Button>
                   </TableCell>
@@ -188,7 +244,7 @@ class CustomPaginationActionsTable extends React.Component {
                 <TablePagination
                   rowsPerPageOptions={[5, 10, 25]}
                   colSpan={12}
-                  count={rows.length}
+                  count={data.length}
                   rowsPerPage={rowsPerPage}
                   page={page}
                   onChangePage={this.handleChangePage}
@@ -198,6 +254,20 @@ class CustomPaginationActionsTable extends React.Component {
             </TableFooter>
           </Table>
         </div>
+
+        <ModalAddMonThi isModal={isModalAddMonThi} 
+            closeModalAddMonThi={this.closeModalAddMonThi}
+            getAllMonThi={this.getAllMonThi}/>
+
+        <ModalEditMonThi isModal={isModalEditMonThi} 
+            onRef={this.onRefModalEditMonThi}
+            closeModalEditMonThi={this.closeModalEditMonThi}
+            getAllMonThi={this.getAllMonThi}/>
+        
+        <ModalDeleteMonThi isModal={isModalDeleteMonThi} 
+            onRef={this.onRefModalDeleteMonThi}
+            closeModalDeleteMonThi={this.closeModalDeleteMonThi}
+            getAllMonThi={this.getAllMonThi}/>
       </Paper>
     );
   }
