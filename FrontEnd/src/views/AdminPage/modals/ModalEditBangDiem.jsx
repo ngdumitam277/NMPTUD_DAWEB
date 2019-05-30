@@ -154,16 +154,6 @@ class ModalEditBangDiem extends Component {
                             margin="normal"
                             variant="outlined"
                         />
-                        <TextField
-                            id="phach"
-                            label="Phách"
-                            value={phach}
-                            onChange={this.onChangePhach}
-                            className={classes.textField}
-                            type="number"
-                            margin="normal"
-                            variant="outlined"
-                        />
                     </form>
 
                     <div style={{textAlign: "end"}}>

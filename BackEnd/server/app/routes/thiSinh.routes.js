@@ -8,5 +8,5 @@ module.exports = (app) => {
     app.post('/web/thisinh/timkiem', ThiSinh.timKiemThiSinh);
 
     // nộp hồ sơ
-    app.post('/web/thisinh/nophoso', ThiSinh.nopHoSo);
+    app.post('/web/taikhoan/nophoso', ThiSinh.nopHoSo);
 }

@@ -2,6 +2,7 @@ const TaiKhoan = require('../models/taikhoan.model.js');
 const ngQuanLy = require('../models/ngQuanLy.model.js');
 const CanBo = require('../models/canbo.model.js');
 const ThiSinh = require('../models/thiSinh.model.js');
+const ThiSinhNhap = require('../models/thiSinhNhap.model.js');
 const moment = require('moment');
 const nodemailer = require("nodemailer");
 var md5 = require('md5');
@@ -65,11 +66,22 @@ exports.taoTaiKhoanTS = async(req, res) => {
                     maKhuVuc: "",
                     maDoiTuong: ""
                 })
+
+                const thisinhnhap = new ThiSinhNhap({
+                    usernamets: username,
+                    maNganh: "",
+                    tenKhoi: "",
+                    diemTBthi: "",
+                    diemCong: "",
+                    tinhTrang: "",
+                    diemTB: ""
+                })
             
                 let a = taikhoan.save()
                 let b = thisinh.save()
+                let c = thisinhnhap.save()
 
-                Promise.all([a, b])
+                Promise.all([a, b, c])
                 .then((result) => {
                     res.send({message: "ok"});
                 }).catch(err => {
@@ -878,6 +890,59 @@ exports.getAllCanBo = async (req, res) => {
     .catch((err) => {
         res.send({message: "Lỗi lấy tất cả cán bộ!"})
         console.log("Lỗi lấy tất cả cán bộ!", err)
+    })
+}
+
+exports.timKiemTaiKhoan = async (req, res) => {
+    let keySearch = req.params.keySearch
+
+    TaiKhoan.aggregate([
+        {   
+            $match: {
+                $and: [ 
+                    { $text: { $search: keySearch } }, 
+                    { loai: "TS" }
+                ]
+            }
+        },
+        { $sort: { score: { $meta: "textScore" } } },
+        {   $lookup: {
+                from: "thisinhs",
+                localField: "username",
+                foreignField: "usernamets",
+                as: "thisinh"
+            }
+        },
+        { $unwind: "$thisinh" },
+        { $project: {
+                username: 1,
+                hTen: 1,
+                SBD: "$thisinh.SBD",
+                ngSinh: 1,
+                gioiTinh: 1,
+                danToc: 1,
+                soCMND: 1,
+                ngCapCMND: 1,
+                noiSinh: 1,
+                diaChi: 1,
+                email: 1,
+                SDT: 1,
+                namTotNghiep: "$thisinh.namTotNghiep",
+                tenTHPT: "$thisinh.tenTHPT",
+                anhMinhChung: "$thisinh.anhMinhChung",
+                maKhuVuc: "$thisinh.maKhuVuc",
+                maDoiTuong: "$thisinh.maDoiTuong",
+                createdAt: 1,
+                tinhTrang: 1
+            } 
+        },
+    ])
+    .then((result) => {
+        res.send(result)
+    })
+    .catch((err) => {
+        res.send({message: "Lỗi tìm kiếm tài khoản!"})
+        console.log("Lỗi tìm kiếm tài khoản!", err)
     })
 }
 

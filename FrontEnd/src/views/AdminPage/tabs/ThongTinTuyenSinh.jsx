@@ -136,6 +136,7 @@ class ThongTinTuyenSinh extends React.Component {
       rowsPerPage: 5,
       isModalDeleteStudent: false,
       optionSearch: '',
+      keySearch: ""
     }
 
     this.modalDeleteStudentRef = React.createRef()
@@ -184,9 +185,35 @@ class ThongTinTuyenSinh extends React.Component {
     this.setState({ optionSearch: e.target.value })
   }
 
+  handleChangeKeySearch = (e) => {
+    this.setState({keySearch: e.target.value})
+  }
+
+  onSearch = () => {
+    let keySearch = this.state.keySearch
+
+    if(keySearch === ""){
+      this.getAllStudent()
+    }else{
+      axios.get(`${url}web/taikhoan/timkiem/${this.state.keySearch}`)
+      .then((result) => {
+        let data = result.data
+  
+        if(data.length > 0){
+          this.setState({data: data})
+        }else{
+          this.setState({data: []})
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+    }
+  }
+
   render() {
     const { classes } = this.props;
-    const { rowsPerPage, page, data, isModalDeleteStudent } = this.state;
+    const { rowsPerPage, page, data, isModalDeleteStudent, keySearch } = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
     return (
@@ -198,6 +225,8 @@ class ThongTinTuyenSinh extends React.Component {
                   Seacrh
                 </label>
               <InputBase
+                value={keySearch}
+                onChange={this.handleChangeKeySearch}
                 style={{ boder: "red" }}
                 placeholder="Nhập thông tin ...."
                 classes={{
@@ -251,7 +280,7 @@ class ThongTinTuyenSinh extends React.Component {
               </FormControl>
               </GridItem>
               <GridItem xs={2} sm={2} md={2} lg={2}>
-                <Button variant="outlined" color="secondary" className={classes.button}>
+                <Button onClick={this.onSearch} variant="outlined" color="secondary" className={classes.button}>
                   Tìm Kiếm
               </Button>
               </GridItem>

@@ -43,6 +43,9 @@ module.exports = (app) => {
     // lấy tất cả cán bộ
     app.get('/web/taikhoan/canbo', taikhoan.getAllCanBo);
 
+    // tìm kiếm tài khoản
+    app.get('/web/taikhoan/timkiem/:keySearch', taikhoan.timKiemTaiKhoan);
+
     // // lấy tất cả môn thi
     // app.get('/web/taikhoan/monthi', taikhoan.getAllMonThi);
 }
