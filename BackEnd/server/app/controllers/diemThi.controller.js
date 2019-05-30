@@ -72,6 +72,22 @@ exports.updateDiemThi = async(req, res) => {
     })
 };
 
+// phúc khảo điểm thi thao phách và môn
+exports.phucKhaoDiemThi = async(req, res) => {
+    let Phach = Number(req.params.phach)
+    let mon = req.params.mon
+    let diemPK = Number(req.body.diemPK)
+
+    DiemThi.findOneAndUpdate({Phach: Phach, mon: mon}, {diemPK: diemPK}, {new: true})
+    .then((result) => {
+        res.send({message: "ok"})
+    })
+    .catch((err) => {
+        res.send({message: "Lỗi phúc khảo điểm thi theo phách và môn!"})
+        console.log(err, "phucKhaoDiemThi")
+    })
+};
+
 // xoá 1 điểm thi theo id
 exports.deleteDiemThi = async(req, res) => {
     let id = req.params.id
@@ -371,7 +387,8 @@ exports.layDiemThiTheoTaiKhoan = async(req, res) => {
                 { $project: {
                         diem: 1,
                         mon: 1,
-                        Phach: 1
+                        Phach: 1,
+                        diemPK: 1
                     } 
                 },
                 { 
@@ -383,6 +400,7 @@ exports.layDiemThiTheoTaiKhoan = async(req, res) => {
                         diem: 1,
                         mon: 1,
                         Phach: 1,
+                        diemPK: 1,
                         phongThi: "$monthi.phongThi",
                         tgThi: "$monthi.tgThi"
                     } 
@@ -395,6 +413,7 @@ exports.layDiemThiTheoTaiKhoan = async(req, res) => {
                     $project: {
                         usernamets: "$thisinh.usernamets",
                         diem: 1,
+                        diemPK: 1,
                         mon: 1,
                         Phach: 1,
                         phongThi: 1,
@@ -411,7 +430,15 @@ exports.layDiemThiTheoTaiKhoan = async(req, res) => {
                             "maKhuVuc": "$maKhuVuc",
                             "maDoiTuong": "$maDoiTuong"
                         },
-                        monthi: { $addToSet: { mon: "$mon", diem: "$diem", tgThi: "$tgThi", phongThi: "$phongThi" } },
+                        monthi: { $addToSet: { 
+                                mon: "$mon", 
+                                diem: "$diem",
+                                tgThi: "$tgThi", 
+                                phongThi: "$phongThi",
+                                diemPK: "$diemPK",
+                                Phach: "$Phach"
+                            } 
+                        },
                         diem: { $sum: "$diem" }
                     }
                 },

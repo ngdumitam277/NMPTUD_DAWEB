@@ -10,6 +10,9 @@ module.exports = (app) => {
     // sửa 1 điểm thi theo id
     app.put('/web/diemthi/:id', DiemThi.updateDiemThi);
 
+    // phúc khảo điểm theo phách và môn
+    app.put('/web/diemthi/phuckhao/:phach/:mon', DiemThi.phucKhaoDiemThi);
+
     // xoá 1 điểm thi theo id
     app.delete('/web/diemthi/:id', DiemThi.deleteDiemThi);
 
