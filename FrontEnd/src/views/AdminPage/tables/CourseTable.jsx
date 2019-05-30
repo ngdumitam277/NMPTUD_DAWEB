@@ -210,6 +210,7 @@ class CustomPaginationActionsTable extends React.Component {
               <TableRow>
                 <TableCell>Tên môn</TableCell>
                 <TableCell align="right">Ngày thi</TableCell>
+                <TableCell align="right">Giờ thi</TableCell>
                 <TableCell align="right">Phòng thi</TableCell>
                 <TableCell align="right">Tùy chỉnh</TableCell>
               </TableRow>
@@ -221,6 +222,7 @@ class CustomPaginationActionsTable extends React.Component {
                     {row.tenMon}
                   </TableCell>
                   <TableCell align="right">{moment(row.tgThi).format("DD-MM-YYYY")}</TableCell>
+                  <TableCell align="right">{row.gioThi}</TableCell>
                   <TableCell align="right">{row.phongThi}</TableCell>
                   <TableCell align="right">
                     <Button onClick={() => this.openModalDeleteMonThi(row)} variant="contained" color="secondary" className={classes.button}>

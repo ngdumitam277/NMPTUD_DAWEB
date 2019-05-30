@@ -61,7 +61,8 @@ class ModalEditMonThi extends Component {
             phongThi: "",
             tgThi: "",
             diemTBmon: 0,
-            key: ""
+            key: "",
+            gioThi: ""
         }
     }
 
@@ -90,6 +91,7 @@ class ModalEditMonThi extends Component {
             tenMon: this.state.tenMon,
             phongThi: this.state.phongThi,
             tgThi: this.state.tgThi,
+            gioThi: this.state.gioThi,
             diemTBmon: this.state.diemTBmon,
             key: this.getKeyFromString(this.state.tenMon)
         })
@@ -122,9 +124,9 @@ class ModalEditMonThi extends Component {
         this.setState({tgThi: event.target.value})
     }
 
-    onChangeDiemTBMon = (event) => {
-        let diem = Number(event.target.value)
-        this.setState({diemTBmon: diem})
+    onChangeGioThi = (event) => {
+        let gioThi = Number(event.target.value)
+        this.setState({gioThi: gioThi})
     }
 
     componentDidMount = () => {
@@ -138,6 +140,7 @@ class ModalEditMonThi extends Component {
                 phongThi: data.phongThi,
                 tgThi: moment(data.tgThi).format("YYYY-MM-DD"),
                 diemTBmon: data.diemTBmon,
+                gioThi: data.gioThi,
                 key: data.key
             })
         }catch(err){
@@ -147,7 +150,7 @@ class ModalEditMonThi extends Component {
 
     render() {
         let { isModal, classes, ...rest } = this.props
-        let { tenMon, tgThi, diemTBmon, phongThi } = this.state
+        let { tenMon, tgThi, diemTBmon, phongThi, gioThi } = this.state
 
         return (
             <Modal open={isModal}
@@ -192,11 +195,10 @@ class ModalEditMonThi extends Component {
                             variant="outlined"
                         />
                         <TextField
-                            id="diem-tb-mon"
-                            label="Điểm TB Môn"
-                            type="number"
-                            value={diemTBmon}
-                            onChange={this.onChangeDiemTBMon}
+                            id="giothi"
+                            label="Giờ Thi"
+                            value={gioThi}
+                            onChange={this.onChangeGioThi}
                             className={classes.textField}
                             margin="normal"
                             variant="outlined"
