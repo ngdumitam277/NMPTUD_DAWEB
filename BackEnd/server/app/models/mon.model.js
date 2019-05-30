@@ -4,6 +4,7 @@ const MonSchema = mongoose.Schema({
     tenMon: String,
     phongThi: String,
     tgThi: Date,
+    gioThi: String,
     diemTBmon: Intl,
     key: String
 }, {

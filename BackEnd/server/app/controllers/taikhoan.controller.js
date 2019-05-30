@@ -28,6 +28,7 @@ exports.taoTaiKhoanTS = async(req, res) => {
     let diaChi = req.body.diaChi ? req.body.diaChi : ""
     let email = req.body.email ? req.body.email : ""
     let tgDangKy = req.body.tgDangKy ? moment(req.body.tgDangKy, "DD-MM-YYYY HH:mm:ss").toISOString() : ""
+    let md5Password = md5(password)
 
     try{
         if(username !== ""){
@@ -37,7 +38,7 @@ exports.taoTaiKhoanTS = async(req, res) => {
             }else{
                 const taikhoan = new TaiKhoan({
                     username: username,
-                    password: password,
+                    password: md5Password,
                     soCMND: soCMND,
                     ngCapCMND: ngCapCMND,
                     hTen: hTen,
