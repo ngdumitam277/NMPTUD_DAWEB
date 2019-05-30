@@ -21,6 +21,12 @@ import axios from 'axios'
 import { url } from 'variable/general.jsx'
 
 class AdminPage extends Component {
+    constructor(props) {
+      super(props)
+      this.state = {
+        loai: ""
+      }
+    }
 
     componentDidMount() {
         this.checkLogin()
@@ -34,7 +40,9 @@ class AdminPage extends Component {
           let result = response.data
           if(result.message === "ok" && result.user.loai === 'TS'){
             this.props.history.push("/");
+            return;
           }
+          this.setState({loai: result.user.loai})
         })
         .catch((err) => {
           console.log(err)
@@ -43,6 +51,8 @@ class AdminPage extends Component {
 
     render() {
         const { classes, ...rest } = this.props;
+        const {loai} = this.state
+        console.log("LOAI === "+ loai)
         return (
             <div>
                 <Header
@@ -58,7 +68,7 @@ class AdminPage extends Component {
                 />
                 <Parallax style={{height:150}} small filter image={require("assets/img/profile-bg.jpg")} />
                 <div className={classNames(classes.main, classes.mainRaised)}>
-                    <SectionAdmin/>
+                    <SectionAdmin rule={loai}/>
                 </div>
                 <Footer />
             </div>

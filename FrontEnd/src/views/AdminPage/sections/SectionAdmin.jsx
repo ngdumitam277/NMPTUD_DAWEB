@@ -18,9 +18,96 @@ import QuyChe from '../tabs/QuyChe';
 import ThongTinTuyenSinh from '../tabs/ThongTinTuyenSinh';
 import BangDiem from '../tabs/BangDiem';
 import ThongKeTab from '../tabs/thongke/ThongKeTab';
+
+const CB = [{
+    tabButton: "Cá nhân",
+    tabIcon: Schedule,
+    tabContent: (<ProfileUser />)
+  },
+  {
+    tabButton: "Thông tin-TS",
+    tabIcon: Schedule,
+    tabContent: (
+      <ThongTinTuyenSinh />
+    )
+  },
+  {
+    tabButton: "Thống kê",
+    tabIcon: Schedule,
+    tabContent: (
+      <ThongKeTab />
+    )
+  }
+]
+
+const CB_ND = [{
+  tabButton: "Cá nhân",
+  tabIcon: Schedule,
+  tabContent: (<ProfileUser />)
+  },
+  {
+    tabButton: "Q.L Điểm",
+    tabIcon: Schedule,
+    tabContent: (
+      <BangDiem />
+    )
+  }
+]
+
+const CB_AD = [
+  {
+    tabButton: "Cá nhân",
+    tabIcon: Schedule,
+    tabContent: (<ProfileUser />)
+  },
+  {
+    tabButton: "Tuyển sinh",
+    tabIcon: Schedule,
+    tabContent: (
+      <QLTuyenSinh />
+    )
+  },
+  {
+    tabButton: "Thông tin-TS",
+    tabIcon: Schedule,
+    tabContent: (
+      <ThongTinTuyenSinh />
+    )
+  },
+  {
+    tabButton: "Quy chế",
+    tabIcon: Schedule,
+    tabContent: (
+      <QuyChe />
+    )
+  },
+  {
+    tabButton: "Q.L Điểm",
+    tabIcon: Schedule,
+    tabContent: (
+      <BangDiem />
+    )
+  },
+  {
+    tabButton: "Lịch sử điểm",
+    tabIcon: Schedule,
+    tabContent: (
+      <LichSuDiem />
+    )
+  },
+  {
+    tabButton: "Thống kê",
+    tabIcon: Schedule,
+    tabContent: (
+      <ThongKeTab />
+    )
+  }
+]
+
 class SectionAdmin extends Component {
   render() {
-    const { classes } = this.props;
+    const { classes, rule } = this.props;
+    //console.log("RULE === " + rule)
     return (
       <div className={classes.section}>
         <div className={classes.container}>
@@ -36,55 +123,11 @@ class SectionAdmin extends Component {
                     tabsGrid: { xs: 12, sm: 2, md: 2 },
                     contentGrid: { xs: 12, sm: 10, md: 10 }
                   }}
-                  tabs={[
-                    {
-                      tabButton: "Cá nhân",
-                      tabIcon: Schedule,
-                      tabContent: (<ProfileUser />)
-                    },
-                    {
-                      tabButton: "Tuyển sinh",
-                      tabIcon: Schedule,
-                      tabContent: (
-                        <QLTuyenSinh />
-                      )
-                    },
-                    {
-                      tabButton: "Thông tin-TS",
-                      tabIcon: Schedule,
-                      tabContent: (
-                        <ThongTinTuyenSinh />
-                      )
-                    },
-                    {
-                      tabButton: "Quy chế",
-                      tabIcon: Schedule,
-                      tabContent: (
-                        <QuyChe />
-                      )
-                    },
-                    {
-                      tabButton: "Q.L Điểm",
-                      tabIcon: Schedule,
-                      tabContent: (
-                        <BangDiem />
-                      )
-                    },
-                    {
-                      tabButton: "Lịch sử điểm",
-                      tabIcon: Schedule,
-                      tabContent: (
-                        <LichSuDiem />
-                      )
-                    },
-                    {
-                      tabButton: "Thống kê",
-                      tabIcon: Schedule,
-                      tabContent: (
-                        <ThongKeTab />
-                      )
-                    }
-                  ]}
+                  tabs={
+                    rule && rule === "CB" ? CB :
+                    rule && rule === "CB_ND" ? CB_ND :
+                    rule && rule === "CB_AD" ? CB_AD : []
+                 }
                 />
               </GridItem>
             </GridContainer>

@@ -189,15 +189,6 @@ class BangDiem extends React.Component {
 
         return (
             <div className={classes.container}>
-                {/* <Button onClick={this.openModalAddBangDiem} variant="contained" color="green" className={classes.button}>
-                    <Icon className={classes.iconHover} color="error" style={{ fontSize: 30 }}>
-                        add_circle
-                    </Icon>
-                </Button>
-                &nbsp;
-                <InputLabel className={classes.label}>
-                        Nhập điểm
-                </InputLabel> */}
                 <Paper className={classes.root}>
                     <div className={classes.title}>
                         <h4>Danh sách điểm</h4>

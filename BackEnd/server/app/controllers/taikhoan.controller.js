@@ -232,7 +232,8 @@ exports.hienThongTinCaNhan = async(req, res) => {
                             diaChi: 1,
                             email: 1,
                             SDT: 1,
-                            tinhTrang: 1
+                            tinhTrang: 1,
+                            loai: 1
                         } 
                     },
                     { 
@@ -253,6 +254,7 @@ exports.hienThongTinCaNhan = async(req, res) => {
                             email: 1,
                             SDT: 1,
                             tinhTrang: 1,
+                            loai: 1,
                             namTotNghiep: "$thisinh.namTotNghiep",
                             tenTHPT: "$thisinh.tenTHPT",
                             anhMinhChung: "$thisinh.anhMinhChung",
@@ -281,6 +283,7 @@ exports.hienThongTinCaNhan = async(req, res) => {
                             tenTHPT: 1,
                             anhMinhChung: 1,
                             maKhuVuc: 1,
+                            loai: 1,
                             maDoiTuong: 1,
                             tinhTrang: 1,
                             maNganh: "$thisinhnhap.maNganh",
@@ -335,7 +338,8 @@ exports.hienThongTinThiSinh = async(req, res) => {
                             diaChi: 1,
                             email: 1,
                             SDT: 1,
-                            tinhTrang: 1
+                            tinhTrang: 1,
+                            loai: 1
                         } 
                     },
                     { 
@@ -356,6 +360,7 @@ exports.hienThongTinThiSinh = async(req, res) => {
                             email: 1,
                             SDT: 1,
                             tinhTrang: 1,
+                            loai: 1,
                             namTotNghiep: "$thisinh.namTotNghiep",
                             tenTHPT: "$thisinh.tenTHPT",
                             anhMinhChung: "$thisinh.anhMinhChung",
@@ -383,6 +388,7 @@ exports.hienThongTinThiSinh = async(req, res) => {
                             namTotNghiep: 1,
                             tenTHPT: 1,
                             anhMinhChung: 1,
+                            loai: 1,
                             maKhuVuc: 1,
                             maDoiTuong: 1,
                             tinhTrang: 1,
@@ -416,6 +422,7 @@ exports.hienThongTinThiSinh = async(req, res) => {
                             tinhTrang: 1,
                             tenNganh: "$nganh.tenNganh",
                             maNganh: 1,
+                            loai: 1,
                             thongTin: "$nganh.thongTin",
                             chiTieuNganh: "$nganh.chiTieuNganh"
                         } 

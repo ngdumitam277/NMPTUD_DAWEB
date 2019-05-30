@@ -40,7 +40,8 @@ class ProfileUser extends Component {
             tenTHPT: "",
             namTotNghiep: "",
             tinhTrang: 0,
-            isModalEditProfileUser: false
+            isModalEditProfileUser: false,
+            loai: '',
         }
 
         this.modalEditProfileUserRef = React.createRef()
@@ -50,34 +51,35 @@ class ProfileUser extends Component {
         axios.get(`${url}web/taikhoan/thongtincanhan`, {
             withCredentials: true
         })
-        .then((response) => {
-        let data = response.data
+            .then((response) => {
+                let data = response.data
+                console.log("DATA === " + JSON.stringify(data))
+                if (data.length > 0) {
+                    let item = data[0]
 
-        if(data.length > 0){
-            let item = data[0] 
-
-            this.setState({
-                username: item.username,
-                hTen: item.hTen,
-                gioiTinh: item.gioiTinh,
-                ngSinh: item.ngSinh,
-                danToc: item.danToc,
-                soCMND: item.soCMND,
-                ngCapCMND: item.ngCapCMND,
-                diaChi: item.diaChi,
-                email: item.email,
-                SDT: item.SDT,
-                maKhuVuc: item.maKhuVuc,
-                maDoiTuong: item.maDoiTuong,
-                tenTHPT: item.tenTHPT,
-                namTotNghiep: item.namTotNghiep,
-                tinhTrang: item.tinhTrang
-            })            
-        }
-        })
-        .catch((err) => {
-            console.log(err)
-        })
+                    this.setState({
+                        username: item.username,
+                        hTen: item.hTen,
+                        gioiTinh: item.gioiTinh,
+                        ngSinh: item.ngSinh,
+                        danToc: item.danToc,
+                        soCMND: item.soCMND,
+                        ngCapCMND: item.ngCapCMND,
+                        diaChi: item.diaChi,
+                        email: item.email,
+                        SDT: item.SDT,
+                        maKhuVuc: item.maKhuVuc,
+                        maDoiTuong: item.maDoiTuong,
+                        tenTHPT: item.tenTHPT,
+                        namTotNghiep: item.namTotNghiep,
+                        tinhTrang: item.tinhTrang,
+                        loai: item.loai,
+                    })
+                }
+            })
+            .catch((err) => {
+                console.log(err)
+            })
     }
 
     componentDidMount() {
@@ -87,8 +89,8 @@ class ProfileUser extends Component {
     setModalEditProfileUser = (isModal) => this.setState({ isModalEditProfileUser: isModal })
 
     openModalEditProfileUser = () => {
-        this.modalEditProfileUserRef.setDataProfileUser(this.state.username, this.state.hTen, this.state.gioiTinh, this.state.ngSinh, 
-            this.state.danToc, this.state.soCMND, this.state.ngCapCMND, this.state.diaChi, this.state.email, 
+        this.modalEditProfileUserRef.setDataProfileUser(this.state.username, this.state.hTen, this.state.gioiTinh, this.state.ngSinh,
+            this.state.danToc, this.state.soCMND, this.state.ngCapCMND, this.state.diaChi, this.state.email,
             this.state.SDT, this.state.maKhuVuc, this.state.maDoiTuong, this.state.tenTHPT, this.state.namTotNghiep)
         this.setModalEditProfileUser(true)
     }
@@ -97,21 +99,21 @@ class ProfileUser extends Component {
         this.setModalEditProfileUser(false)
     }
 
-    onRefModalEditProfileUser = (ref) =>  this.modalEditProfileUserRef = ref
+    onRefModalEditProfileUser = (ref) => this.modalEditProfileUserRef = ref
 
     getTinhTrang = (classes) => {
         let tinhTrang = Number(this.state.tinhTrang)
-
-        if(tinhTrang === 0){
+        const loai = this.state.loai
+        if (tinhTrang === 0 || loai != 'TS') {
             return (
                 <Button onClick={this.openModalEditProfileUser} variant="contained" color="primary" className={classes.button}>
-                    Thay đổi thông tin 
+                    Thay đổi thông tin
                 </Button>
             )
-        }else{
+        } else {
             return (
                 <Button disabled={true} onClick={this.openModalEditProfileUser} variant="contained" color="primary" className={classes.button}>
-                    Thay đổi thông tin 
+                    Thay đổi thông tin
                 </Button>
             )
         }
@@ -120,17 +122,26 @@ class ProfileUser extends Component {
     render() {
         const { classes } = this.props;
         const { hTen, SDT, danToc, diaChi, email, gioiTinh, maDoiTuong, maKhuVuc, namTotNghiep, ngCapCMND,
-            ngSinh, soCMND, tenTHPT, isModalEditProfileUser } = this.state;
-
+            ngSinh, soCMND, tenTHPT, isModalEditProfileUser, loai } = this.state;
         return (
             <div className={classes.container}>
                 <div className={classes.title}>
-                  <h4>Thông tin cá nhân</h4>
+                <h4>Thông tin cá nhân</h4>
+                
+                </div>
+                <div className={classes.title}>
+                <h4>
+                    {
+                        loai && loai === "CB" ? "Chào bạn cán bộ nhập thông tin!" :
+                        loai && loai === "CD_ND" ? "Chào bạn cán bộ nhập điểm!" : 
+                        loai && loai === "CD_ND" ? "Bạn là admin cao cấp!": null
+                    }
+                </h4>
                 </div>
                 <GridContainer>
                     <GridItem xs={4} sm={4} md={4}>
                         <img
-                            style={{width:200, height:200}}
+                            style={{ width: 200, height: 200 }}
                             src={require("assets/img/avatar-profile.jpg")}
                             alt="..."
                             className={classes.imgRounded + " " + classes.imgFluid}
@@ -157,9 +168,9 @@ class ProfileUser extends Component {
                                 <br />
                                 <p>{moment(ngSinh).format("DD-MM-YYYY")}</p>
                             </GridItem>
-                            
+
                         </GridContainer>
-                        <br/>
+                        <br />
                         <GridContainer>
                             <GridItem xs={4} sm={4} md={4}>
                                 <InputLabel className={classes.label}>
@@ -180,14 +191,14 @@ class ProfileUser extends Component {
                                 </InputLabel>
                                 <br />
                                 <p>{moment(ngCapCMND).format("DD-MM-YYYY")}</p>
-                                
+
                             </GridItem>
                         </GridContainer>
-                        <br/>
+                        <br />
                         <GridContainer>
                             <GridItem xs={4} sm={4} md={4}>
                                 <InputLabel className={classes.label}>
-                                   Địa chỉ
+                                    Địa chỉ
                                 </InputLabel>
                                 <p>{diaChi}</p>
                             </GridItem>
@@ -204,48 +215,56 @@ class ProfileUser extends Component {
                                 <br />
                                 <p>{email}</p>
                             </GridItem>
-                            
+
                         </GridContainer>
                     </GridItem>
                 </GridContainer>
-                <hr/>
-                <br/>
-                <GridContainer>
-                    <GridItem xs={3} sm={3} md={3}>
-                        <InputLabel className={classes.label}>
-                            Mã khu vực
+                
+                {
+                    loai && loai != "TS" ? null :
+                        <>
+                        <hr />
+                        <br />
+                            <GridContainer>
+                                <GridItem xs={3} sm={3} md={3}>
+                                    <InputLabel className={classes.label}>
+                                        Mã khu vực
                         </InputLabel>
-                        <p>{maKhuVuc}</p>
-                    </GridItem>
-                    <GridItem xs={3} sm={3} md={3}>
-                        <InputLabel className={classes.label}>
-                            Mã đối tượng
+                                    <p>{maKhuVuc}</p>
+                                </GridItem>
+                                <GridItem xs={3} sm={3} md={3}>
+                                    <InputLabel className={classes.label}>
+                                        Mã đối tượng
                         </InputLabel>
-                        <p>{maDoiTuong}</p>
-                    </GridItem>
-                    <GridItem xs={3} sm={3} md={3}>
-                        <InputLabel className={classes.label}>
-                            Tên trường THPT
+                                    <p>{maDoiTuong}</p>
+                                </GridItem>
+                                <GridItem xs={3} sm={3} md={3}>
+                                    <InputLabel className={classes.label}>
+                                        Tên trường THPT
                         </InputLabel>
-                        <p>{tenTHPT}</p>
-                    </GridItem>
-                    <GridItem xs={3} sm={3} md={3}>
-                        <InputLabel className={classes.label}>
-                            Năm tốt nghiệp
+                                    <p>{tenTHPT}</p>
+                                </GridItem>
+                                <GridItem xs={3} sm={3} md={3}>
+                                    <InputLabel className={classes.label}>
+                                        Năm tốt nghiệp
                         </InputLabel>
-                        <p>{namTotNghiep}</p>
-                    </GridItem>
-                </GridContainer>
-                <br/>
-                <hr/>
-                <div style={{textAlign:"right"}}>
-                {this.getTinhTrang(classes)}
-                </div>
+                                    <p>{namTotNghiep}</p>
+                                </GridItem>
+                            </GridContainer>
+                            <br />
+                            <hr />
+                            <div style={{ textAlign: "right" }}>
+                                {this.getTinhTrang(classes)}
+                            </div>
 
-                <ModalEditProfileUser isModal={isModalEditProfileUser} 
-                    onRef={this.onRefModalEditProfileUser}
-                    closeModalEditProfileUser={this.closeModalEditProfileUser}
-                    getProfileUser={this.getProfileUser}/>
+                            <ModalEditProfileUser isModal={isModalEditProfileUser}
+                                onRef={this.onRefModalEditProfileUser}
+                                closeModalEditProfileUser={this.closeModalEditProfileUser}
+                                getProfileUser={this.getProfileUser} />
+                        </>
+                }
+
+
             </div>
         )
     }
