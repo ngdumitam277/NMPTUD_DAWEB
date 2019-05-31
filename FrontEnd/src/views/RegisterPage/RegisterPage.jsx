@@ -98,6 +98,7 @@ class RegisterPage extends React.Component {
       let result = response.data
       if(result.message === "ok"){
         alert("Tạo tài khoản thành công!")
+        this.props.history.push("/login-page");
       }else{
         alert(result.message)
       }
