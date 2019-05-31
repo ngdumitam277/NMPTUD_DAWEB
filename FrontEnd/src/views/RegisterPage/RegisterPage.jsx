@@ -61,7 +61,34 @@ class RegisterPage extends React.Component {
     this.setState({password: event.target.value})
   }
 
+  checkInput = () => {
+    let filter = /^[a-zA-Z0-9]+\@gmail\.com$/
+    const username = this.state.username
+    const password = this.state.password
+
+    if(username.length == 0 && password.length == 0) {
+      alert("Username và password không được rỗng!")
+      return false
+    } else if(username.length == 0) {
+      alert("Username không được rỗng!")
+      return false
+    } else if(password.length == 0) {
+      alert("Password không được rỗng!")
+      return false
+    }
+    //    
+    if(!filter.test(this.state.username)) {
+      alert("Email không hợp lệ ! (VD: example@gmail.com)")
+      return false
+    }
+    return true
+  }
+
   clickDangKy = () => {
+    let check = this.checkInput()
+    if(!check){
+      return;
+    }
     axios.post(`${url}web/create/taikhoan/thisinh`,{
       username: this.state.username,
       password: this.state.password,
@@ -121,6 +148,8 @@ class RegisterPage extends React.Component {
                           onChange: this.onChangeHTen,
                           value: hTen,
                           type: "text",
+                          min: 6,
+                          max: 16,
                           endAdornment: (
                             <InputAdornment position="end">
                               <People className={classes.inputIconsColor} />
@@ -138,9 +167,11 @@ class RegisterPage extends React.Component {
                           type: "email",
                           onChange: this.onChangeUsername,
                           value: username,
+                          min: 6,
+                          max: 16,
                           endAdornment: (
-                            <InputAdornment position="end">
-                              <Email className={classes.inputIconsColor} />
+                            <InputAdornment inputProps={{min:"6", max:"16"}} position="end">
+                              <Email  className={classes.inputIconsColor} />
                             </InputAdornment>
                           )
                         }}
@@ -154,6 +185,8 @@ class RegisterPage extends React.Component {
                         inputProps={{
                           type: "password",
                           value: password,
+                          min: 6,
+                          max: 16,
                           onChange: this.onChangePassword,
                           endAdornment: (
                             <InputAdornment position="end">
@@ -184,7 +217,6 @@ class RegisterPage extends React.Component {
               </GridItem>
             </GridContainer>
           </div>
-          <Footer whiteFont />
         </div>
       </div>
     );
