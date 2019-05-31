@@ -41,7 +41,7 @@ exports.taoKhoi = async(req, res) => {
 
 // lấy tất cả khối
 exports.getAllKhoi = async(req, res) => {
-    Khoi.find({}, {_id: 0, createdAt: 0, updatedAt: 0, __v: 0})
+    Khoi.find({}, {createdAt: 0, updatedAt: 0, __v: 0})
     .then((result) => {
         res.send(result)
     })
@@ -53,17 +53,30 @@ exports.getAllKhoi = async(req, res) => {
 
 // sửa 1 khối theo key
 exports.updateKhoi = async(req, res) => {
-    let key = req.params.key
-    let body = req.body
+    let id = req.params.id
+    let tenKhoi = req.body.tenKhoi ? req.body.tenKhoi : ""
+    let diemTBkhoi = req.body.diemTBkhoi ? Number(req.body.diemTBkhoi) : 0
+    let slThiSinh = req.body.slThiSinh ? Number(req.body.slThiSinh) : 0
+    let key = req.body.key ? req.body.key : ""
 
-    Khoi.findOneAndUpdate({key: key}, body, {new: true})
-    .then((result) => {
-        res.send({message: "ok"})
-    })
-    .catch((err) => {
-        res.send({message: "Lỗi sửa khối theo key!"})
-        console.log(err, "updateKhoi")
-    })
+    let exist = await Khoi.findOne({tenKhoi: tenKhoi})
+    if(exist && exist._id !== id){
+        res.send({message: "Khối đã tồn tại!"})
+    }else{
+        Khoi.findOneAndUpdate({_id: id}, {
+            tenKhoi: tenKhoi,
+            diemTBkhoi: diemTBkhoi,
+            slThiSinh: slThiSinh,
+            key: key
+        }, {new: true})
+        .then((result) => {
+            res.send({message: "ok"})
+        })
+        .catch((err) => {
+            res.send({message: "Lỗi sửa khối theo key!"})
+            console.log(err, "updateKhoi")
+        })
+    }
 };
 
 // xoá 1 khối theo key

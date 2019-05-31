@@ -60,14 +60,15 @@ class ModalDeleteNganhThi extends Component {
             tenNganh: "",
             diemTBkhoi: "",
             slThiSinh: "",
-            key: ""
+            key: "",
+            id: ""
         }
     }
 
     clickDeleteNganhThi = (event) => {
         event.preventDefault()
 
-        axios.delete(`${url}web/nganh/${this.state.key}`)
+        axios.delete(`${url}web/nganh/${this.state.id}`)
         .then((response) => {
             let result = response.data
             if(result.message === "ok"){
@@ -91,7 +92,8 @@ class ModalDeleteNganhThi extends Component {
                 tenNganh: data.maNganh,
                 diemTBkhoi: data.diemTBkhoi,
                 slThiSinh: data.slThiSinh,
-                key: data.key
+                key: data.key,
+                id: data._id
             })
         }catch(err){
             console.log(err)

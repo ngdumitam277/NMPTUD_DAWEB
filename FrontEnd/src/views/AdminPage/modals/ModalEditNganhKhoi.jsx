@@ -57,16 +57,17 @@ class ModalEditNganhKhoi extends Component {
         super(props)
 
         this.state = {
-            maNganh: "",
             tenKhoi: "",
-            diemChuan: 0
+            diemChuan: 0,
+            id: ""
         }
     }
 
     clickEditKhoiThi = (event) => {
         event.preventDefault()
 
-        axios.put(`${url}web/nganhkhoi/${this.state.maNganh}/${this.state.tenKhoi}`, {
+        axios.put(`${url}web/nganhkhoi/${this.state.id}`, {
+            tenKhoi: this.state.tenKhoi,
             diemChuan: this.state.diemChuan,
         })
         .then((response) => {
@@ -91,19 +92,23 @@ class ModalEditNganhKhoi extends Component {
     }
 
     onChangeDiemChuan = (event) => {
-        this.setState({diemChuan: event.target.value})
+        let diemChuan = Number(event.target.value)
+
+        if(diemChuan >= 0 && diemChuan <= 100){
+            this.setState({diemChuan: diemChuan})
+        }
     }
 
     componentDidMount = () => {
         this.props.onRef(this)
     }
 
-    setDataKhoiThi = (data, maNganh) => {
+    setDataKhoiThi = (data) => {
         try{
             this.setState({
                 tenKhoi: data.tenKhoi,
                 diemChuan: data.diemChuan,
-                maNganh: maNganh
+                id: data._id
             })
         }catch(err){
             console.log(err)

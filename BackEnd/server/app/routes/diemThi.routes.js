@@ -27,4 +27,7 @@ module.exports = (app) => {
 
     // lấy tất cả môn của một tài khoản
     app.get('/web/taikhoan/monthi', DiemThi.layDiemThiTheoTaiKhoan)
+
+    // tìm kiêm theo phách
+    app.get('/web/diemthi/timkiem/:phach', DiemThi.timKiemDiemThi)
 }

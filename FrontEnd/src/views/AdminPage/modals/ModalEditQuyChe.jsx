@@ -90,7 +90,7 @@ class ModalEditQuyChe extends Component {
     }
 
     onChangeDiemCong = (event) => {
-        if(Number(event.target.value) >= 0 && Number(event.target.value) <= 99){
+        if(Number(event.target.value) >= 0 && Number(event.target.value) <= 10){
             this.setState({diemCong: Number(event.target.value)})
         }
     }

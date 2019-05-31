@@ -8,8 +8,8 @@ module.exports = (app) => {
     app.get('/web/nganh', Nganh.getAllNganh);
 
     // sửa 1 ngành theo key
-    app.put('/web/nganh/:key', Nganh.updateNganh);
+    app.put('/web/nganh/:id', Nganh.updateNganh);
 
     // xoá 1 ngành theo key
-    app.delete('/web/nganh/:key', Nganh.deleteNganh);
+    app.delete('/web/nganh/:id', Nganh.deleteNganh);
 }

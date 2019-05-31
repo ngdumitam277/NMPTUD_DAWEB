@@ -61,7 +61,8 @@ class ModalEditNganhThi extends Component {
             chiTieuNganh: "",
             thongTin: "",
             key: "",
-            maNganh: ""
+            maNganh: "",
+            id: ""
         }
     }
 
@@ -86,7 +87,7 @@ class ModalEditNganhThi extends Component {
     clickEditNganhThi = (event) => {
         event.preventDefault()
 
-        axios.put(`${url}web/nganh/${this.state.key}`, {
+        axios.put(`${url}web/nganh/${this.state.id}`, {
             maNganh: this.state.maNganh,
             tenNganh: this.state.tenNganh,
             chiTieuNganh: this.state.chiTieuNganh,
@@ -119,7 +120,11 @@ class ModalEditNganhThi extends Component {
     }
 
     onChangeChiTieuNganh = (event) => {
-        this.setState({chiTieuNganh: event.target.value})
+        let chiTieuNganh = Number(event.target.value)
+
+        if(chiTieuNganh >= 0 && chiTieuNganh <= 2000){
+            this.setState({chiTieuNganh: chiTieuNganh})
+        }
     }
 
     onChangeThongTin = (event) => {
@@ -137,7 +142,8 @@ class ModalEditNganhThi extends Component {
                 chiTieuNganh: data.chiTieuNganh,
                 thongTin: data.thongTin,
                 key: data.key,
-                maNganh: data.maNganh
+                maNganh: data.maNganh,
+                id: data._id
             })
         }catch(err){
             console.log(err)

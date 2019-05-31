@@ -8,7 +8,7 @@ module.exports = (app) => {
     app.get('/web/nganhkhoi', NganhKhoi.getAllNganhKhoi);
 
     // sửa 1 ngành khối theo key Ngành và tên khối
-    app.put('/web/nganhkhoi/:maNganh/:tenKhoi', NganhKhoi.updateNganhKhoi);
+    app.put('/web/nganhkhoi/:id', NganhKhoi.updateNganhKhoi);
 
     // xoá 1 ngành khối theo key Ngành và tên khối
     app.delete('/web/nganh/:maNganh/:tenKhoi', NganhKhoi.deleteNganhKhoi);

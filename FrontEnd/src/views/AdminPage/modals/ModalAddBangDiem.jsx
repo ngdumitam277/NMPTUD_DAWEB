@@ -91,8 +91,10 @@ class ModalAddBangDiem extends Component {
     }
 
     onChangeDiem = (event) => {
-        if(event.target.value >= 0 && event.target.value <= 10){
-            this.setState({diem: event.target.value})
+        let diem = Number(event.target.value)
+
+        if(diem >= 0 && diem <= 10){
+            this.setState({diem: diem})
         }
     }
 

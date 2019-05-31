@@ -99,6 +99,14 @@ class ModalPhucKhao extends Component {
         this.props.onRef(this)
     }
 
+    onChangeDiemPK = (event) => {
+        let diemPhucKhao = Number(event.target.value)
+
+        if(diemPhucKhao >= 0 && diemPhucKhao <= 10){
+            this.setState({diemPhucKhao: diemPhucKhao})
+        }
+    }
+
     render() {
         let { isModal, classes, ...rest } = this.props
 
@@ -122,7 +130,7 @@ class ModalPhucKhao extends Component {
                             type="number"
                             label="Nhập số điểm"
                             value={this.state.diemPhucKhao}
-                            onChange={(e) => { this.setState({diemPhucKhao: e.target.value})}}
+                            onChange={this.onChangeDiemPK}
                             className={classes.textField}
                             margin="normal"
                             variant="outlined"

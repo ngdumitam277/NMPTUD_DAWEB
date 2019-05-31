@@ -43,6 +43,10 @@ class BranchTab extends Component {
 
         this.modalEditNganhThiRef = React.createRef()
         this.modalDeleteNganhThiRef = React.createRef()
+        this.modalAddNganhThiRef = React.createRef()
+        this.modalAddKhoiThiRef = React.createRef()
+        this.modalEditKhoiThiRef = React.createRef()
+        this.modalDeleteKhoiThiRef = React.createRef()
     }
 
     getAllNganhThi = () => {
@@ -64,6 +68,7 @@ class BranchTab extends Component {
 
     openModalAddNganhThi = (event) => {
         event.preventDefault()
+        this.modalAddNganhThiRef.setDataNganhThi()
         this.setModalAddNganhThi(true)
     }
 
@@ -125,6 +130,8 @@ class BranchTab extends Component {
     closeModalDeleteKhoiThi = () => {
         this.setModalDeleteKhoiThi(false)
     }
+
+    onRefModalAddNganhThi = (ref) => this.modalAddNganhThiRef = ref
 
     onRefModalDeleteNganhThi = (ref) => this.modalDeleteNganhThiRef = ref
 
@@ -224,6 +231,7 @@ class BranchTab extends Component {
                 ))}
 
                 <ModalAddNganhThi isModal={isModalAddNganhThi} 
+                    onRef={this.onRefModalAddNganhThi}
                     closeModalAddNganhThi={this.closeModalAddNganhThi}
                     getAllNganhThi={this.getAllNganhThi}/>
 

@@ -47,11 +47,9 @@ exports.getAllNganh = async(req, res) => {
     Nganh.aggregate([
         {$lookup: {from: "nganhkhois", localField: "maNganh", foreignField: "maNganh", as: "khoi"}},
         {$project: { 
-            _id: 0, 
             __v: 0, 
             createdAt: 0, 
             updatedAt: 0,
-            "khoi._id": 0,
             "khoi.maNganh": 0,
             "khoi.createdAt": 0,
             "khoi.updatedAt": 0,
@@ -69,24 +67,39 @@ exports.getAllNganh = async(req, res) => {
 
 // sửa 1 ngành theo key
 exports.updateNganh = async(req, res) => {
-    let key = req.params.key
-    let body = req.body
+    let id = req.params.id ? req.params.id : ""
+    let maNganh = req.body.maNganh ? req.body.maNganh : ""
+    let tenNganh = req.body.tenNganh ? req.body.tenNganh : ""
+    let chiTieuNganh = Number(req.body.chiTieuNganh)
+    let thongTin = req.body.thongTin ? req.body.thongTin : ""
+    let key = req.body.key ? req.body.key : ""
 
-    Nganh.findOneAndUpdate({key: key}, body, {new: true})
-    .then((result) => {
-        res.send({message: "ok"})
-    })
-    .catch((err) => {
-        res.send({message: "Lỗi sửa ngành theo key!"})
-        console.log(err, "updateNganh")
-    })
+    let exist = await Nganh.findOne({maNganh: maNganh})
+    if(exist && exist._id !== id){
+        res.send({message: "Ngành đã tồn tại!"})
+    }else{
+        Nganh.findOneAndUpdate({_id: id}, {
+            maNganh: maNganh,
+            chiTieuNganh: chiTieuNganh,
+            thongTin: thongTin,
+            key: key,
+            tenNganh: tenNganh
+        }, {new: true})
+        .then((result) => {
+            res.send({message: "ok"})
+        })
+        .catch((err) => {
+            res.send({message: "Lỗi sửa ngành theo key!"})
+            console.log(err, "updateNganh")
+        })
+    }
 };
 
 // xoá 1 ngành theo key
 exports.deleteNganh = async(req, res) => {
-    let key = req.params.key
+    let id = req.params.id ? req.params.id : ""
 
-    Nganh.findOneAndRemove({key: key}, {rawResult: true})
+    Nganh.findOneAndRemove({_id: id}, {rawResult: true})
     .then((result) => {
         let maNganh = result.value.maNganh
         NganhKhoi.remove({maNganh: maNganh})

@@ -136,6 +136,7 @@ class CustomPaginationActionsTable extends React.Component {
 
     this.modalEditMonThiRef = React.createRef()
     this.modalDeleteMonThiRef = React.createRef()
+    this.modalAddMonThiRef = React.createRef()
   }
 
   getAllMonThi = () => {
@@ -157,6 +158,7 @@ class CustomPaginationActionsTable extends React.Component {
 
   openModalAddMonThi = (event) => {
     event.preventDefault()
+    this.modalAddMonThiRef.setDataMonThi()
     this.setModalAddMonThi(true)
   }
 
@@ -189,6 +191,8 @@ class CustomPaginationActionsTable extends React.Component {
   onRefModalDeleteMonThi = (ref) => this.modalDeleteMonThiRef = ref
 
   onRefModalEditMonThi = (ref) => this.modalEditMonThiRef = ref
+
+  onRefModalAddMonThi = (ref) => this.modalAddMonThiRef = ref
 
   handleChangePage = (event, page) => {
     this.setState({ page });
@@ -273,7 +277,8 @@ class CustomPaginationActionsTable extends React.Component {
 
           <ModalAddMonThi isModal={isModalAddMonThi}
             closeModalAddMonThi={this.closeModalAddMonThi}
-            getAllMonThi={this.getAllMonThi} />
+            getAllMonThi={this.getAllMonThi} 
+            onRef={this.onRefModalAddMonThi}/>
 
           <ModalEditMonThi isModal={isModalEditMonThi}
             onRef={this.onRefModalEditMonThi}
