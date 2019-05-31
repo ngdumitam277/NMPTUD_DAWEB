@@ -11,6 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
+import moment from 'moment';
 
 function getModalStyle() {
     const top = 50;
@@ -51,16 +52,13 @@ const styles = theme => ({
     ...componentsStyle
 });
 
-class ModalAddMonThi extends Component {
+class ModalEditMonKhoiEdit extends Component {
     constructor(props){
         super(props)
 
         this.state = {
             tenMon: "",
-            phongThi: "",
-            tgThi: "",
-            diemTBmon: 0,
-            gioThi: ""
+            id: ""
         }
     }
 
@@ -82,28 +80,29 @@ class ModalAddMonThi extends Component {
         return str; 
     }
 
-    clickAddMonThi = (event) => {
+    clickEditMonThi = (event) => {
         event.preventDefault()
 
-        axios.post(`${url}web/create/mon`, {
-            tenMon: this.state.tenMon,
-            phongThi: this.state.phongThi,
-            tgThi: this.state.tgThi,
-            gioThi: this.state.gioThi,
-            key: this.getKeyFromString(this.state.tenMon)
-        })
-        .then((response) => {
-            let result = response.data
-            if(result.message === "ok"){
-                alert("Tạo môn thi thành công!")
-            }else{
-                alert(result.message)
-            }
+        let tenMon = this.state.tenMon
+        let tenKhoi = this.props.tenKhoi
+        let keyMon = this.getKeyFromString(this.state.tenMon)
 
-            this.props.getAllMonThi()
+        axios.put(`${url}web/khoimon/edit/${this.state.id}`, {
+            tenKhoi: tenKhoi,
+            tenMon: tenMon,
+            keyMon: keyMon
+        })
+        .then((result) => {
+            let data = result.data
+
+            if(data.message === "ok"){
+                alert("Sửa môn thành công!!!")
+                this.props.getAllMonKhoi()
+                this.props.closeModalEditMonKhoiEdit()
+            }
         })
         .catch((err) => {
-            alert("Tạo môn thi thất bại!")
+            alert("Sửa môn thât bại!!!")
             console.log(err)
         })
     }
@@ -112,32 +111,34 @@ class ModalAddMonThi extends Component {
         this.setState({tenMon: event.target.value})
     }
 
-    onChangePhongThi = (event) => {
-        this.setState({phongThi: event.target.value})
+    componentDidMount = () => {
+        this.props.onRef(this)
     }
 
-    onChangeTGThi = (event) => {
-        this.setState({tgThi: event.target.value})
-    }
-
-    onChangeGioThi = (event) => {
-        let gioThi = event.target.value
-        this.setState({gioThi: gioThi})
+    setDataMonThi = (data) => {
+        try{
+            this.setState({
+                tenMon: data.tenMon,
+                id: data._id
+            })
+        }catch(err){
+            console.log(err)
+        }
     }
 
     render() {
         let { isModal, classes, ...rest } = this.props
-        let { tenMon, tgThi, gioThi, phongThi } = this.state
+        let { tenMon } = this.state
 
         return (
             <Modal open={isModal}
                 aria-labelledby="simple-modal-title"
                 aria-describedby="simple-modal-description"
-                onClose={this.props.closeModalAddMonThi}
+                onClose={this.props.closeModalEditMonKhoiEdit}
             >
                 <div style={getModalStyle()} className={classes.paper}>
                     <div className={classes.title}>
-                        <h3>Thêm Môn Thi</h3>
+                        <h3>Sửa Môn</h3>
                     </div>
                     <form className={classes.container} noValidate autoComplete="off">
                         <TextField
@@ -149,45 +150,14 @@ class ModalAddMonThi extends Component {
                             margin="normal"
                             variant="outlined"
                         />
-                        <TextField
-                            id="phong-thi"
-                            label="Phòng Thi"
-                            value={phongThi}
-                            onChange={this.onChangePhongThi}
-                            className={classes.textField}
-                            margin="normal"
-                            variant="outlined"
-                        />
-                       <TextField
-                            id="thoi-gian-thi"
-                            label="Thời Gian Thi"
-                            type="date"
-                            value={tgThi}
-                            onChange={this.onChangeTGThi}
-                            className={classes.textField}
-                            InputLabelProps={{
-                            shrink: true,
-                            }}
-                            margin="normal"
-                            variant="outlined"
-                        />
-                        <TextField
-                            id="gio-thi"
-                            label="Giờ thi"
-                            value={gioThi}
-                            onChange={this.onChangeGioThi}
-                            className={classes.textField}
-                            margin="normal"
-                            variant="outlined"
-                        />
                     </form>
 
                     <div style={{textAlign: "end"}}>
                         <Button
                             style={{marginRight: 5}}
                             variant="outlined"
-                            href="#huyModalAddMonThi"
-                            onClick={this.props.closeModalAddMonThi}
+                            href="#huyModalEditMonKhoiEdit"
+                            onClick={this.props.closeModalEditMonKhoiEdit}
                         >
                             Huỷ
                         </Button>
@@ -195,9 +165,9 @@ class ModalAddMonThi extends Component {
                             style={{marginLeft: 5}}
                             variant="outlined"
                             href="#themMonThi"
-                            onClick={this.clickAddMonThi}
+                            onClick={this.clickEditMonThi}
                         >
-                            Thêm
+                            Sửa
                         </Button>
                     </div>
                 </div>
@@ -206,4 +176,4 @@ class ModalAddMonThi extends Component {
     }
 }
 
-export default withStyles(styles)(ModalAddMonThi)
+export default withStyles(styles)(ModalEditMonKhoiEdit)

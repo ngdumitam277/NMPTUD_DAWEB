@@ -55,6 +55,7 @@ class MonThi extends Component {
                             <TableCell>Môn thi</TableCell>
                             <TableCell align="center">Phòng thi</TableCell>
                             <TableCell align="center">Ngày giờ thi</TableCell>
+                            <TableCell align="center">Giờ thi</TableCell>
                             <TableCell align="center">Điểm</TableCell>
                             <TableCell align="center">Điểm phúc khảo</TableCell>
                             <TableCell align="center">Tùy chỉnh</TableCell>
@@ -69,6 +70,7 @@ class MonThi extends Component {
                                     </TableCell>
                                     <TableCell align="center">{row.phongThi}</TableCell>
                                     <TableCell align="center">{moment(row.tgThi).format("DD-MM-YYYY")}</TableCell>
+                                    <TableCell align="center">{row.gioThi}</TableCell>
                                     <TableCell align="center">{row.diem}</TableCell>
                                     <TableCell align="center">{row.diemPK === "" ? "Chưa có" : row.diemPK}</TableCell>
                                     <TableCell align="center">

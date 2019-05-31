@@ -2,7 +2,8 @@ const mongoose = require('mongoose')
 
 const KhoiMonSchema = mongoose.Schema({
     tenKhoi: String,
-    tenMon: String
+    tenMon: String,
+    keyMon: String
 }, {
     timestamps: true
 })

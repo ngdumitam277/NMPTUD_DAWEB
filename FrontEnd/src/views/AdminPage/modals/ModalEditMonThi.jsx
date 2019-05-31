@@ -125,7 +125,7 @@ class ModalEditMonThi extends Component {
     }
 
     onChangeGioThi = (event) => {
-        let gioThi = Number(event.target.value)
+        let gioThi = event.target.value
         this.setState({gioThi: gioThi})
     }
 

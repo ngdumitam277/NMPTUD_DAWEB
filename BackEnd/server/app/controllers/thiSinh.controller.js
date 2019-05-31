@@ -83,7 +83,7 @@ exports.nopHoSo = async(req, res) => {
                 let Phach = dataThiSinh.Phach
         
                 let dataDiemThiInsert = dataKhoiMon.map((item, index) => {
-                    return { mon: item.tenMon, Phach: Phach, maDiem: "", diem: "" }
+                    return { mon: item.tenMon, Phach: Phach, maDiem: "", diem: "", keyMon: item.keyMon }
                 })
     
                 await DiemThi.remove({Phach: Phach})

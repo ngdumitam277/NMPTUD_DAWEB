@@ -207,7 +207,7 @@ class CustomPaginationActionsTable extends React.Component {
     return (
       <div>
         <div style={{marginBottom:10}}>
-        <Button onClick={this.openModalAddKhoiThi} variant="contained" color="green" className={classes.button}>
+        <Button onClick={this.openModalAddMonThi} variant="contained" color="green" className={classes.button}>
           <Icon className={classes.iconHover} color="error" style={{ fontSize: 30 }}>
             add_circle
           </Icon>
@@ -224,6 +224,7 @@ class CustomPaginationActionsTable extends React.Component {
                 <TableRow>
                   <TableCell>Tên môn</TableCell>
                   <TableCell align="right">Ngày thi</TableCell>
+                  <TableCell align="right">Giờ thi</TableCell>
                   <TableCell align="right">Phòng thi</TableCell>
                   <TableCell align="right">Tùy chỉnh</TableCell>
                 </TableRow>
@@ -235,6 +236,7 @@ class CustomPaginationActionsTable extends React.Component {
                       {row.tenMon}
                     </TableCell>
                     <TableCell align="right">{moment(row.tgThi).format("DD-MM-YYYY")}</TableCell>
+                    <TableCell align="right">{row.gioThi}</TableCell>
                     <TableCell align="right">{row.phongThi}</TableCell>
                     <TableCell align="right">
                       <Button onClick={() => this.openModalDeleteMonThi(row)} variant="contained" color="secondary" className={classes.button}>

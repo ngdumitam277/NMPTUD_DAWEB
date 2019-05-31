@@ -52,55 +52,45 @@ const styles = theme => ({
     ...componentsStyle
 });
 
-class ModalDeleteKhoiThi extends Component {
+class ModalDeleteMonKhoiEdit extends Component {
     constructor(props){
         super(props)
 
         this.state = {
-            tenKhoi: "",
-            diemTBkhoi: "",
-            slThiSinh: "",
-            key: ""
+            tenMon: "",
+            keyMon: ""
         }
     }
 
-    clickDeleteKhoiThi = (event) => {
+    clickDeleteMonThi = (event) => {
         event.preventDefault()
 
-        axios.delete(`${url}web/khoi/${this.state.key}`)
-        .then((response) => {
-            let result = response.data
-            if(result.message === "ok"){
-                axios.delete(`${url}web/delete/multiple/khoimon/${this.state.tenKhoi}`)
-                .then((result) => {
-                    let data = result.data
+        let keyMon = this.state.keyMon
+        let tenKhoi = this.props.tenKhoi
 
-                    if(data.message === "ok"){
-                        alert("Xoá khối thi thành công!")
+        axios.delete(`${url}web/delete/khoimon/${tenKhoi}/${keyMon}`)
+        .then((result) => {
+            let data = result.data
 
-                        this.props.closeModalDeleteKhoiThi()
-                        this.props.getAllKhoiThi()
-                    }else{
-                        alert(result.message)
-                    }
-                })
+            if(data.message === "ok"){
+                alert("Xoá môn thành công!!!")
+
+                this.props.getAllMonKhoi()
+                this.props.closeModalDeleteMonKhoiEdit()
             }else{
-                alert(result.message)
+                alert(data.message)
             }
         })
         .catch((err) => {
-            alert("Xoá khối thi thất bại!")
             console.log(err)
         })
     }
 
-    setDataKhoiThi = (data) => {
+    setDataMonThi = (data) => {
         try{
             this.setState({
-                tenKhoi: data.tenKhoi,
-                diemTBkhoi: data.diemTBkhoi,
-                slThiSinh: data.slThiSinh,
-                key: data.key
+                tenMon: data.tenMon,
+                keyMon: data.keyMon
             })
         }catch(err){
             console.log(err)
@@ -113,36 +103,36 @@ class ModalDeleteKhoiThi extends Component {
 
     render() {
         let { isModal, classes, ...rest } = this.props
-        let { tenKhoi } = this.state
+        let { tenMon } = this.state
 
         return (
             <Modal open={isModal}
                 aria-labelledby="simple-modal-title"
                 aria-describedby="simple-modal-description"
-                onClose={this.props.closeModalDeleteKhoiThi}
+                onClose={this.props.closeModalDeleteMonKhoiEdit}
             >
                 <div style={getModalStyle()} className={classes.paper}>
                     <div className={classes.title}>
-                        <h3>Xoá Khối Thi</h3>
+                        <h3>Xoá Môn Thi</h3>
                     </div>
                     <Typography variant="h6" gutterBottom>
-                        {`Bạn có chắc chắn muốn xoá khối thi là ${tenKhoi} này không?`}
+                        {`Bạn có chắc chắn muốn xoá môn thi là ${tenMon} này không?`}
                     </Typography>
 
                     <div style={{textAlign: "end"}}>
                         <Button
                             style={{marginRight: 5}}
                             variant="outlined"
-                            href="#huyModalDeleteKhoiThi"
-                            onClick={this.props.closeModalDeleteKhoiThi}
+                            href="#huyModalDeleteMonKhoiEdit"
+                            onClick={this.props.closeModalDeleteMonKhoiEdit}
                         >
                             Huỷ
                         </Button>
                         <Button
                             style={{marginLeft: 5}}
                             variant="outlined"
-                            href="#xoaKhoiThi"
-                            onClick={this.clickDeleteKhoiThi}
+                            href="#xoaMonThi"
+                            onClick={this.clickDeleteMonThi}
                         >
                             Xoá
                         </Button>
@@ -153,4 +143,4 @@ class ModalDeleteKhoiThi extends Component {
     }
 }
 
-export default withStyles(styles)(ModalDeleteKhoiThi)
+export default withStyles(styles)(ModalDeleteMonKhoiEdit)

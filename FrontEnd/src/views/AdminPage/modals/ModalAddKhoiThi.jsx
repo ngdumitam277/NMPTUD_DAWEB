@@ -3,14 +3,30 @@ import React, { Component } from 'react'
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
 
-import axios from 'axios'
-import { url } from 'variable/general.jsx'
+
 import Modal from '@material-ui/core/Modal';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
+import Icon from '@material-ui/core/Icon';
+import InputLabel from "@material-ui/core/InputLabel";
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableFooter from '@material-ui/core/TableFooter';
+import TablePagination from '@material-ui/core/TablePagination';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+import axios from 'axios'
+import { url } from 'variable/general.jsx'
+import moment from 'moment'
+import PropTypes from 'prop-types';
+import ModalAddMonKhoi from './ModalAddMonKhoi';
+import ModalEditMonKhoi from './ModalEditMonKhoi';
+import ModalDeleteMonKhoi from './ModalDeleteMonKhoi';
 
 function getModalStyle() {
     const top = 50;
@@ -58,7 +74,13 @@ class ModalAddKhoiThi extends Component {
         this.state = {
             tenKhoi: "",
             diemTBkhoi: "",
-            slThiSinh: ""
+            slThiSinh: "",
+            page: 0,
+            rowsPerPage: 3,
+            dataMon: [],
+            isModalEditMonKhoi: false,
+            isModalAddMonKhoi: false,
+            isModalDeleteMonKhoi: false
         }
     }
 
@@ -80,8 +102,23 @@ class ModalAddKhoiThi extends Component {
         return str; 
     }
 
+    themTenKhoiVaoDataMon = () => {
+        let dataMon = this.state.dataMon
+        let tenKhoi = this.state.tenKhoi
+
+        let data = dataMon.map((item, index) => {
+            item.tenKhoi = tenKhoi
+
+            return item
+        })
+
+        return data
+    }
+
     clickAddKhoiThi = (event) => {
         event.preventDefault()
+
+        let dataMon = this.themTenKhoiVaoDataMon()
 
         axios.post(`${url}web/create/khoi`, {
             tenKhoi: this.state.tenKhoi,
@@ -89,15 +126,27 @@ class ModalAddKhoiThi extends Component {
             slThiSinh: this.state.slThiSinh,
             key: this.getKeyFromString(this.state.tenKhoi)
         })
-        .then((response) => {
-            let result = response.data
-            if(result.message === "ok"){
-                alert("Tạo khối thi thành công!")
-            }else{
-                alert(result.message)
-            }
+        .then((result) => {
+            let data = result.data
 
-            this.props.getAllKhoiThi()
+            if(data.message === "ok"){
+                axios.post(`${url}web/create/multiple/khoimon`, {
+                    dataMon: dataMon
+                })
+                .then((result) => {
+                    let data = result.data
+
+                    if(data.message === "ok"){
+                        alert("Tạo khối thi thành công!")
+                        
+                        this.props.getAllKhoiThi()
+                    }else{
+                        alert(data.message)
+                    }
+                })
+            }else{
+                alert(data.message)
+            }
         })
         .catch((err) => {
             alert("Tạo khối thi thất bại!")
@@ -117,9 +166,108 @@ class ModalAddKhoiThi extends Component {
         this.setState({slThiSinh: event.target.value})
     }
 
+    setModalAddMonKhoi = (isModal) => this.setState({ isModalAddMonKhoi: isModal })
+
+    openModalAddMonKhoi = (event) => {
+        event.preventDefault()
+        this.setModalAddMonKhoi(true)
+    }
+
+    closeModalAddMonKhoi = () => {
+        this.setModalAddMonKhoi(false)
+    }
+
+    setModalEditMonKhoi = (isModal) => this.setState({ isModalEditMonKhoi: isModal })
+
+    openModalEditMonKhoi = (data) => {
+        this.ModalEditMonKhoiRef.setDataMonThi(data)
+        this.setModalEditMonKhoi(true)
+    }
+
+    closeModalEditMonKhoi = () => {
+        this.setModalEditMonKhoi(false)
+    }
+
+    setModalDeleteMonKhoi = (isModal) => this.setState({isModalDeleteMonKhoi: isModal})
+
+    openModalDeleteMonKhoi = (data) => {
+        this.ModalDeleteMonKhoiRef.setDataMonThi(data)
+        this.setModalDeleteMonKhoi(true)
+    }
+
+    closeModalDeleteMonKhoi = () => {
+        this.setModalDeleteMonKhoi(false)
+    }
+
+    onRefModalDeleteMonKhoi = (ref) => this.ModalDeleteMonKhoiRef = ref
+
+    onRefModalEditMonKhoi = (ref) => this.ModalEditMonKhoiRef = ref
+
+    addMonVaoDataMon = (tenMon, keyMon) => {
+        let dataMon = this.state.dataMon
+        let message = ""
+
+        if(this.checkKeyMon(dataMon, keyMon)){
+            dataMon.push({tenMon: tenMon, keyMon: keyMon})
+
+            this.setState({dataMon: dataMon})
+
+            message = "Thêm môn thành công!!!"
+        }else{
+            message = "Lỗi trùng key!!!"
+        }
+
+        return { message: message }
+    }
+
+    checkKeyMon = (dataMon, keyMon) => {
+        let data = dataMon.filter((item, index) => item.keyMon === keyMon)
+
+        let kt = data.length > 0 ? false : true 
+
+        return kt
+    }
+
+    editDataMon = (tenMon, keyMon, key) => {
+        let dataMon = this.state.dataMon
+        let message = ""
+
+        if(this.checkKeyMon(dataMon, keyMon)){
+            let data = dataMon.map((item, index) => {
+                if(item.keyMon === key){
+                    return { tenMon: tenMon, keyMon: keyMon }
+                }else{
+                    return item
+                }
+            })
+    
+            this.setState({dataMon: data})
+
+            message = "Sửa môn thành công!!!"
+        }else{
+            message = "Lỗi trùng key!!!"
+        }
+
+        return { message: message }
+    }
+
+    deleteDataMon = (key) => {
+        let dataMon = this.state.dataMon
+
+        let data = dataMon.filter((item, index) => {
+            if(item.keyMon !== key){
+                return item
+            }
+        })
+
+        this.setState({dataMon: data})
+    } 
+
     render() {
         let { isModal, classes, ...rest } = this.props
-        let { tenKhoi, slThiSinh, diemTBkhoi } = this.state
+        let { tenKhoi, slThiSinh, diemTBkhoi, dataMon, page, rowsPerPage, isModalAddMonKhoi, isModalDeleteMonKhoi,
+        isModalEditMonKhoi } = this.state
+        const emptyRows = rowsPerPage - Math.min(rowsPerPage, dataMon.length - page * rowsPerPage);
 
         return (
             <Modal open={isModal}
@@ -163,6 +311,68 @@ class ModalAddKhoiThi extends Component {
                         />
                     </form>
 
+                    <div style={{marginBottom:10}}>
+                        <Button onClick={this.openModalAddMonKhoi} variant="contained" color="green" className={classes.button}>
+                            <Icon className={classes.iconHover} color="error" style={{ fontSize: 30 }}>
+                                add_circle
+                            </Icon>
+                        </Button>
+                        &nbsp;
+                        <InputLabel className={classes.label}>
+                        Thêm môn
+                        </InputLabel>
+                    </div>
+                    <Paper classname={classes.root}>
+                        <div classname={classes.tableWrapper}>
+                            <Table classname={classes.table}>
+                            <TableHead>
+                                <TableRow>
+                                <TableCell>Tên môn</TableCell>
+                                <TableCell align="right">Tùy chỉnh</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                            {dataMon.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
+                                <TableRow key={row.id}>
+                                    <TableCell component="th" scope="row">
+                                    {row.tenMon}
+                                    </TableCell>
+                                    <TableCell align="right">
+                                    <Button onClick={() => this.openModalDeleteMonKhoi(row)} variant="contained" color="secondary" className={classes.button}>
+                                        Xóa
+                                    </Button>
+                                    &nbsp;
+                                    <Button onClick={() => this.openModalEditMonKhoi(row)} variant="contained" color="primary" className={classes.button}>
+                                        Sửa
+                                    </Button>
+                                    </TableCell>
+                                </TableRow>
+                                ))}
+                                {emptyRows > 0 && (
+                                <TableRow style={{ height: 48 * emptyRows }}>
+                                    <TableCell colSpan={6} />
+                                </TableRow>
+                                )}
+                            </TableBody>
+                            </Table>
+
+                            <ModalAddMonKhoi isModal={isModalAddMonKhoi}
+                                addMonVaoDataMon={this.addMonVaoDataMon}
+                                closeModalAddMonKhoi={this.closeModalAddMonKhoi}/>
+
+                            <ModalEditMonKhoi isModal={isModalEditMonKhoi}
+                                onRef={this.onRefModalEditMonKhoi}
+                                editDataMon={this.editDataMon}
+                                closeModalEditMonKhoi={this.closeModalEditMonKhoi}/>
+
+                            <ModalDeleteMonKhoi isModal={isModalDeleteMonKhoi}
+                                onRef={this.onRefModalDeleteMonKhoi}
+                                deleteDataMon={this.deleteDataMon}
+                                closeModalDeleteMonKhoi={this.closeModalDeleteMonKhoi}/>
+                        </div>
+
+
+                        </Paper>
                     <div style={{textAlign: "end"}}>
                         <Button
                             style={{marginRight: 5}}
@@ -186,5 +396,9 @@ class ModalAddKhoiThi extends Component {
         )
     }
 }
+
+ModalAddKhoiThi.propTypes = {
+    classes: PropTypes.object.isRequired,
+};
 
 export default withStyles(styles)(ModalAddKhoiThi)

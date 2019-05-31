@@ -388,11 +388,12 @@ exports.layDiemThiTheoTaiKhoan = async(req, res) => {
                         diem: 1,
                         mon: 1,
                         Phach: 1,
-                        diemPK: 1
+                        diemPK: 1,
+                        keyMon: 1
                     } 
                 },
                 { 
-                    $lookup: {from: "mons", localField: "mon", foreignField: "tenMon", as: "monthi"}
+                    $lookup: {from: "mons", localField: "keyMon", foreignField: "key", as: "monthi"}
                 },
                 { $unwind: "$monthi" },
                 {
@@ -402,7 +403,8 @@ exports.layDiemThiTheoTaiKhoan = async(req, res) => {
                         Phach: 1,
                         diemPK: 1,
                         phongThi: "$monthi.phongThi",
-                        tgThi: "$monthi.tgThi"
+                        tgThi: "$monthi.tgThi",
+                        gioThi: "$monthi.gioThi"
                     } 
                 },
                 { 
@@ -418,6 +420,7 @@ exports.layDiemThiTheoTaiKhoan = async(req, res) => {
                         Phach: 1,
                         phongThi: 1,
                         tgThi: 1,
+                        gioThi: 1,
                         maKhuVuc: "$thisinh.maKhuVuc",
                         maDoiTuong: "$thisinh.maDoiTuong"
                     } 
@@ -436,7 +439,8 @@ exports.layDiemThiTheoTaiKhoan = async(req, res) => {
                                 tgThi: "$tgThi", 
                                 phongThi: "$phongThi",
                                 diemPK: "$diemPK",
-                                Phach: "$Phach"
+                                Phach: "$Phach",
+                                gioThi: "$gioThi"
                             } 
                         },
                         diem: { $sum: "$diem" }
