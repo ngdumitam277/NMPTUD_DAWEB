@@ -88,6 +88,20 @@ exports.phucKhaoDiemThi = async(req, res) => {
     })
 };
 
+// tìm kiem diếm thi theo phách
+exports.timKiemDiemThi = async(req, res) => {
+    let phach = req.params.phach ? Number(req.params.phach) : ""
+
+    DiemThi.find({Phach: phach})
+    .then((result) => {
+        res.send(result)
+    })
+    .catch((err) => {
+        res.send({message: "Lỗi tìm kiếm điểm thi !!!"})
+        console.log(err)
+    })
+};
+
 // xoá 1 điểm thi theo id
 exports.deleteDiemThi = async(req, res) => {
     let id = req.params.id

@@ -123,6 +123,19 @@ class ModalAddNganhThi extends Component {
         this.setState({thongTin: event.target.value})
     }
 
+    componentDidMount = () => {
+        this.props.onRef(this)
+    }
+
+    setDataNganhThi = () => {
+        this.setState({
+            tenNganh: "",
+            chiTieuNganh: "",
+            thongTin: "",
+            maNganh: ""
+        })
+    }
+
     render() {
         let { isModal, classes, ...rest } = this.props
         let { tenNganh, thongTin, chiTieuNganh, maNganh } = this.state

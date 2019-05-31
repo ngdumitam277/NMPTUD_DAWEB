@@ -138,7 +138,7 @@ class ModalAddKhoiThi extends Component {
 
                     if(data.message === "ok"){
                         alert("Tạo khối thi thành công!")
-                        
+
                         this.props.getAllKhoiThi()
                     }else{
                         alert(data.message)
@@ -152,6 +152,24 @@ class ModalAddKhoiThi extends Component {
             alert("Tạo khối thi thất bại!")
             console.log(err)
         })
+    }
+
+    setDataKhoiThi = () => {
+        this.setState({
+            tenKhoi: "",
+            diemTBkhoi: "",
+            slThiSinh: "",
+            page: 0,
+            rowsPerPage: 3,
+            dataMon: [],
+            isModalEditMonKhoi: false,
+            isModalAddMonKhoi: false,
+            isModalDeleteMonKhoi: false
+        })
+    }
+
+    componentDidMount = () => {
+        this.props.onRef(this)
     }
 
     onChangeTenKhoi = (event) => {

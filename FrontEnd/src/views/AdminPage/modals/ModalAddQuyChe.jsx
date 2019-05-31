@@ -89,8 +89,10 @@ class ModalAddQuyChe extends Component {
     }
 
     onChangeDiemCong = (event) => {
-        if(event.target.value >= 0 && event.target.value <= 99){
-            this.setState({diemCong: event.target.value})
+        let diemCong = Number(event.target.value)
+
+        if(diemCong >= 0 && diemCong <= 10){
+            this.setState({diemCong: diemCong})
         }
     }
 

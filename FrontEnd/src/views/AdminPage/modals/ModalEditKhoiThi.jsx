@@ -80,7 +80,8 @@ class ModalEditKhoiThi extends Component {
             isModalEditMonKhoiEdit: false,
             dataMon: [],
             rowsPerPage: 3,
-            page: 0
+            page: 0,
+            id: ""
         }
     }
 
@@ -105,7 +106,7 @@ class ModalEditKhoiThi extends Component {
     clickEditKhoiThi = (event) => {
         event.preventDefault()
 
-        axios.put(`${url}web/khoi/${this.state.key}`, {
+        axios.put(`${url}web/khoi/${this.state.id}`, {
             tenKhoi: this.state.tenKhoi,
             diemTBkhoi: this.state.diemTBkhoi,
             slThiSinh: this.state.slThiSinh,
@@ -150,11 +151,19 @@ class ModalEditKhoiThi extends Component {
     }
 
     onChangeDiemTBkhoi = (event) => {
-        this.setState({diemTBkhoi: event.target.value})
+        let diemTBkhoi = Number(event.target.value)
+
+        if(diemTBkhoi >= 0 && diemTBkhoi <= 30){
+            this.setState({diemTBkhoi: diemTBkhoi})
+        }
     }
 
     onChangeSoLuongTS = (event) => {
-        this.setState({slThiSinh: event.target.value})
+        let slThiSinh = Number(event.target.value)
+
+        if(slThiSinh >= 0 && slThiSinh <= 3000){
+            this.setState({slThiSinh: slThiSinh})
+        }
     }
 
     componentDidMount = () => {
@@ -175,14 +184,16 @@ class ModalEditKhoiThi extends Component {
                     tenKhoiBefore: tenKhoi,
                     diemTBkhoi: data.diemTBkhoi,
                     slThiSinh: data.slThiSinh,
-                    key: data.key
+                    key: data.key,
+                    id: data._id
                 })
             }else{
                 this.setState({
                     tenKhoi: tenKhoi,
                     diemTBkhoi: data.diemTBkhoi,
                     slThiSinh: data.slThiSinh,
-                    key: data.key
+                    key: data.key,
+                    id: data._id
                 })
             }
         })

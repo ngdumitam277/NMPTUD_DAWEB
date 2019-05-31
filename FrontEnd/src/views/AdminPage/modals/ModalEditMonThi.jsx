@@ -62,7 +62,8 @@ class ModalEditMonThi extends Component {
             tgThi: "",
             diemTBmon: 0,
             key: "",
-            gioThi: ""
+            gioThi: "",
+            id: ""
         }
     }
 
@@ -87,7 +88,7 @@ class ModalEditMonThi extends Component {
     clickEditMonThi = (event) => {
         event.preventDefault()
 
-        axios.put(`${url}web/mon/${this.state.key}`, {
+        axios.put(`${url}web/mon/${this.state.id}`, {
             tenMon: this.state.tenMon,
             phongThi: this.state.phongThi,
             tgThi: this.state.tgThi,
@@ -141,7 +142,8 @@ class ModalEditMonThi extends Component {
                 tgThi: moment(data.tgThi).format("YYYY-MM-DD"),
                 diemTBmon: data.diemTBmon,
                 gioThi: data.gioThi,
-                key: data.key
+                key: data.key,
+                id: data._id
             })
         }catch(err){
             console.log(err)

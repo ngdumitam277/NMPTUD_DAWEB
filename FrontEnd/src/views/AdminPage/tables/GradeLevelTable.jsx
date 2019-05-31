@@ -55,6 +55,7 @@ class GradeLevelTable extends Component {
 
     this.modalEditKhoiThiRef = React.createRef()
     this.modalDeleteKhoiThiRef = React.createRef()
+    this.modalAddKhoiThiRef = React.createRef()
   }
 
   getAllKhoiThi = () => {
@@ -76,6 +77,7 @@ class GradeLevelTable extends Component {
 
   openModalAddKhoiThi = (event) => {
     event.preventDefault()
+    this.modalAddKhoiThiRef.setDataKhoiThi()
     this.setModalAddKhoiThi(true)
   }
 
@@ -104,6 +106,8 @@ class GradeLevelTable extends Component {
   closeModalDeleteKhoiThi = () => {
     this.setModalDeleteKhoiThi(false)
   }
+
+  onRefModalAddKhoiThi = (ref) => this.modalAddKhoiThiRef = ref
 
   onRefModalDeleteKhoiThi = (ref) => this.modalDeleteKhoiThiRef = ref
 
@@ -159,7 +163,8 @@ class GradeLevelTable extends Component {
 
         <ModalAddKhoiThi isModal={isModalAddKhoiThi} 
             closeModalAddKhoiThi={this.closeModalAddKhoiThi}
-            getAllKhoiThi={this.getAllKhoiThi}/>
+            getAllKhoiThi={this.getAllKhoiThi}
+            onRef={this.onRefModalAddKhoiThi}/>
 
         <ModalEditKhoiThi isModal={isModalEditKhoiThi} 
             onRef={this.onRefModalEditKhoiThi}

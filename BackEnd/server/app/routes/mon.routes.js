@@ -8,7 +8,7 @@ module.exports = (app) => {
     app.get('/web/mon', Mon.getAllMon);
 
     // sửa 1 môn theo key
-    app.put('/web/mon/:key', Mon.updateMon);
+    app.put('/web/mon/:id', Mon.updateMon);
 
     // xoá 1 môn theo key
     app.delete('/web/mon/:key', Mon.deleteMon);

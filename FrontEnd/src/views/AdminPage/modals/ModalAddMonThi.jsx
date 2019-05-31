@@ -125,6 +125,20 @@ class ModalAddMonThi extends Component {
         this.setState({gioThi: gioThi})
     }
 
+    componentDidMount = () => {
+        this.props.onRef(this)
+    }
+
+    setDataMonThi = () => {
+       this.setState({
+            tenMon: "",
+            phongThi: "",
+            tgThi: "",
+            diemTBmon: 0,
+            gioThi: ""
+       })
+    }
+
     render() {
         let { isModal, classes, ...rest } = this.props
         let { tenMon, tgThi, gioThi, phongThi } = this.state

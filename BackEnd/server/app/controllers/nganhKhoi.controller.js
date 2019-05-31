@@ -53,14 +53,13 @@ exports.getAllNganhKhoi = async(req, res) => {
 
 // sửa 1 ngành khối theo key ngành và tên khối
 exports.updateNganhKhoi = async(req, res) => {
-    let maNganh = req.params.maNganh
-    let tenKhoi = req.params.tenKhoi
+    let id = req.params.id ? req.params.id : ""
+    let tenKhoi = req.body.tenKhoi ? req.body.tenKhoi : ""
     let diemChuan = Number(req.body.diemChuan) ? Number(req.body.diemChuan) : 0
-    let slTSthiNganhKhoi = Number(req.body.diemChuan) ? Number(req.body.diemChuan) : 0
 
-    NganhKhoi.findOneAndUpdate({maNganh: maNganh, tenKhoi: tenKhoi}, {
-        diemChuan: diemChuan,
-        slTSthiNganhKhoi: slTSthiNganhKhoi
+    NganhKhoi.findOneAndUpdate({_id: id}, {
+        tenKhoi: tenKhoi,
+        diemChuan: diemChuan
     }, {new: true})
     .then((result) => {
         res.send({message: "ok"})

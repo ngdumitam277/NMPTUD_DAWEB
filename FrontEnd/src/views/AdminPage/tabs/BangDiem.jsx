@@ -22,6 +22,13 @@ import axios from 'axios'
 import { url } from 'variable/general.jsx'
 import ModalAddBangDiem from '../modals/ModalAddBangDiem';
 import ModalEditBangDiem from '../modals/ModalEditBangDiem';
+import InputBase from '@material-ui/core/InputBase';
+import GridContainer from "components/Grid/GridContainer.jsx";
+import GridItem from "components/Grid/GridItem.jsx";
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormControl from '@material-ui/core/FormControl';
 
 const actionsStyles = theme => ({
     root: {
@@ -130,7 +137,8 @@ class BangDiem extends React.Component {
             page: 0,
             rowsPerPage: 5,
             isModalAddBangDiem: false,
-            isModalEditBangDiem: false
+            isModalEditBangDiem: false,
+            keySearch: ""
         }
     }
 
@@ -182,13 +190,82 @@ class BangDiem extends React.Component {
 
     onRefModalEditBangDiem = (ref) => this.modalEditBangDiemRef = ref
 
+    handleChangeKeySearch = (e) => {
+        this.setState({keySearch: e.target.value})
+    }
+
+    onSearch = () => {
+        let keySearch = this.state.keySearch
+    
+        if(keySearch === ""){
+          this.getAllBangDiem()
+        }else{
+          axios.get(`${url}web/diemthi/timkiem/${this.state.keySearch}`)
+          .then((result) => {
+            let data = result.data
+      
+            if(data.length > 0){
+              this.setState({data: data})
+            }else{
+              this.setState({data: []})
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+        }
+    }
+
     render() {
         const { classes } = this.props;
-        const { data, rowsPerPage, page, isModalAddBangDiem, isModalEditBangDiem } = this.state;
+        const { data, rowsPerPage, page, isModalAddBangDiem, isModalEditBangDiem, keySearch } = this.state;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
         return (
             <div className={classes.container}>
+                <div className={classes.search}>
+                    <GridContainer>
+                        <GridItem xs={3} sm={3} md={3} lg={3}>
+                        <label>
+                            Seacrh
+                            </label>
+                        <InputBase
+                            value={keySearch}
+                            onChange={this.handleChangeKeySearch}
+                            style={{ boder: "red" }}
+                            placeholder="Nhập thông tin ...."
+                            classes={{
+                            root: classes.inputRoot,
+                            input: classes.inputInput,
+                            }}
+                        />
+
+                        </GridItem>
+                        <GridItem xs={2} sm={2} md={2} lg={2}>
+                        <FormControl component="fieldset">
+                        <RadioGroup
+                            aria-label="position" name="position"
+                            className={classes.group}
+                            value={this.state.optionSearch}
+                            onChange={this.handleChangeSearch}
+                            row
+                        >
+                                <FormControlLabel
+                                value="phach"
+                                control={<Radio color="primary" />}
+                                label="Phách"
+                                labelPlacement="start"
+                                />          
+                        </RadioGroup>
+                        </FormControl>
+                        </GridItem>
+                        <GridItem xs={2} sm={2} md={2} lg={2}>
+                            <Button onClick={this.onSearch} variant="outlined" color="secondary" className={classes.button}>
+                            Tìm Kiếm
+                        </Button>
+                        </GridItem>
+                        </GridContainer>
+                    </div>
                 <Paper className={classes.root}>
                     <div className={classes.title}>
                         <h4>Danh sách điểm</h4>
