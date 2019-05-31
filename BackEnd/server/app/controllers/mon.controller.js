@@ -6,7 +6,8 @@ exports.taoMon = async(req, res) => {
     let tenMon = req.body.tenMon ? req.body.tenMon : ""
     let phongThi = req.body.phongThi ? req.body.phongThi : ""
     let tgThi = req.body.tgThi ? moment(req.body.tgThi, "YYYY-MM-DD HH:mm:ss").toISOString() : ""
-    let diemTBmon = Number(req.body.diemTBmon)
+    let gioThi = req.body.gioThi ? req.body.gioThi : ""
+    let diemTBmon = req.body.diemTBmon ? Number(req.body.diemTBmon) : 0
     let key = req.body.key ? req.body.key : ""
 
     try{
@@ -20,7 +21,8 @@ exports.taoMon = async(req, res) => {
                     diemTBmon: diemTBmon,
                     phongThi: phongThi,
                     tgThi: tgThi,
-                    key: key
+                    key: key,
+                    gioThi: gioThi
                 })
             
                 mon.save()
