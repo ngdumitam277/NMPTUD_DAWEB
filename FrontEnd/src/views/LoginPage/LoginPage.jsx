@@ -49,6 +49,24 @@ class LoginPage extends React.Component {
     //this.checkLogin()
   }
 
+  checkInput = () => {
+    const username = this.state.username
+    const password = this.state.password
+
+    if(username.length == 0 && password.length == 0) {
+      alert("Username và password không được rỗng!")
+      return false
+    } else if(username.length == 0) {
+      alert("Username không được rỗng!")
+      return false
+    } else if(password.length == 0) {
+      alert("Password không được rỗng!")
+      return false
+    }
+    //    
+    return true
+  }
+
   checkLogin = () => {
     axios.get(`${url}web/taikhoan/checkCookie`, {
       withCredentials: true
@@ -65,6 +83,10 @@ class LoginPage extends React.Component {
   }
 
   clickDangNhap = () => {
+    let check = this.checkInput()
+    if(!check){
+      return;
+    }
     axios.post(`${url}web/taikhoan/dangnhap`, {
       username: this.state.username,
       password: this.state.password
@@ -166,6 +188,8 @@ class LoginPage extends React.Component {
                         inputProps={{
                           onChange: this.onChangeUsername,
                           value: username,
+                          min: "6",
+                          max: "16",
                           type: "email",
                           endAdornment: (
                             <InputAdornment position="end">
@@ -183,6 +207,8 @@ class LoginPage extends React.Component {
                         inputProps={{
                           type: "password",
                           value: password,
+                          min: "6",
+                          max: "16",
                           onChange: this.onChangePassword,
                           endAdornment: (
                             <InputAdornment position="end">
@@ -220,7 +246,6 @@ class LoginPage extends React.Component {
               </GridItem>
             </GridContainer>
           </div>
-          <Footer whiteFont />
         </div>
       </div>
     );

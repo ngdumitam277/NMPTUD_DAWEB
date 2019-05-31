@@ -126,22 +126,22 @@ class ProfileUser extends Component {
         return (
             <div className={classes.container}>
                 <div className={classes.title}>
-                <h4>Thông tin cá nhân</h4>
+                <h4 style={{paddingLeft:30}}>Thông tin cá nhân</h4>
                 
                 </div>
                 <div className={classes.title}>
-                <h4>
+                {/* <h4>
                     {
                         loai && loai === "CB" ? "Chào bạn cán bộ nhập thông tin!" :
                         loai && loai === "CD_ND" ? "Chào bạn cán bộ nhập điểm!" : 
                         loai && loai === "CD_ND" ? "Bạn là admin cao cấp!": null
                     }
-                </h4>
+                </h4> */}
                 </div>
                 <GridContainer>
                     <GridItem xs={4} sm={4} md={4}>
                         <img
-                            style={{ width: 200, height: 200 }}
+                            style={{ width: 200, height: 200, borderRadius:"50%" }}
                             src={require("assets/img/avatar-profile.jpg")}
                             alt="..."
                             className={classes.imgRounded + " " + classes.imgFluid}
