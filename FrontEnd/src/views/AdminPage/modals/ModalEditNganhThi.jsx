@@ -88,7 +88,6 @@ class ModalEditNganhThi extends Component {
         event.preventDefault()
 
         axios.put(`${url}web/nganh/${this.state.id}`, {
-            maNganh: this.state.maNganh,
             tenNganh: this.state.tenNganh,
             chiTieuNganh: this.state.chiTieuNganh,
             thongTin: this.state.thongTin,
@@ -165,15 +164,6 @@ class ModalEditNganhThi extends Component {
                         <h3>Sửa Ngành Thi</h3>
                     </div>
                     <form className={classes.container} noValidate autoComplete="off">
-                        <TextField
-                            id="ma-nganh"
-                            label="Mã Ngành"
-                            value={maNganh}
-                            onChange={this.onChangeMaNganh}
-                            className={classes.textField}
-                            margin="normal"
-                            variant="outlined"
-                        />
                         <TextField
                             id="ten-nganh"
                             label="Tên Ngành"

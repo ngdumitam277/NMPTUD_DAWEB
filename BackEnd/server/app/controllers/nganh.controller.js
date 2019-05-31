@@ -68,31 +68,24 @@ exports.getAllNganh = async(req, res) => {
 // sửa 1 ngành theo key
 exports.updateNganh = async(req, res) => {
     let id = req.params.id ? req.params.id : ""
-    let maNganh = req.body.maNganh ? req.body.maNganh : ""
     let tenNganh = req.body.tenNganh ? req.body.tenNganh : ""
     let chiTieuNganh = Number(req.body.chiTieuNganh)
     let thongTin = req.body.thongTin ? req.body.thongTin : ""
     let key = req.body.key ? req.body.key : ""
 
-    let exist = await Nganh.findOne({maNganh: maNganh})
-    if(exist && exist._id !== id){
-        res.send({message: "Ngành đã tồn tại!"})
-    }else{
-        Nganh.findOneAndUpdate({_id: id}, {
-            maNganh: maNganh,
-            chiTieuNganh: chiTieuNganh,
-            thongTin: thongTin,
-            key: key,
-            tenNganh: tenNganh
-        }, {new: true})
-        .then((result) => {
-            res.send({message: "ok"})
-        })
-        .catch((err) => {
-            res.send({message: "Lỗi sửa ngành theo key!"})
-            console.log(err, "updateNganh")
-        })
-    }
+    Nganh.findOneAndUpdate({_id: id}, {
+        chiTieuNganh: chiTieuNganh,
+        thongTin: thongTin,
+        key: key,
+        tenNganh: tenNganh
+    }, {new: true})
+    .then((result) => {
+        res.send({message: "ok"})
+    })
+    .catch((err) => {
+        res.send({message: "Lỗi sửa ngành theo key!"})
+        console.log(err, "updateNganh")
+    })
 };
 
 // xoá 1 ngành theo key
