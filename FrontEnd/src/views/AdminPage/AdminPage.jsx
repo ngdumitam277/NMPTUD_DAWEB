@@ -17,9 +17,42 @@ import Parallax from "components/Parallax/Parallax.jsx";
 import HeaderLinks from "components/Header/HeaderLinks.jsx";
 import SectionAdmin from './sections/SectionAdmin';
 
+import axios from 'axios'
+import { url } from 'variable/general.jsx'
+
 class AdminPage extends Component {
+    constructor(props) {
+      super(props)
+      this.state = {
+        loai: ""
+      }
+    }
+
+    componentDidMount() {
+        this.checkLogin()
+    }
+
+    checkLogin = () => {
+        axios.get(`${url}web/taikhoan/checkCookie`, {
+          withCredentials: true
+        })
+        .then((response) => {
+          let result = response.data
+          if(result.message === "ok" && result.user.loai === 'TS'){
+            this.props.history.push("/");
+            return;
+          }
+          this.setState({loai: result.user.loai})
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+      }
+
     render() {
         const { classes, ...rest } = this.props;
+        const {loai} = this.state
+        console.log("LOAI === "+ loai)
         return (
             <div>
                 <Header
@@ -28,14 +61,14 @@ class AdminPage extends Component {
                     fixed
                     color="transparent"
                     changeColorOnScroll={{
-                        height: 400,
+                        height: 50,
                         color: "white"
                     }}
                     {...rest}
                 />
-                <Parallax small filter image={require("assets/img/profile-bg.jpg")} />
+                <Parallax style={{height:150}} small filter image={require("assets/img/profile-bg.jpg")} />
                 <div className={classNames(classes.main, classes.mainRaised)}>
-                    <SectionAdmin/>
+                    <SectionAdmin rule={loai}/>
                 </div>
                 <Footer />
             </div>

@@ -34,6 +34,7 @@ import SectionHistory from "./Sections/SectionHistory.jsx";
 import SectionCertificate from "./Sections/SectionCertificate.jsx";
 import SectionNews from "./Sections/SectionNews.jsx";
 
+
 class Components extends React.Component {
   render() {
     const { classes, ...rest } = this.props;
@@ -70,7 +71,8 @@ class Components extends React.Component {
           <SectionsImage />
           <SectionCertificate />
           <SectionNews />
-          <SectionBasics />
+
+          {/* <SectionBasics />
           <SectionNavbars />
           <SectionTabs />
           <SectionPills />
@@ -88,7 +90,7 @@ class Components extends React.Component {
             </Link>
           </GridItem>
           <SectionExamples />
-          <SectionDownload />
+          <SectionDownload /> */}
         </div>
         <Footer />
       </div>

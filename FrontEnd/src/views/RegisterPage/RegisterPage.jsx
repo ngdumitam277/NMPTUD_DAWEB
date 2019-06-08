@@ -20,17 +20,23 @@ import CardBody from "components/Card/CardBody.jsx";
 import CardHeader from "components/Card/CardHeader.jsx";
 import CardFooter from "components/Card/CardFooter.jsx";
 import CustomInput from "components/CustomInput/CustomInput.jsx";
-
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 import loginPageStyle from "assets/jss/material-kit-react/views/loginPage.jsx";
 
 import image from "assets/img/bg-login.jpeg";
+import axios from 'axios'
+import { url } from 'variable/general.jsx'
 
 class RegisterPage extends React.Component {
   constructor(props) {
     super(props);
     // we use this to make the card to appear after the page has been rendered
     this.state = {
-      cardAnimaton: "cardHidden"
+      cardAnimaton: "cardHidden",
+      username: "",
+      password: "",
+      hTen: ""
     };
   }
   componentDidMount() {
@@ -42,8 +48,70 @@ class RegisterPage extends React.Component {
       700
     );
   }
+
+  onChangeUsername = (event) => {
+    this.setState({username: event.target.value})
+  }
+
+  onChangeHTen = (event) => {
+    this.setState({hTen: event.target.value})
+  }
+
+  onChangePassword = (event) => {
+    this.setState({password: event.target.value})
+  }
+
+  checkInput = () => {
+    let filter = /^[a-zA-Z0-9]+\@gmail\.com$/
+    const username = this.state.username
+    const password = this.state.password
+
+    if(username.length == 0 && password.length == 0) {
+      alert("Username và password không được rỗng!")
+      return false
+    } else if(username.length == 0) {
+      alert("Username không được rỗng!")
+      return false
+    } else if(password.length == 0) {
+      alert("Password không được rỗng!")
+      return false
+    }
+    //    
+    if(!filter.test(this.state.username)) {
+      alert("Email không hợp lệ ! (VD: example@gmail.com)")
+      return false
+    }
+    return true
+  }
+
+  clickDangKy = () => {
+    let check = this.checkInput()
+    if(!check){
+      return;
+    }
+    axios.post(`${url}web/create/taikhoan/thisinh`,{
+      username: this.state.username,
+      password: this.state.password,
+      hTen: this.state.hTen
+    })
+    .then((response) => {
+      let result = response.data
+      if(result.message === "ok"){
+        alert("Tạo tài khoản thành công!")
+      }else{
+        alert(result.message)
+      }
+    })
+    .catch((err) => {
+      alert("Tạo tài khoản thất bại!")
+      console.log(err)
+    })
+  }
+
   render() {
     const { classes, ...rest } = this.props;
+    let { username, password, hTen } = this.state
+
     return (
       <div>
         <Header
@@ -68,37 +136,7 @@ class RegisterPage extends React.Component {
                   <form className={classes.form}>
                     <CardHeader color="primary" className={classes.cardHeader}>
                       <h4>Đăng ký</h4>
-                      <div className={classes.socialLine}>
-                        <Button
-                          justIcon
-                          href="#pablo"
-                          target="_blank"
-                          color="transparent"
-                          onClick={e => e.preventDefault()}
-                        >
-                          <i className={"fab fa-twitter"} />
-                        </Button>
-                        <Button
-                          justIcon
-                          href="#pablo"
-                          target="_blank"
-                          color="transparent"
-                          onClick={e => e.preventDefault()}
-                        >
-                          <i className={"fab fa-facebook"} />
-                        </Button>
-                        <Button
-                          justIcon
-                          href="#pablo"
-                          target="_blank"
-                          color="transparent"
-                          onClick={e => e.preventDefault()}
-                        >
-                          <i className={"fab fa-google-plus-g"} />
-                        </Button>
-                      </div>
                     </CardHeader>
-
                     <CardBody>
                     <CustomInput
                         labelText="Họ tên ..."
@@ -107,7 +145,11 @@ class RegisterPage extends React.Component {
                           fullWidth: true
                         }}
                         inputProps={{
+                          onChange: this.onChangeHTen,
+                          value: hTen,
                           type: "text",
+                          min: 6,
+                          max: 16,
                           endAdornment: (
                             <InputAdornment position="end">
                               <People className={classes.inputIconsColor} />
@@ -123,9 +165,13 @@ class RegisterPage extends React.Component {
                         }}
                         inputProps={{
                           type: "email",
+                          onChange: this.onChangeUsername,
+                          value: username,
+                          min: 6,
+                          max: 16,
                           endAdornment: (
-                            <InputAdornment position="end">
-                              <Email className={classes.inputIconsColor} />
+                            <InputAdornment inputProps={{min:"6", max:"16"}} position="end">
+                              <Email  className={classes.inputIconsColor} />
                             </InputAdornment>
                           )
                         }}
@@ -138,6 +184,10 @@ class RegisterPage extends React.Component {
                         }}
                         inputProps={{
                           type: "password",
+                          value: password,
+                          min: 6,
+                          max: 16,
+                          onChange: this.onChangePassword,
                           endAdornment: (
                             <InputAdornment position="end">
                               <Icon className={classes.inputIconsColor}>
@@ -150,7 +200,7 @@ class RegisterPage extends React.Component {
                     </CardBody>
                     <CardFooter className={classes.cardFooter} style={{display: 'block'}}>
                       <div style={{textAlign:'center'}}>
-                        <Button simple color="primary" size="lg">
+                        <Button onClick={this.clickDangKy} simple color="primary" size="lg">
                           Đăng Ký
                         </Button>
                       </div>
@@ -167,7 +217,6 @@ class RegisterPage extends React.Component {
               </GridItem>
             </GridContainer>
           </div>
-          <Footer whiteFont />
         </div>
       </div>
     );

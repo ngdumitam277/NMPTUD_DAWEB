@@ -3,4 +3,13 @@ module.exports = (app) => {
 
     // tạo khối
     app.post('/web/create/khoi', Khoi.taoKhoi);
+
+    // lấy tất cả các khối
+    app.get('/web/khoi', Khoi.getAllKhoi);
+
+    // sửa 1 khối theo key
+    app.put('/web/khoi/:id', Khoi.updateKhoi);
+
+    // xoá 1 khối theo key
+    app.delete('/web/khoi/:key', Khoi.deleteKhoi);
 }

@@ -15,24 +15,24 @@ exports.taoNguoiNhapData = async(req, res) => {
             let exist = await ngNhapData.find({usernameNgNhapData: usernameNgNhapData})
             if(exist.length > 0){
                 res.send({message: "Người nhập data đã tồn tại!"})
+            }else{
+                const ngNhap = new ngNhapData({
+                    usernameNgNhapData: usernameNgNhapData,
+                    usernamets: usernamets,
+                    tgSuaThongTin: tgSuaThongTin,
+                    tgXacNhanTK: tgXacNhanTK,
+                    tgXoaTK: tgXoaTK,
+                    ttinSuaXoa: ttinSuaXoa
+                })
+            
+                ngNhap.save()
+                .then((result) => {
+                    res.send({message: "ok"});
+                }).catch(err => {
+                    console.log("taoNguoiNhapData", err)
+                    res.send({message: "Lỗi tạo người nhập data"})
+                })
             }
-    
-            const ngNhap = new ngNhapData({
-                usernameNgNhapData: usernameNgNhapData,
-                usernamets: usernamets,
-                tgSuaThongTin: tgSuaThongTin,
-                tgXacNhanTK: tgXacNhanTK,
-                tgXoaTK: tgXoaTK,
-                ttinSuaXoa: ttinSuaXoa
-            })
-        
-            ngNhap.save()
-            .then((result) => {
-                res.send({message: "ok"});
-            }).catch(err => {
-                console.log("taoNguoiNhapData", err)
-                res.send({message: "Lỗi tạo người nhập data"})
-            })
         }else{
             console.log("taoNguoiNhapData", "usernameNgNhapData không được rỗng!")
             res.send({message: "usernameNgNhapData không được rỗng!"})

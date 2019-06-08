@@ -13,22 +13,22 @@ exports.taoNguoiNhapDiem = async(req, res) => {
             let exist = await ngNhapDiem.find({usernameNgNhapDiem: usernameNgNhapDiem})
             if(exist.length > 0){
                 res.send({message: "Người nhập điểm đã tồn tại!"})
+            }else{
+                const ngNhap = new ngNhapDiem({
+                    usernameNgNhapDiem: usernameNgNhapDiem,
+                    maDiem: maDiem,
+                    tgNhap: tgNhap,
+                    diemLog: diemLog
+                })
+            
+                ngNhap.save()
+                .then((result) => {
+                    res.send({message: "ok"});
+                }).catch(err => {
+                    console.log("taoNguoiNhapDiem", err)
+                    res.send({message: "Lỗi tạo người nhập điểm"})
+                })
             }
-    
-            const ngNhap = new ngNhapDiem({
-                usernameNgNhapDiem: usernameNgNhapDiem,
-                maDiem: maDiem,
-                tgNhap: tgNhap,
-                diemLog: diemLog
-            })
-        
-            ngNhap.save()
-            .then((result) => {
-                res.send({message: "ok"});
-            }).catch(err => {
-                console.log("taoNguoiNhapDiem", err)
-                res.send({message: "Lỗi tạo người nhập điểm"})
-            })
         }else{
             console.log("taoNguoiNhapDiem", "usernameNgNhapDiem không được rỗng!")
             res.send({message: "usernameNgNhapDiem không được rỗng!"})

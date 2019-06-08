@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import withStyles from "@material-ui/core/styles/withStyles";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Icon from "@material-ui/core/Icon";
+import { Redirect } from 'react-router-dom';
 // @material-ui/icons
 import Email from "@material-ui/icons/Email";
 import People from "@material-ui/icons/People";
@@ -24,13 +25,17 @@ import CustomInput from "components/CustomInput/CustomInput.jsx";
 import loginPageStyle from "assets/jss/material-kit-react/views/loginPage.jsx";
 
 import image from "assets/img/bg-login.jpeg";
+import axios from 'axios'
+import { url } from 'variable/general.jsx'
 
 class LoginPage extends React.Component {
   constructor(props) {
     super(props);
     // we use this to make the card to appear after the page has been rendered
     this.state = {
-      cardAnimaton: "cardHidden"
+      cardAnimaton: "cardHidden",
+      username: "",
+      password: ""
     };
   }
   componentDidMount() {
@@ -41,16 +46,88 @@ class LoginPage extends React.Component {
       }.bind(this),
       700
     );
+    //this.checkLogin()
   }
+
+  checkInput = () => {
+    const username = this.state.username
+    const password = this.state.password
+
+    if(username.length == 0 && password.length == 0) {
+      alert("Username và password không được rỗng!")
+      return false
+    } else if(username.length == 0) {
+      alert("Username không được rỗng!")
+      return false
+    } else if(password.length == 0) {
+      alert("Password không được rỗng!")
+      return false
+    }
+    //    
+    return true
+  }
+
+  checkLogin = () => {
+    axios.get(`${url}web/taikhoan/checkCookie`, {
+      withCredentials: true
+    })
+    .then((response) => {
+      let result = response.data
+      if(result.message === "ok"){
+        this.props.history.push("/");
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+  }
+
+  clickDangNhap = () => {
+    let check = this.checkInput()
+    if(!check){
+      return;
+    }
+    axios.post(`${url}web/taikhoan/dangnhap`, {
+      username: this.state.username,
+      password: this.state.password
+    }, {withCredentials: true})
+    .then((response) => {
+      let result = response.data
+      if(result.message === "ok"){
+        alert("Đăng nhập thành công!")
+        //return <Redirect to='/' />
+        this.props.history.push("/");
+      }else{
+        alert(result.message)
+      }
+    })
+    .catch((err) => {
+      alert("Đăng nhập thất bại!")
+      console.log(err)
+    })
+  }
+
+  onChangeUsername = (event) => {
+    const username = event.target.value
+
+    this.setState({username: username})
+  }
+
+  onChangePassword = (event) => {
+    this.setState({password: event.target.value})
+  }
+
   render() {
     const { classes, ...rest } = this.props;
+    let { username, password } = this.state
+
     return (
       <div>
         <Header
           absolute
           color="transparent"
           brand="Trang chủ"
-          rightLinks={<HeaderLinks />}
+          rightLinks={<HeaderLinks {...this.props} />}
           {...rest}
         />
         <div
@@ -106,7 +183,13 @@ class LoginPage extends React.Component {
                         formControlProps={{
                           fullWidth: true
                         }}
+                        max="16"
+                        min="5"
                         inputProps={{
+                          onChange: this.onChangeUsername,
+                          value: username,
+                          min: "6",
+                          max: "16",
                           type: "email",
                           endAdornment: (
                             <InputAdornment position="end">
@@ -123,6 +206,10 @@ class LoginPage extends React.Component {
                         }}
                         inputProps={{
                           type: "password",
+                          value: password,
+                          min: "6",
+                          max: "16",
+                          onChange: this.onChangePassword,
                           endAdornment: (
                             <InputAdornment position="end">
                               <Icon className={classes.inputIconsColor}>
@@ -135,7 +222,7 @@ class LoginPage extends React.Component {
                     </CardBody>
                     <CardFooter className={classes.cardFooter} style={{display: 'block'}}>
                       <div style={{textAlign:'center'}}>
-                        <Button simple color="primary" size="lg">
+                        <Button onClick={this.clickDangNhap} simple color="primary" size="lg">
                           Đăng Nhập
                         </Button>
                       </div>
@@ -159,7 +246,6 @@ class LoginPage extends React.Component {
               </GridItem>
             </GridContainer>
           </div>
-          <Footer whiteFont />
         </div>
       </div>
     );

@@ -2,8 +2,10 @@ const mongoose = require('mongoose')
 
 const NganhSchema = mongoose.Schema({
     maNganh: String,
+    tenNganh: String,
     chiTieuNganh: Intl,
-    thongTin: String
+    thongTin: String,
+    key: String
 }, {
     timestamps: true
 })

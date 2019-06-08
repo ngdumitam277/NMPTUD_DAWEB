@@ -4,7 +4,9 @@ const MonSchema = mongoose.Schema({
     tenMon: String,
     phongThi: String,
     tgThi: Date,
-    diemTBmon: Intl
+    gioThi: String,
+    diemTBmon: Intl,
+    key: String
 }, {
     timestamps: true
 })

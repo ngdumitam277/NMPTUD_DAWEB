@@ -3,4 +3,13 @@ module.exports = (app) => {
 
     // tạo ngành khối
     app.post('/web/create/nganhkhoi', NganhKhoi.taoNganhKhoi);
+
+    // lấy tất cả ngành khối
+    app.get('/web/nganhkhoi', NganhKhoi.getAllNganhKhoi);
+
+    // sửa 1 ngành khối theo key Ngành và tên khối
+    app.put('/web/nganhkhoi/:id', NganhKhoi.updateNganhKhoi);
+
+    // xoá 1 ngành khối theo key Ngành và tên khối
+    app.delete('/web/nganh/:maNganh/:tenKhoi', NganhKhoi.deleteNganhKhoi);
 }

@@ -5,30 +5,34 @@ const moment = require('moment');
 exports.taoMon = async(req, res) => {
     let tenMon = req.body.tenMon ? req.body.tenMon : ""
     let phongThi = req.body.phongThi ? req.body.phongThi : ""
-    let tgThi = req.body.tgThi ? moment(req.body.tgThi, "DD-MM-YYYY HH:mm:ss").toISOString() : ""
-    let diemTBmon = Number(req.body.diemTBmon)
+    let tgThi = req.body.tgThi ? moment(req.body.tgThi, "YYYY-MM-DD HH:mm:ss").toISOString() : ""
+    let gioThi = req.body.gioThi ? req.body.gioThi : ""
+    let diemTBmon = req.body.diemTBmon ? Number(req.body.diemTBmon) : 0
+    let key = req.body.key ? req.body.key : ""
 
     try{
         if(tenMon !== "" && !isNaN(diemTBmon)){
             let exist = await Mon.find({tenMon: tenMon})
             if(exist.length > 0){
                 res.send({message: "Môn thi đã tồn tại!"})
+            }else{
+                const mon = new Mon({
+                    tenMon: tenMon,
+                    diemTBmon: diemTBmon,
+                    phongThi: phongThi,
+                    tgThi: tgThi,
+                    key: key,
+                    gioThi: gioThi
+                })
+            
+                mon.save()
+                .then((result) => {
+                    res.send({message: "ok"});
+                }).catch(err => {
+                    console.log("taoMon", err)
+                    res.send({message: "Lỗi tạo môn thi"})
+                })
             }
-    
-            const mon = new Mon({
-                tenMon: tenMon,
-                diemTBmon: diemTBmon,
-                phongThi: phongThi,
-                tgThi: tgThi
-            })
-        
-            mon.save()
-            .then((result) => {
-                res.send({message: "ok"});
-            }).catch(err => {
-                console.log("taoMon", err)
-                res.send({message: "Lỗi tạo môn thi"})
-            })
         }else{
             console.log("taoMon", "tenMon không được rỗng!")
             res.send({message: "tenMon không được rỗng!"})
@@ -37,4 +41,62 @@ exports.taoMon = async(req, res) => {
         console.log("taoMon", err)
         res.send({message: "Lỗi tạo môn thi"})
     }
+};
+
+// lấy tất cả môn thi
+exports.getAllMon = async(req, res) => {
+    Mon.find({}, {createdAt: 0, updatedAt: 0, __v: 0})
+    .then((result) => {
+        res.send(result)
+    })
+    .catch((err) => {
+        res.send({message: "Lỗi lấy tất cả các môn thi!"})
+        console.log(err, "getAllMon")
+    })
+};
+
+// sửa 1 môn theo key
+exports.updateMon = async(req, res) => {
+    let id = req.params.id ? req.params.id : ""
+    let tenMon = req.body.tenMon ? req.body.tenMon : ""
+    let phongThi = req.body.phongThi ? req.body.phongThi : ""
+    let tgThi = req.body.tgThi ? req.body.tgThi : ""
+    let gioThi = req.body.gioThi ? req.body.gioThi : ""
+    let diemTBmon = req.body.diemTBmon ? Number(req.body.diemTBmon) : 0
+    let key = req.body.key ? req.body.key : ""
+
+    let exist = await Mon.findOne({tenMon: tenMon})
+    if(exist && exist._id !== id){
+        res.send({message: "Môn đã tồn tại!"})
+    }else{
+        Mon.findOneAndUpdate({_id: id}, {
+            tenMon: tenMon,
+            diemTBmon: diemTBmon,
+            phongThi: phongThi,
+            tgThi: tgThi,
+            key: key,
+            gioThi: gioThi
+        }, {new: true})
+        .then((result) => {
+            res.send({message: "ok"})
+        })
+        .catch((err) => {
+            res.send({message: "Lỗi sửa môn theo key!"})
+            console.log(err, "updateMon")
+        })
+    }
+};
+
+// xoá 1 môn theo key
+exports.deleteMon = async(req, res) => {
+    let key = req.params.key
+
+    Mon.findOneAndRemove({key: key}, {rawResult: true})
+    .then((result) => {
+        res.send({message: "ok"})
+    })
+    .catch((err) => {
+        res.send({message: "Lỗi xoá môn theo key!"})
+        console.log(err, "deleteMon")
+    })
 };

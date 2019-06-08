@@ -1,7 +1,16 @@
 const TaiKhoan = require('../models/taikhoan.model.js');
 const ngQuanLy = require('../models/ngQuanLy.model.js');
+const CanBo = require('../models/canbo.model.js');
+const ThiSinh = require('../models/thiSinh.model.js');
+const ThiSinhNhap = require('../models/thiSinhNhap.model.js');
 const moment = require('moment');
 const nodemailer = require("nodemailer");
+var md5 = require('md5');
+var cookie = require('cookie');
+var cookieTime = 3600*24*6; // tính bằng mili giây
+var tokenTime = 3600*24*6; // 6 ngày cho token tính bằng mili giây
+var { jwt, jwtOptions } = require('../../jwt/jwt.js')
+const mongoose = require('mongoose')
 
 // tạo tài khoản thí sinh
 exports.taoTaiKhoanTS = async(req, res) => {
@@ -19,53 +28,81 @@ exports.taoTaiKhoanTS = async(req, res) => {
     let diaChi = req.body.diaChi ? req.body.diaChi : ""
     let email = req.body.email ? req.body.email : ""
     let tgDangKy = req.body.tgDangKy ? moment(req.body.tgDangKy, "DD-MM-YYYY HH:mm:ss").toISOString() : ""
+    let md5Password = md5(password)
 
     try{
         if(username !== ""){
             let exist = await TaiKhoan.find({username: username})
             if(exist.length > 0){
                 res.send({message: "Tài khoản đã tồn tại!"})
+            }else{
+                const taikhoan = new TaiKhoan({
+                    username: username,
+                    password: md5Password,
+                    soCMND: soCMND,
+                    ngCapCMND: ngCapCMND,
+                    hTen: hTen,
+                    ngSinh: ngSinh,
+                    danToc: danToc,
+                    gioiTinh: gioiTinh,
+                    anh34: anh34,
+                    SDT: SDT,
+                    noiSinh: noiSinh,
+                    diaChi: diaChi,
+                    email: email,
+                    loai: "TS",
+                    tinhTrang: 0,
+                    tgDangKy: tgDangKy,
+                    maXacNhan: ""
+                })
+
+                const thisinh = new ThiSinh({
+                    usernamets: username,
+                    SBD: mongoose.Types.ObjectId(),
+                    tenTHPT: "",
+                    namTotNghiep: "",  
+                    anhMinhChung: "",
+                    ttTuyenSinh: "",
+                    Phach: mongoose.Types.ObjectId(),
+                    maKhuVuc: "",
+                    maDoiTuong: ""
+                })
+
+                const thisinhnhap = new ThiSinhNhap({
+                    usernamets: username,
+                    maNganh: "",
+                    tenKhoi: "",
+                    diemTBthi: "",
+                    diemCong: "",
+                    tinhTrang: "",
+                    diemTB: ""
+                })
+            
+                let a = taikhoan.save()
+                let b = thisinh.save()
+                let c = thisinhnhap.save()
+
+                Promise.all([a, b, c])
+                .then((result) => {
+                    res.send({message: "ok"});
+                }).catch(err => {
+                    console.log("taoTaiKhoanTS", err)
+                    res.send({message: "Lỗi tạo tài khoản thí sinh thất bại!"})
+                })
             }
-    
-            const taikhoan = new TaiKhoan({
-                username: username,
-                password: password,
-                soCMND: soCMND,
-                ngCapCMND: ngCapCMND,
-                hTen: hTen,
-                ngSinh: ngSinh,
-                danToc: danToc,
-                gioiTinh: gioiTinh,
-                anh34: anh34,
-                SDT: SDT,
-                noiSinh: noiSinh,
-                diaChi: diaChi,
-                email: email,
-                loai: "TS",
-                tinhTrang: 0,
-                tgDangKy: tgDangKy
-            })
-        
-            taikhoan.save()
-            .then((result) => {
-                res.send({message: "ok"});
-            }).catch(err => {
-                console.log("taoTaiKhoan", err)
-                res.send({message: "Lỗi tạo tài khoản"})
-            })
         }else{
-            console.log("taoTaiKhoan", "username không được rỗng!")
+            console.log("taoTaiKhoanTS", "username không được rỗng!")
             res.send({message: "Username không được rỗng!"})
         }
     }catch(err){
-        console.log("taoTaiKhoan", err)
+        console.log("taoTaiKhoanTS", err)
         res.send({message: "Lỗi tạo tài khoản"})
     }
 };
 
 // tạo tài khoản cán bộ
 exports.taoTaiKhoanCB = async(req, res) => {
-    let maCB = req.body.maCB ? req.body.maCB : ""
+    let maXacNhan = req.body.maXacNhan ? req.body.maXacNhan : ""
     let username = req.body.username ? req.body.username : ""
     let password = req.body.password ? req.body.password : ""
     let soCMND = req.body.soCMND ? req.body.soCMND : ""
@@ -80,67 +117,712 @@ exports.taoTaiKhoanCB = async(req, res) => {
     let diaChi = req.body.diaChi ? req.body.diaChi : ""
     let email = req.body.email ? req.body.email : ""
     let tgDangKy = req.body.tgDangKy ? moment(req.body.tgDangKy, "DD-MM-YYYY HH:mm:ss").toISOString() : ""
+    let chucVu = req.body.chucVu ? req.body.chucVu : ""
+    let quyenHan = Number(req.body.quyenHan)
 
     try{
-        if(username !== "" && maCB !== ""){
-            let ngQL = await ngQuanLy.find({maXacThucCB: maCB})
+        if(username !== "" && maXacNhan !== ""){
+            let ngQL = await ngQuanLy.find({maXacThucCB: maXacNhan})
             if(ngQL.length > 0){
                 let exist = await TaiKhoan.find({username: username})
                 if(exist.length > 0){
                     res.send({message: "Tài khoản đã tồn tại!"})
                 }
-        
-                const taikhoan = new TaiKhoan({
-                    username: username,
-                    password: password,
-                    soCMND: soCMND,
-                    ngCapCMND: ngCapCMND,
-                    hTen: hTen,
-                    ngSinh: ngSinh,
-                    danToc: danToc,
-                    gioiTinh: gioiTinh,
-                    anh34: anh34,
-                    SDT: SDT,
-                    noiSinh: noiSinh,
-                    diaChi: diaChi,
-                    email: email,
-                    loai: "CB",
-                    tinhTrang: 0,
-                    tgDangKy: tgDangKy
-                })
-            
-                taikhoan.save()
+                let taikhoan = taoTaiKhoanCB(username, password, soCMND, ngCapCMND, hTen, ngSinh, danToc, gioiTinh,
+                    anh34, SDT, noiSinh, diaChi, email, tgDangKy, maXacNhan)
+                let canbo = taoCanBo(username, chucVu, quyenHan)
+
+                Promise.all([taikhoan, canbo])
                 .then((result) => {
-                    res.send({message: "ok"});
-                }).catch(err => {
-                    console.log("taoTaiKhoan", err)
-                    res.send({message: "Lỗi tạo tài khoản"})
+                    if(result[0] && result[1]){
+                        res.send({message: "ok"})
+                    }else{
+                        console.log("taoTaiKhoanCB", "Tạo tài khoản cán bộ thất bại!")
+                        res.send("taoTaiKhoanCB", "Tạo tài khoản cán bộ thất bại!")
+                    }
+                })
+                .catch((err) => {
+                    console.log("taoTaiKhoanCB", err)
+                    res.send("taoTaiKhoanCB", "Tạo tài khoản cán bộ thất bại!")
                 })
             }else{
                 console.log("taoTaiKhoanCB", "lỗi mã xác thức cán bộ!")
                 res.send({message: "Lỗi mã xác thực cán bộ!"})
             }
         }else{
-            console.log("taoTaiKhoan", "username không được rỗng!")
+            console.log("taoTaiKhoanCB", "username không được rỗng!")
             res.send({message: "Username không được rỗng!"})
         }
     }catch(err){
-        console.log("taoTaiKhoan", err)
+        console.log("taoTaiKhoanCB", err)
         res.send({message: "Lỗi tạo tài khoản"})
     }
 };
+
+// lấy tình trạng tài khoản
+exports.layTinhTrang = async(req, res) => {
+    let username = req.body.username ? req.body.username : ""
+
+    try{
+        if(username !== ""){
+            let taikhoan = await TaiKhoan.find({username: username}, { loai: 1, tinhTrang: 1 })
+            if(taikhoan.length > 0){
+                let loai = taikhoan[0].loai
+                let tinhTrang = Number(taikhoan[0].tinhTrang)
+
+                if(loai === "TS"){
+                    res.send({tinhTrang: tinhTrang})
+                }else{
+                    let canbo = await CanBo.find({username: username}, { quyenHan: 1 })
+                    if(canbo.length > 0){
+                        let quyenHan = Number(canbo[0].quyenHan)
+                        if(quyenHan === 0){
+                            let tinhTrangCB = await layTinhTrangNguoiNhapData()
+                            tinhTrang = tinhTrangCB === -1 ? tinhTrang : tinhTrangCB
+
+                            res.send({tinhTrang: tinhTrang})
+                        }else if(quyenHan === 1){
+                            let tinhTrangCB = await layTinhTrangNguoiNhapDiem()
+                            tinhTrang = tinhTrangCB === -1 ? tinhTrang : tinhTrangCB
+
+                            res.send({tinhTrang: tinhTrang})
+                        }else{
+                            res.send({tinhTrang: tinhTrang})
+                        }
+                    }else{
+                        res.send({message: "Không có username này trong cán bộ!"})
+                    }
+                }
+            }else{
+                res.send({message: "Không có username này trong tài khoản!"})
+            }
+        }else{
+            console.log("layTinhTrang", "username không được rỗng!")
+            res.send({message: "Username không được rỗng!"})
+        }
+    }catch(err){
+        console.log("layTinhTrang", err)
+        res.send({message: "Lỗi lấy tình trạng"})
+    }
+};
+
+// lấy thông tin cá nhân
+exports.hienThongTinCaNhan = async(req, res) => {
+    let user = await checkCookie(req.headers.cookie)
+
+    if(user.kt){
+        try{
+            let cookies = cookie.parse(req.headers.cookie || '');
+            let decoded = jwt.verify(cookies.token, jwtOptions.secretOrKey)
+            let username = decoded.username
+
+            if(username !== ""){
+                TaiKhoan.aggregate([
+                    { $match: { username: username } },
+                    { $project: {
+                            _id: 0,
+                            username: 1,
+                            hTen: 1,
+                            ngSinh: 1,
+                            gioiTinh: 1,
+                            danToc: 1,
+                            soCMND: 1,
+                            ngCapCMND: 1,
+                            noiSinh: 1,
+                            diaChi: 1,
+                            email: 1,
+                            SDT: 1,
+                            tinhTrang: 1,
+                            loai: 1
+                        } 
+                    },
+                    { 
+                        $lookup: {from: "thisinhs", localField: "username", foreignField: "usernamets", as: "thisinh"}
+                    },
+                    { $unwind: "$thisinh" },
+                    { $project: {
+                            username: 1,
+                            hTen: 1,
+                            SBD: "$thisinh.SBD",
+                            ngSinh: 1,
+                            gioiTinh: 1,
+                            danToc: 1,
+                            soCMND: 1,
+                            ngCapCMND: 1,
+                            noiSinh: 1,
+                            diaChi: 1,
+                            email: 1,
+                            SDT: 1,
+                            tinhTrang: 1,
+                            loai: 1,
+                            namTotNghiep: "$thisinh.namTotNghiep",
+                            tenTHPT: "$thisinh.tenTHPT",
+                            anhMinhChung: "$thisinh.anhMinhChung",
+                            maKhuVuc: "$thisinh.maKhuVuc",
+                            maDoiTuong: "$thisinh.maDoiTuong"
+                        } 
+                    },
+                    { 
+                        $lookup: {from: "thisinhnhaps", localField: "username", foreignField: "usernamets", as: "thisinhnhap"}
+                    },
+                    { $unwind: "$thisinhnhap" },
+                    { $project: {
+                            username: 1,
+                            hTen: 1,
+                            SBD: 1,
+                            ngSinh: 1,
+                            gioiTinh: 1,
+                            danToc: 1,
+                            soCMND: 1,
+                            ngCapCMND: 1,
+                            noiSinh: 1,
+                            diaChi: 1,
+                            email: 1,
+                            SDT: 1,
+                            namTotNghiep: 1,
+                            tenTHPT: 1,
+                            anhMinhChung: 1,
+                            maKhuVuc: 1,
+                            loai: 1,
+                            maDoiTuong: 1,
+                            tinhTrang: 1,
+                            maNganh: "$thisinhnhap.maNganh",
+                            tenKhoi: "$thisinhnhap.tenKhoi"
+                        } 
+                    },
+                ])  
+                .then((result) => {
+                    res.send(result)
+                })          
+                .catch((err) => {
+                    console.log("hienThongTinThiSinh", err)
+                    res.send({message: "Lỗi lấy thông tin thí sinh!"})
+                })
+            }else{
+                console.log("hienThongTinThiSinh", "username không được rỗng!")
+                res.send({message: "Username không được rỗng!"})
+            }
+        }catch(err){
+            console.log("hienThongTinThiSinh", err)
+            res.send({message: "Lỗi lấy thông tin thí sinh!"})
+        }
+    }else{
+        console.log("hienThongTinThiSinh", "error cookie")
+        res.send({message: "Lỗi lấy thông tin thí sinh!"})
+    }
+};
+
+// lấy thông tin thí sinh
+exports.hienThongTinThiSinh = async(req, res) => {
+    let user = await checkCookie(req.headers.cookie)
+
+    if(user.kt){
+        try{
+            let cookies = cookie.parse(req.headers.cookie || '');
+            let decoded = jwt.verify(cookies.token, jwtOptions.secretOrKey)
+            let username = decoded.username
+
+            if(username !== ""){
+                TaiKhoan.aggregate([
+                    { $match: { username: username } },
+                    { $project: {
+                            _id: 0,
+                            username: 1,
+                            hTen: 1,
+                            ngSinh: 1,
+                            gioiTinh: 1,
+                            danToc: 1,
+                            soCMND: 1,
+                            ngCapCMND: 1,
+                            noiSinh: 1,
+                            diaChi: 1,
+                            email: 1,
+                            SDT: 1,
+                            tinhTrang: 1,
+                            loai: 1
+                        } 
+                    },
+                    { 
+                        $lookup: {from: "thisinhs", localField: "username", foreignField: "usernamets", as: "thisinh"}
+                    },
+                    { $unwind: "$thisinh" },
+                    { $project: {
+                            username: 1,
+                            hTen: 1,
+                            SBD: "$thisinh.SBD",
+                            ngSinh: 1,
+                            gioiTinh: 1,
+                            danToc: 1,
+                            soCMND: 1,
+                            ngCapCMND: 1,
+                            noiSinh: 1,
+                            diaChi: 1,
+                            email: 1,
+                            SDT: 1,
+                            tinhTrang: 1,
+                            loai: 1,
+                            namTotNghiep: "$thisinh.namTotNghiep",
+                            tenTHPT: "$thisinh.tenTHPT",
+                            anhMinhChung: "$thisinh.anhMinhChung",
+                            maKhuVuc: "$thisinh.maKhuVuc",
+                            maDoiTuong: "$thisinh.maDoiTuong"
+                        } 
+                    },
+                    { 
+                        $lookup: {from: "thisinhnhaps", localField: "username", foreignField: "usernamets", as: "thisinhnhap"}
+                    },
+                    { $unwind: "$thisinhnhap" },
+                    { $project: {
+                            username: 1,
+                            hTen: 1,
+                            SBD: 1,
+                            ngSinh: 1,
+                            gioiTinh: 1,
+                            danToc: 1,
+                            soCMND: 1,
+                            ngCapCMND: 1,
+                            noiSinh: 1,
+                            diaChi: 1,
+                            email: 1,
+                            SDT: 1,
+                            namTotNghiep: 1,
+                            tenTHPT: 1,
+                            anhMinhChung: 1,
+                            loai: 1,
+                            maKhuVuc: 1,
+                            maDoiTuong: 1,
+                            tinhTrang: 1,
+                            maNganh: "$thisinhnhap.maNganh",
+                            tenKhoi: "$thisinhnhap.tenKhoi"
+                        } 
+                    },
+                    { 
+                        $lookup: {from: "nganhs", localField: "maNganh", foreignField: "maNganh", as: "nganh"}
+                    },
+                    { $unwind: "$nganh" },
+                    { $project: {
+                            username: 1,
+                            hTen: 1,
+                            SBD: 1,
+                            ngSinh: 1,
+                            gioiTinh: 1,
+                            danToc: 1,
+                            soCMND: 1,
+                            ngCapCMND: 1,
+                            noiSinh: 1,
+                            diaChi: 1,
+                            email: 1,
+                            SDT: 1,
+                            namTotNghiep: 1,
+                            tenTHPT: 1,
+                            anhMinhChung: 1,
+                            maKhuVuc: 1,
+                            maDoiTuong: 1,
+                            tenKhoi: 1,
+                            tinhTrang: 1,
+                            tenNganh: "$nganh.tenNganh",
+                            maNganh: 1,
+                            loai: 1,
+                            thongTin: "$nganh.thongTin",
+                            chiTieuNganh: "$nganh.chiTieuNganh"
+                        } 
+                    }
+                ])  
+                .then((result) => {
+                    res.send(result)
+                })          
+                .catch((err) => {
+                    console.log("hienThongTinThiSinh", err)
+                    res.send({message: "Lỗi lấy thông tin thí sinh!"})
+                })
+            }else{
+                console.log("hienThongTinThiSinh", "username không được rỗng!")
+                res.send({message: "Username không được rỗng!"})
+            }
+        }catch(err){
+            console.log("hienThongTinThiSinh", err)
+            res.send({message: "Lỗi lấy thông tin thí sinh!"})
+        }
+    }else{
+        console.log("hienThongTinThiSinh", "error cookie")
+        res.send({message: "Lỗi lấy thông tin thí sinh!"})
+    }
+};
+
+// sửa thông tin thí sinh
+exports.suaThongTinThiSinh = async(req, res) => {
+    let username = req.params.username ? req.params.username : ""
+    let updateTaiKhoan = getUpdateTaiKhoan(req.body)
+    let updateThiSinh = getUpdateThiSinh(req.body)
+
+    let taikhoan = TaiKhoan.findOneAndUpdate({username: username}, updateTaiKhoan, {new: true})
+    let thisinh = ThiSinh.findOneAndUpdate({usernamets: username}, updateThiSinh, {new: true})
+
+    Promise.all([taikhoan, thisinh])
+    .then((result) => {
+        res.send({message: "ok"})
+    })
+    .catch((err) => {
+        res.send({message: "Lỗi sửa thông tin!"})
+        console.log(err, "suaThongTinThiSinh")
+    })
+};
+
+// nạp thông tin thí sinh
+exports.napThongTinThiSinh = async(req, res) => {
+    let username = req.body.username ? req.body.username : ""
+    let password = req.body.password ? req.body.password : ""
+    let soCMND = req.body.soCMND ? req.body.soCMND : ""
+    let ngCapCMND = req.body.ngCapCMND ? moment(req.body.ngCapCMND, "DD-MM-YYYY HH:mm:ss").toISOString() : ""
+    let hTen = req.body.hTen ? req.body.hTen : ""
+    let ngSinh = req.body.ngSinh ? moment(req.body.ngSinh, "DD-MM-YYYY HH:mm:ss").toISOString() : ""
+    let danToc = req.body.danToc ? req.body.danToc : ""
+    let gioiTinh = req.body.gioiTinh ? req.body.gioiTinh : ""
+    let anh34 = req.body.anh34 ? req.body.anh34 : ""
+    let SDT = req.body.SDT ? req.body.SDT : ""
+    let noiSinh = req.body.noiSinh ? req.body.noiSinh : ""
+    let diaChi = req.body.diaChi ? req.body.diaChi : ""
+    let email = req.body.email ? req.body.email : ""
+    let tgDangKy = req.body.tgDangKy ? moment(req.body.tgDangKy, "DD-MM-YYYY HH:mm:ss").toISOString() : ""
+    let SBD = req.body.SBD ? req.body.SBD : ""
+    let tenTHPT = req.body.tenTHPT ? req.body.tenTHPT : ""
+    let namTotNghiep = req.body.namTotNghiep ? req.body.namTotNghiep : ""
+    let anhMinhChung = req.body.anhMinhChung ? req.body.anhMinhChung : ""
+    let ttTuyenSinh = Number(req.body.ttTuyenSinh)
+    let Phach = Number(req.body.Phach)
+    let maKhuVuc = req.body.maKhuVuc ? req.body.maKhuVuc : ""
+    let maDoiTuong = req.body.maDoiTuong ? req.body.maDoiTuong : ""
+
+    try{
+        if(username !== ""){
+            if(kiemTraEmail(email)){
+                res.send({message: "Lỗi email trùng!"})
+            }
+
+            if(kiemTraCMND(soCMND)){
+                res.send({message: "Lỗi CMND trùng!"})
+            }
+
+            if(kiemTraSDT(SDT)){
+                res.send({message: "Lỗi SDT trùng!"})
+            }
+
+            let taikhoan = taoTaiKhoanTS(username, password, soCMND, ngCapCMND, hTen, ngSinh, danToc, gioiTinh,
+                anh34, SDT, noiSinh, diaChi, email, tgDangKy)
+            let thisinh = taoThiSinh(username, SBD, tenTHPT, namTotNghiep, anhMinhChung, ttTuyenSinh, Phach, 
+                maKhuVuc, maDoiTuong)
+
+            Promise.all([taikhoan, thisinh])
+            .then((result) => {
+                if(result[0] && result[1]){
+                    res.send({message: "ok"})
+                }else{
+                    res.send({message: "Lỗi nạp thông tin thí sinh!"})
+                }
+            })
+            .catch((err) => {
+                console.log("napThongTinThiSinh", err)
+                res.send({message: "Lỗi nạp thông tin thí sinh!"})
+            })
+        }else{
+            console.log("napThongTinThiSinh", "username không được rỗng!")
+            res.send({message: "Username không được rỗng!"})
+        }
+    }catch(err){
+        console.log("napThongTinThiSinh", err)
+        res.send({message: "Lỗi nạp thông tin thí sinh!"})
+    }
+};
+
+function getUpdateTaiKhoan(body){
+    let taikhoan = {}
+    if(body.soCMND){
+        taikhoan.soCMND = body.soCMND
+    }
+
+    if(body.ngCapCMND){
+        taikhoan.ngCapCMND = body.ngCapCMND
+    }
+
+    if(body.hTen){
+        taikhoan.hTen = body.hTen
+    }
+
+    if(body.ngSinh){
+        taikhoan.ngSinh = body.ngSinh
+    }
+
+    if(body.danToc){
+        taikhoan.danToc = body.danToc
+    }
+
+    if(body.gioiTinh){
+        taikhoan.gioiTinh = body.gioiTinh
+    }
+
+    if(body.anh34){
+        taikhoan.anh34 = body.anh34
+    }
+
+    if(body.SDT){
+        taikhoan.SDT = body.SDT
+    }
+
+    if(body.noiSinh){
+        taikhoan.noiSinh = body.noiSinh
+    }
+
+    if(body.diaChi){
+        taikhoan.diaChi = body.diaChi
+    }
+
+    if(body.email){
+        taikhoan.email = body.email
+    }
+
+    return taikhoan
+}
+
+function getUpdateThiSinh(body){
+    let thisinh = {}
+    if(body.tenTHPT){
+        thisinh.tenTHPT = body.tenTHPT
+    }
+
+    if(body.namTotNghiep){
+        thisinh.namTotNghiep = body.namTotNghiep
+    }
+
+    if(body.anhMinhChung){
+        thisinh.anhMinhChung = body.anhMinhChung
+    }
+
+    if(body.ttTuyenSinh){
+        thisinh.ttTuyenSinh = body.ttTuyenSinh
+    }
+
+    if(body.maKhuVuc){
+        thisinh.maKhuVuc = body.maKhuVuc
+    }
+
+    if(body.maDoiTuong){
+        thisinh.maDoiTuong = body.maDoiTuong
+    }
+
+    return thisinh
+}
+
+async function kiemTraEmail(email){
+    try{
+        let taikhoan = await TaiKhoan.find({email: email})
+        if(taikhoan.length > 0){
+            return true
+        }
+    }catch(err){
+        console.log("kiemTraEmail", err)
+    }
+
+    return false
+}
+
+async function kiemTraCMND(soCMND){
+    try{
+        let taikhoan = await TaiKhoan.find({soCMND: soCMND})
+        if(taikhoan.length > 0){
+            return true
+        }
+    }catch(err){
+        console.log("kiemTraCMND", err)
+    }
+
+    return false
+}
+
+async function kiemTraSDT(SDT){
+    try{
+        let taikhoan = await TaiKhoan.find({SDT: SDT})
+        if(taikhoan.length > 0){
+            return true
+        }
+    }catch(err){
+        console.log("kiemTraSDT", err)
+    }
+
+    return false
+}
+
+async function layTinhTrangNguoiNhapDiem(){
+    let namTuyenSinh = new Date().getFullYear()
+
+    try{
+        let quanly = await ngQuanLy.aggregate([
+                    { $match: { namTuyenSinh: `${namTuyenSinh}` } },
+                    { $project: { tinhTrang: 
+                            {
+                                $cond: { if: { $gte: [ "$tgCongBoKQ", new Date() ] }, then: 2, else: -1 }
+                            }
+                        } 
+                    }
+                ])
+        if(quanly.length > 0){
+            return quanly[0].tinhTrang
+        }
+    }catch(err){
+        console.log("layTinhTrangNguoiNhapDiem", err)
+    }
+
+    return -1
+}
+
+async function taoTaiKhoanTS(username, password, soCMND, ngCapCMND, hTen, ngSinh, danToc, gioiTinh,
+    anh34, SDT, noiSinh, diaChi, email, tgDangKy) {
+    const taikhoan = new TaiKhoan({
+        username: username,
+        password: password,
+        soCMND: soCMND,
+        ngCapCMND: ngCapCMND,
+        hTen: hTen,
+        ngSinh: ngSinh,
+        danToc: danToc,
+        gioiTinh: gioiTinh,
+        anh34: anh34,
+        SDT: SDT,
+        noiSinh: noiSinh,
+        diaChi: diaChi,
+        email: email,
+        loai: "TS",
+        tinhTrang: 0,
+        tgDangKy: tgDangKy,
+        maXacNhan: ""
+    })
+
+    try{
+        await taikhoan.save()
+        return true
+    }catch(err){
+        console.log("taoTaiKhoanTS", err)
+    }
+
+    return false
+}
+
+async function taoThiSinh(username, SBD, tenTHPT, namTotNghiep, anhMinhChung, ttTuyenSinh, Phach, 
+    maKhuVuc, maDoiTuong){
+    const thisinh = new ThiSinh({
+        usernamets: username,
+        SBD: SBD,
+        tenTHPT: tenTHPT,
+        namTotNghiep: namTotNghiep,
+        anhMinhChung: anhMinhChung,
+        ttTuyenSinh: ttTuyenSinh,
+        Phach: Phach,
+        maKhuVuc: maKhuVuc,
+        maDoiTuong: maDoiTuong
+    })
+
+    try{
+        await thisinh.save()
+        return true
+    }catch(err){
+        console.log("taoThiSinh", err)
+    }
+
+    return false
+}
+
+async function layTinhTrangNguoiNhapData(){
+    let namTuyenSinh = new Date().getFullYear()
+
+    try{
+        let quanly = await ngQuanLy.aggregate([
+                    { $match: { namTuyenSinh: `${namTuyenSinh}` } },
+                    { $project: { tinhTrang: 
+                            {
+                                $cond: { if: { $gte: [ "$tgKTnhanHoSo", new Date() ] }, then: 2, else: -1 }
+                            }
+                        } 
+                    }
+                ])
+        if(quanly.length > 0){
+            return quanly[0].tinhTrang
+        }
+    }catch(err){
+        console.log("layTinhTrangNguoiNhapData", err)
+    }
+
+    return -1
+}
+
+async function taoCanBo(username, chucVu, quyenHan){
+    const canbo = new CanBo({
+        username: username,
+        chucVu: chucVu,
+        quyenHan: quyenHan
+    })
+
+    try{
+        await canbo.save()
+        return true
+    }catch(err){
+        console.log("taoCanBo", err)
+    }
+
+    return false
+}
+
+async function taoTaiKhoanCB(username, password, soCMND, ngCapCMND, hTen, ngSinh, danToc, gioiTinh,
+                    anh34, SDT, noiSinh, diaChi, email, tgDangKy, maXacNhan){
+    const taikhoan = new TaiKhoan({
+        username: username,
+        password: password,
+        soCMND: soCMND,
+        ngCapCMND: ngCapCMND,
+        hTen: hTen,
+        ngSinh: ngSinh,
+        danToc: danToc,
+        gioiTinh: gioiTinh,
+        anh34: anh34,
+        SDT: SDT,
+        noiSinh: noiSinh,
+        diaChi: diaChi,
+        email: email,
+        loai: "CB",
+        tinhTrang: 0,
+        tgDangKy: tgDangKy,
+        maXacNhan: maXacNhan
+    })
+
+    try{
+        await taikhoan.save()
+        return true
+    }catch(err){
+        console.log("taoTaiKhoanCB", err)
+    }
+
+    return false
+}
 
 // đăng nhập bằng tài khoản
 exports.dangnhap = async(req, res) => {
     let username = req.body.username ? req.body.username : ""
     let password = req.body.password ? req.body.password : ""
+    let md5Password = md5(password)
     
     try{
         if(username !== "" && password !== ""){
             let exist = await TaiKhoan.find({username: username})
             if(exist.length > 0){
-                let user = await TaiKhoan.find({username: username, password: password})
+                let user = await TaiKhoan.find({username: username, password: md5Password})
                 if(user.length > 0){
+                    var payload = {username: user[0].username, loai: user[0].loai, 
+                        exp: Math.floor(Date.now() / 1000) + tokenTime, hTen: user[0].hTen};
+                    var token = jwt.sign(payload, jwtOptions.secretOrKey);
+                    res.setHeader('Set-Cookie', cookie.serialize('token', token, {
+                        httpOnly: true,
+                        maxAge: cookieTime
+                    }));
+                    res.setHeader('If-None-Match', 'no-match-for-this');
+                    res.setHeader('ETag', 'no-match-for-this');
                     res.send({message: "ok"})
                 }else{
                     res.send({message: "Bạn nhập sai mật khẩu!"})
@@ -157,6 +839,14 @@ exports.dangnhap = async(req, res) => {
         console.log("dangnhap", err)
         res.send({message: "Lỗi đăng nhập tài khoản!"})
     }
+};
+
+// đăng xuất bằng tài khoản
+exports.dangxuat = (req, res) => {
+    res.setHeader('Set-Cookie', cookie.serialize('token', null));
+    res.setHeader('If-None-Match', 'no-match-for-this')
+    res.setHeader('ETag', 'no-match-for-this')
+    res.end()
 };
 
 // thay đổi mật khẩu
@@ -199,6 +889,8 @@ exports.sendCode = async(req, res) => {
         if(email !== ""){
             let exist = await TaiKhoan.find({email: email})
             if(exist.length > 0){
+                let code = getCode()
+
                 let kt = await updateCodeUser(exist, code)
                 if(kt === false) res.send({message: "error"})
 
@@ -274,29 +966,213 @@ async function sendMailCodeResetPassword(mailReceivers, code){
     return false
 }
 
-// Retrieve and return all movies from the database.
-exports.findAll = (req, res) => {
-    Movie.find()
-    .then(movies => {
-        res.send(movies);
-    }).catch(err => {
-        res.status(500).send({
-            message: err.message || "Some error occurred while retrieving notes."
-        });
-    });
-};
+exports.checkCookie = async (req, res) => {
+    let user = await checkCookie(req.headers.cookie)
+    if(user.kt){
+        try{
+            let cookies = cookie.parse(req.headers.cookie || '');
+            let decoded = jwt.verify(cookies.token, jwtOptions.secretOrKey)
+            let userInfo = { 
+                username: decoded.username, 
+                loai: decoded.loai, 
+                hTen: decoded.hTen 
+            }
+            res.send({message: "ok", user: userInfo})
+        }catch(err){
+            console.log(err)
+            res.send({message: "error cookie"})
+        }
+    }else{
+        res.send({message: "error cookie"})
+    }
+}
 
-// Find a single note with a noteId
-exports.findOne = (req, res) => {
+exports.getAllThiSinh = async (req, res) => {
+    TaiKhoan.find({loai: "TS"}, {_id: 0, __v: 0, anh34: 0, password: 0, tgDangKy: 0})
+    .then((result) => {
+        res.send(result)
+    })
+    .catch((err) => {
+        res.send({message: "Lỗi lấy tất cả thí sinh!"})
+        console.log("Lỗi lấy tất cả thí sinh!", err)
+    })
+}
 
-};
+exports.getAllCanBo = async (req, res) => {
+    TaiKhoan.find({loai: "CB"}, {_id: 0, __v: 0, anh34: 0, password: 0, tgDangKy: 0})
+    .then((result) => {
+        res.send(result)
+    })
+    .catch((err) => {
+        res.send({message: "Lỗi lấy tất cả cán bộ!"})
+        console.log("Lỗi lấy tất cả cán bộ!", err)
+    })
+}
 
-// Update a note identified by the noteId in the request
-exports.update = (req, res) => {
+exports.timKiemTaiKhoan = async (req, res) => {
+    let keySearch = req.params.keySearch
 
-};
+    TaiKhoan.aggregate([
+        {   
+            $match: {
+                $and: [ 
+                    { $text: { $search: keySearch } }, 
+                    { loai: "TS" }
+                ]
+            }
+        },
+        { $sort: { score: { $meta: "textScore" } } },
+        {   $lookup: {
+                from: "thisinhs",
+                localField: "username",
+                foreignField: "usernamets",
+                as: "thisinh"
+            }
+        },
+        { $unwind: "$thisinh" },
+        { $project: {
+                username: 1,
+                hTen: 1,
+                SBD: "$thisinh.SBD",
+                ngSinh: 1,
+                gioiTinh: 1,
+                danToc: 1,
+                soCMND: 1,
+                ngCapCMND: 1,
+                noiSinh: 1,
+                diaChi: 1,
+                email: 1,
+                SDT: 1,
+                namTotNghiep: "$thisinh.namTotNghiep",
+                tenTHPT: "$thisinh.tenTHPT",
+                anhMinhChung: "$thisinh.anhMinhChung",
+                maKhuVuc: "$thisinh.maKhuVuc",
+                maDoiTuong: "$thisinh.maDoiTuong",
+                createdAt: 1,
+                tinhTrang: 1
+            } 
+        },
+    ])
+    .then((result) => {
+        res.send(result)
+    })
+    .catch((err) => {
+        res.send({message: "Lỗi tìm kiếm tài khoản!"})
+        console.log("Lỗi tìm kiếm tài khoản!", err)
+    })
+}
 
-// Delete a note with the specified noteId in the request
-exports.delete = (req, res) => {
+// exports.getAllMonThi = async (req, res) => {
+//     TaiKhoan.aggregate([
+//         { $project: {
+//                 username: 1,
+//             } 
+//         },
+//         { 
+//             $lookup: {from: "thisinhs", localField: "username", foreignField: "usernamets", as: "thisinh"}
+//         },
+//         { $unwind: "$thisinh" },
+//         { $project: {
+//                 username: 1,
+//                 Phach: "$thisinh.Phach"
+//             } 
+//         },
+//         {
+//             $lookup: {from: "thisinhnhaps", localField: "username", foreignField: "usernamets", as: "thisinhnhap"}
+//         },
+//         { $unwind: "$thisinhnhap" },
+//         {$project: {
+//                 username: 1,
+//                 Phach: 1,
+//                 tenKhoi: "$thisinhnhap.tenKhoi"
+//             } 
+//         },
+//         {
+//             $lookup: {from: "khoimons", localField: "tenKhoi", foreignField: "tenKhoi", as: "khoimon"}
+//         },
+//         { $unwind: "$khoimon" },
+//         {$project: {
+//                 _id: "$_id",
+//                 maDiem: "",
+//                 Phach: 1,
+//                 mon: "$khoimon.tenMon",
+//                 diem: "0",
+//                 createdAt: "2018-11-02",
+//                 updatedAt: "2018-11-02"
+//             } 
+//         }
+//     ])  
+//     .then((result) => {
+//         let data = result.map((value) => {
+//             let diem = Math.floor(Math.random() * 11); 
+//             value._id = { "$oid": mongoose.Types.ObjectId() }
+//             value.diem = diem
 
-};
+//             return value
+//         })
+//         res.send(data)
+//     })          
+//     .catch((err) => {
+//         console.log("hienThongTinThiSinh", err)
+//         res.send({message: "Lỗi lấy thông tin thí sinh!"})
+//     })
+// }
+
+exports.deleteTaiKhoan = async (req, res) => {
+    let username = req.params.username
+
+    TaiKhoan.findOneAndUpdate({username: username}, { tinhTrang: 3 }, {rawResult: true})
+    .then((result) => {
+        res.send({message: "ok"})
+    })
+    .catch((err) => {
+        res.send({message: "Lỗi xoá tài khoản theo username!"})
+        console.log(err, "deleteTaiKhoan")
+    })
+}
+
+exports.xacNhanTaiKhoan = async (req, res) => {
+    let username = req.params.username
+
+    TaiKhoan.findOneAndUpdate({username: username}, { tinhTrang: 1 }, {rawResult: true})
+    .then((result) => {
+        res.send({message: "ok"})
+    })
+    .catch((err) => {
+        res.send({message: "Lỗi xác nhận tài khoản theo username!"})
+        console.log(err, "xacNhanTaiKhoan")
+    })
+}
+
+async function checkCookie(data){
+    let informationUser = {
+        kt: false,
+        user: []
+    }
+    let cookies = cookie.parse(data || '');
+    if(cookies.token){
+        try{
+            let decoded = jwt.verify(cookies.token, jwtOptions.secretOrKey)
+            if(decoded.username){
+                try{
+                    let user = await TaiKhoan.find({username: decoded.username})
+                    if(user.length > 0){
+                        informationUser.kt = true
+                        informationUser.user = user
+                        return informationUser
+                    }else{
+                        return informationUser
+                    }
+                }catch(e) {
+                    return informationUser
+                }
+            }else{
+                return informationUser
+            }
+        }catch(e){
+            return informationUser
+        }
+    }else{
+        return informationUser
+    }   
+}

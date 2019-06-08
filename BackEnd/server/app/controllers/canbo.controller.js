@@ -12,21 +12,21 @@ exports.taoCanBo = async(req, res) => {
             let exist = await CanBo.find({username: username})
             if(exist.length > 0){
                 res.send({message: "Cán bộ đã tồn tại!"})
+            }else{
+                const canbo = new CanBo({
+                    username: username,
+                    chucVu: chucVu,
+                    quyenHan: quyenHan
+                })
+            
+                canbo.save()
+                .then((result) => {
+                    res.send({message: "ok"});
+                }).catch(err => {
+                    console.log("taoCanBo", err)
+                    res.send({message: "Lỗi tạo cán bộ"})
+                })
             }
-    
-            const canbo = new CanBo({
-                username: username,
-                chucVu: chucVu,
-                quyenHan: quyenHan
-            })
-        
-            canbo.save()
-            .then((result) => {
-                res.send({message: "ok"});
-            }).catch(err => {
-                console.log("taoCanBo", err)
-                res.send({message: "Lỗi tạo cán bộ"})
-            })
         }else{
             console.log("taoCanBo", "username không được rỗng!")
             res.send({message: "Username không được rỗng!"})
